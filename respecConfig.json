@@ -1,0 +1,33 @@
+{
+  "shortName": "vcalm-test-suite",
+  "group": "vc",
+  "specStatus": "unofficial",
+  "subtitle": "VCALM Interoperability Report",
+  "github": "https://github.com/w3c/vcalm-test-suite",
+  "edDraftURI": "https://w3c.github.io/vcalm-test-suite/",
+  "doJsonLd": true,
+  "includePermalinks": false,
+  "otherLinks": [{
+    "key": "Related Specifications",
+    "data": [{
+      "value": "Verifiable Credential API for Lifecycle Management (VCALM) v1.0",
+      "href": "https://www.w3.org/TR/vcalm-1.0/"
+    }]
+  }],
+  "editors": [
+    {
+      "name": "Patrick St. Louis",
+      "url": "https://github.com/PatStLouis",
+      "company": "OpSecId",
+      "companyURL": "https://github.com/OpSecId"
+    }
+  ],
+  "authors": [
+    {
+      "name": "Patrick St. Louis",
+      "url": "https://github.com/PatStLouis",
+      "company": "OpSecId",
+      "companyURL": "https://github.com/OpSecId"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+node_modules/
+localConfig.cjs
+schemathesis.local.cjs
+reports/**
+!reports/.gitkeep
+suite.log
+allure-results/
+.DS_Store

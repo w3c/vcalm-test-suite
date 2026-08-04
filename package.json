@@ -1,0 +1,36 @@
+{
+  "name": "vcalm-test-suite",
+  "version": "0.1.0",
+  "description": "Interoperability tests for VCALM (Verifiable Credential API for Lifecycle Management)",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint tests .eslintrc.cjs",
+    "test": "mocha 'tests/*/**/*.js' --reporter @digitalbazaar/mocha-w3c-interop-reporter --reporter-options abstract=\"$PWD/abstract.hbs\",reportDir=\"$PWD/reports\",respec=\"$PWD/respecConfig.json\",suiteLog='./suite.log',templateData=\"$PWD/reports/index.json\",title=\"VCALM Interoperability Report\" --timeout 15000 --preserve-symlinks"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w3c/vcalm-test-suite.git"
+  },
+  "keywords": [
+    "test",
+    "w3c",
+    "vcalm",
+    "verifiable credentials"
+  ],
+  "license": "(LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023)",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@digitalbazaar/mocha-w3c-interop-reporter": "^1.6.0",
+    "chai": "^4.3.7",
+    "mocha": "^11.7.5",
+    "vc-test-suite-implementations": "github:w3c/vc-test-suite-implementations"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-digitalbazaar": "^5.0.1",
+    "eslint-plugin-jsdoc": "^48.11.0",
+    "eslint-plugin-unicorn": "^49.0.0"
+  }
+}
