@@ -28,7 +28,7 @@ const paired = implementationsWithPresentationFlow(match, tag);
 const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
 
 describeNormativeStatement({
-  section: 'Verifier',
+  section: 'Verify Credential',
   match: paired,
   columnLabel: 'Verifier',
   statements: [
@@ -68,7 +68,15 @@ describeNormativeStatement({
           }
         ];
       }
-    },
+    }
+  ]
+});
+
+describeNormativeStatement({
+  section: 'Verify Presentation',
+  match: paired,
+  columnLabel: 'Verifier',
+  statements: [
     {
       statement: NORMATIVE.conformance.verifyPresentation,
       link,

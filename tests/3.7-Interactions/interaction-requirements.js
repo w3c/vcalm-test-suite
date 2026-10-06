@@ -8,43 +8,48 @@ import {NORMATIVE} from '../normative-statements.js';
 const {interactions} = NORMATIVE;
 
 describeSkippedSection({
-  section: 'Interactions',
+  section: 'Interaction URL Format',
+  columnLabel: 'Interactions',
+  link: `${TR}#interaction-url-format`,
   statements: [
-    {
-      statement: interactions.interactionUrl,
-      link: `${TR}#interaction-url-format`
-    },
-    {
-      statement: interactions.interactionUrlVersion,
-      link: `${TR}#interaction-url-format`
-    },
-    {
-      statement: interactions.qrCode,
-      link: `${TR}#interaction-qr-code-format`
-    },
-    {
-      statement: interactions.qrCodeMaxLength,
-      link: `${TR}#interaction-qr-code-format`
-    },
-    {
-      statement: interactions.scheme,
-      link: `${TR}#interaction-scheme-format`
-    },
-    {
-      statement: interactions.protocolsJson,
-      link: `${TR}#interaction-protocols-response`
-    },
-    {
-      statement: interactions.protocolsHtml,
-      link: `${TR}#interaction-protocols-response`
-    },
-    {
-      statement: interactions.digitalCredentialsRequest,
-      link: `${TR}#initiating-interactions`
-    },
-    {
-      statement: interactions.digitalCredentialsFetch,
-      link: `${TR}#initiating-interactions`
-    }
+    interactions.interactionUrl,
+    interactions.interactionUrlVersion
+  ]
+});
+
+describeSkippedSection({
+  section: 'Interaction QR Code Format',
+  columnLabel: 'Interactions',
+  link: `${TR}#interaction-qr-code-format`,
+  statements: [
+    interactions.qrCode,
+    interactions.qrCodeMaxLength
+  ]
+});
+
+describeSkippedSection({
+  section: 'Interaction Scheme Format',
+  columnLabel: 'Interactions',
+  link: `${TR}#interaction-scheme-format`,
+  statements: [interactions.scheme]
+});
+
+describeSkippedSection({
+  section: 'Interaction Protocols Response',
+  columnLabel: 'Interactions',
+  link: `${TR}#interaction-protocols-response`,
+  statements: [
+    interactions.protocolsJson,
+    interactions.protocolsHtml
+  ]
+});
+
+describeSkippedSection({
+  section: 'vcapi Interaction Protocol',
+  columnLabel: 'Interactions',
+  link: `${TR}#vcapi-interaction-protocol`,
+  statements: [
+    interactions.digitalCredentialsRequest,
+    interactions.digitalCredentialsFetch
   ]
 });

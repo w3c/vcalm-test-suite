@@ -9,22 +9,19 @@ const {errorHandling} = NORMATIVE;
 
 describeSkippedSection({
   section: 'Error Handling',
+  link: `${TR}#error-handling`,
   statements: [
-    {
-      statement: errorHandling.problemDetailsTypePresent,
-      link: `${TR}#error-handling`
-    },
-    {
-      statement: errorHandling.problemDetailsType,
-      link: `${TR}#error-handling`
-    },
-    {
-      statement: errorHandling.verifiedFalse,
-      link: `${TR}#verification-errors-vs-warnings`
-    },
-    {
-      statement: errorHandling.verifiedTrue,
-      link: `${TR}#verification-errors-vs-warnings`
-    }
+    errorHandling.problemDetailsTypePresent,
+    errorHandling.problemDetailsType
+  ]
+});
+
+describeSkippedSection({
+  section: 'Verification Errors vs. Warnings',
+  columnLabel: 'Error Handling',
+  link: `${TR}#verification-errors-vs-warnings`,
+  statements: [
+    errorHandling.verifiedFalse,
+    errorHandling.verifiedTrue
   ]
 });

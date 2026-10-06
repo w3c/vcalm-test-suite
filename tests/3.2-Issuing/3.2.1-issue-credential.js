@@ -31,7 +31,7 @@ function rejectIssue(endpoints, body) {
 }
 
 describeNormativeStatement({
-  section: 'Issuer',
+  section: 'Issue Credential',
   match,
   columnLabel: 'Issuer',
   statements: [

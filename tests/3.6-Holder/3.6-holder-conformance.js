@@ -2,31 +2,23 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-import {describeNormativeStatement} from '../statement-suite.js';
-import {filterByTag} from 'vc-test-suite-implementations';
+import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
-import {VCALM_TAG} from '../helpers.js';
 
-const tag = VCALM_TAG;
-const {match} = filterByTag({property: 'holders', tags: [tag]});
-const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
+const link = `${TR}#conformance`;
 
-describeNormativeStatement({
-  section: 'Holder',
-  match,
+describeSkippedSection({
+  section: 'Get Exchange Protocols',
   columnLabel: 'Holder',
-  statements: [
-    {
-      statement: NORMATIVE.conformance.getExchangeProtocols,
-      link,
-      skip: true,
-      skipMessage: 'Skipped.'
-    },
-    {
-      statement: NORMATIVE.conformance.participateInExchange,
-      link,
-      skip: true,
-      skipMessage: 'Skipped.'
-    }
-  ]
+  property: 'holders',
+  link,
+  statements: [NORMATIVE.conformance.getExchangeProtocols]
+});
+
+describeSkippedSection({
+  section: 'Participate in an Exchange',
+  columnLabel: 'Holder',
+  property: 'holders',
+  link,
+  statements: [NORMATIVE.conformance.participateInExchange]
 });
