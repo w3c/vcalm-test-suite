@@ -1,0 +1,22 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "id": "urn:uuid:reference-foreign-vc-0001",
+  "type": [
+    "VerifiableCredential"
+  ],
+  "issuer": "did:web:vcalm-test-fixtures.example:reference-issuer",
+  "credentialSubject": {
+    "id": "did:example:subject-foreign",
+    "description": "Reference foreign VC for VCALM interop negative testing"
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "cryptosuite": "eddsa-rdfc-2022",
+    "created": "2026-01-01T00:00:00Z",
+    "verificationMethod": "did:web:vcalm-test-fixtures.example:reference-issuer#key-1",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "zInvalidReferenceProofValueForInteropNegativeTestingOnly"
+  }
+}

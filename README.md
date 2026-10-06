@@ -4,17 +4,34 @@ Interoperability tests for implementations of
 [VCALM](https://www.w3.org/TR/vcalm-1.0/) (Verifiable Credential API for
 Lifecycle Management).
 
-This repo is an **initial scaffold** (v0.1.0): npm dependencies, project README,
-and a curated normative statement inventory. Behavioral Mocha tests are added in
-a follow-up change.
+## Branches
 
-## What's in this repo
+| Branch | Contents |
+|--------|----------|
+| `feature/vcalm-required-endpoints` | Required issuer and verifier POSTs, plus Chai OpenAPI checks |
+| `feature/vcalm-docs` | Coverage matrix, normative traceability, stats (`docs/` tree) |
 
-| Path | Purpose |
-|------|---------|
-| [`tests/normative-statements.js`](tests/normative-statements.js) | RFC 2119 strings for future Mocha `it()` titles |
-| `abstract.hbs` / `respecConfig.json` | W3C interop report metadata |
-| `package.json` / `package-lock.json` | Mocha, Chai, W3C interop reporter, `vc-test-suite-implementations` |
+## Strategy
+
+| Layer | Tool | Where |
+|-------|------|--------|
+| Normative statements | Mocha | `tests/3.2-Issuing`, `tests/3.3-Verifying` |
+| Response shape | Chai OpenAPI | `docs/openapi/oas.bundled.json` via `tests/openapi.js` |
+
+Mocha tests are adapted from the CCG
+[vc-api-issuer-test-suite](https://github.com/w3c-ccg/vc-api-issuer-test-suite)
+and
+[vc-api-verifier-test-suite](https://github.com/w3c-ccg/vc-api-verifier-test-suite),
+extended with **negative fixtures** (malformed issue requests, foreign
+credentials/presentations) to catch stub implementations. Successful responses
+for the three required POSTs are also checked against the bundled VCALM OpenAPI
+document. This suite does
+**not** run VCDM or crypto interop suites — it uses minimal fixture credentials
+sufficient to exercise the API.
+
+Mocha tests under `tests/<section>/` mirror the VCALM TOC (helpers live at
+`tests/*.js` and are excluded from the `tests/*/**/*.js` glob). Per-file
+coverage matrix: branch `feature/vcalm-docs` → `docs/test-coverage.md`.
 
 ## Install
 
@@ -22,102 +39,136 @@ a follow-up change.
 npm install --legacy-peer-deps
 ```
 
-## Lint
+`--legacy-peer-deps` avoids peer-resolution conflicts between Mocha 11 and older
+devDependency trees (Chai OpenAPI).
+
+## Setup
+
+Endpoints must follow the VCALM / VC-API shape:
+
+- `POST /credentials/issue`
+- `POST /credentials/verify`
+- `POST /presentations/verify`
+
+### Local testing
 
 ```sh
-npm run lint
+cp localConfig.example.cjs localConfig.cjs
+# edit endpoints, then:
+npm test
 ```
 
-## Run tests
+Override the API base URL:
 
-`npm test` runs Mocha with the glob `tests/*/**/*.js` and the W3C interop
-reporter (`abstract.hbs`, `respecConfig.json`). Reports are written under
-`reports/`. A skipped placeholder test keeps the harness runnable until
-behavioral tests land in follow-up PRs.
-
-## Planned test layout
-
-Tests will mirror the VCALM table of contents. Mocha will load
-`tests/*/**/*.js` only; shared helpers at `tests/*.js` (including
-`normative-statements.js`) are not test files.
-
-```
-tests/
-  normative-statements.js   # RFC 2119 strings (present now)
-  helpers.js                # matrix setup, VCALM tag, fixtures
-  negative-fixtures.js      # malformed / foreign VC·VP cases
-  1.3-Conformance/          # §1.3 service role probes
-  2.4-Configurations/       # §2.4 JSON, options, auth, payload limits
-  3.2-Issuing/              # §3.2 issue · get · delete · multi-proof
-  3.3-Verifying/            # §3.3 verify VC/VP · challenge · negatives
-  3.4-Requesting/           # §3.4 VPR shape and query rules
-  3.5-Presenting/           # §3.5 derive · create · list · get · delete
-  3.6-Workflows/            # §3.6 workflow and exchange lifecycle
-  3.7-Interactions/         # §3.7 interaction URL · QR · protocols
-  3.8-ErrorHandling/        # §3.8 ProblemDetails · verified true/false
-  appendix-B-Security/      # selected appendix B guidance
+```sh
+BASE_URL=https://localhost:8000 npm test
 ```
 
-## Implementation config (when tests land)
+### VC Dojo (localhost)
 
-Implementations will be registered in **`localConfig.cjs`** (gitignored). Each
-role gets an `endpoint` and **`tags: ['VCALM']`**. Register only what you
-implement — tests skip missing pairings (for example, presentation verify needs
-both `holders` and `verifiers`).
+Terminal 1 — start the server:
 
-| Role key | Used for | Typical `endpoint` |
-|----------|----------|-------------------|
-| `issuers` | Issue credential (§3.2.1) | `…/credentials/issue` or gateway root |
-| `verifiers` | Verify VC and VP (§3.3.1–2) | `…/credentials/verify` or gateway root |
-| `holders` | Create presentation (§3.5.2) | `…/presentations` or gateway root |
-| `workflows` | §3.6 workflows (optional) | `…/workflows` or gateway root |
-| `interactions` | §3.7 interaction URL fetch (optional) | gateway root or `…/interactions` |
-
-One `verifiers` entry covers both verify operations. Issuers may set
-`options.cryptosuite` to a string or string array (array enables §3.2.4
-multi-proof when length ≥ 2).
-
-```javascript
-module.exports = {
-  implementations: [{
-    name: 'My VCALM service',
-    implementation: 'Example Corp',
-    issuers: [{
-      id: 'did:web:example.com',
-      endpoint: process.env.BASE_URL || 'https://localhost:8000',
-      tags: ['VCALM'],
-      options: { cryptosuite: 'eddsa-jcs-2022' }
-    }],
-    verifiers: [{
-      endpoint: process.env.BASE_URL || 'https://localhost:8000',
-      tags: ['VCALM']
-    }],
-    holders: [{
-      endpoint: process.env.BASE_URL || 'https://localhost:8000',
-      tags: ['VCALM']
-    }]
-  }]
-};
+```sh
+cd vc-dojo && ./scripts/dev-server.sh
 ```
 
-Override the base URL: `BASE_URL=https://localhost:8000 npm test`
+Terminal 2 — run the suite (point `localConfig.cjs` at `https://localhost:8000`):
 
-## The `VCALM` tag
+```sh
+cd test-suites/vcalm-test-suite
+NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
+```
 
-Endpoints that participate in this suite include **`VCALM`** in `tags`. The
-harness uses
-[`vc-test-suite-implementations`](https://github.com/w3c/vc-test-suite-implementations)
-`filterByTag({ tags: ['VCALM'] })` to build the Mocha matrix.
+| Variable | Default | Meaning |
+|----------|---------|---------|
+| `NODE_TLS_REJECT_UNAUTHORIZED=0` | — | Allow self-signed HTTPS for local dev |
+| `VCALM_OPENAPI=0` | validation on | Skip OpenAPI response checks |
 
-## Mocha and OpenAPI (planned)
+### Role registration
 
-**Mocha** will run behavioral interop: HTTP status, VCALM response envelopes
-(`verifiableCredential` / `verifiablePresentation`), and spec-specific fields.
-`it()` titles will use strings from `tests/normative-statements.js`.
+Tag each registered endpoint with `VCALM`. Register only roles your deployment
+implements — tests skip missing pairings (e.g. no VP path without `holders` +
+`verifiers`).
 
-**OpenAPI (optional, later)** — selected tests may validate responses against
-the VCALM OAS via Chai OpenAPI (`VCALM_OPENAPI=0` to disable).
+| Profile | Register | Enables |
+|---------|----------|---------|
+| Issuer only | `issuers` | §1.3 issuer, §2.4.1/2.4.2, §3.2.1, §3.2.6 |
+| Verifier only | `verifiers` | §1.3 verifier smoke, §3.3.4–5 |
+| Issuer + verifier | `issuers`, `verifiers` | + §3.3.1, §3.3.4, §3.8.1 (VC) |
+| Full §1.3 core | above + `holders` | + §3.3.2, §3.3.5, §3.5.2, §3.8.1 (VP) |
+
+**Verifier — one entry, two operations.** There is no separate `vpVerifiers` key.
+A single `verifiers` entry satisfies §1.3 (verify credential and verify
+presentation). The suite derives the sibling path from `endpoint`:
+
+- `…/credentials/verify` → VP at `…/presentations/verify` (path swap)
+- Gateway root → both paths appended under the root
+
+| Role key | Typical `endpoint` |
+|----------|-------------------|
+| `issuers` | `…/credentials/issue` or gateway root |
+| `verifiers` | `…/credentials/verify` or gateway root |
+| `holders` | `…/presentations` or gateway root |
+| `workflows` | `…/workflows` or gateway root (optional) |
+| `interactions` | gateway root or `…/interactions` (optional) |
+
+Optional endpoints that return **404** or **501** are skipped. See
+`localConfig.example.cjs` for unified-gateway vs explicit-path templates.
+
+### Optional profiles
+
+| Tag / env | Enables |
+|-----------|---------|
+| `VCALM_FIXTURE=1` | Fixture-only §3.4 VPR shape tests and workflow config fixtures |
+
+Default `npm test` skips fixture suites unless `VCALM_FIXTURE=1`.
+
+Explicit paths:
+
+```js
+issuers: [{ endpoint: `${baseUrl}/credentials/issue`, tags: ['VCALM'] }],
+holders: [{ endpoint: `${baseUrl}/presentations`, tags: ['VCALM'] }],
+verifiers: [{ endpoint: `${baseUrl}/credentials/verify`, tags: ['VCALM'] }],
+```
+
+Unified gateways may use one `baseUrl` for all roles (see `localConfig.example.cjs`).
+
+## Implementation registration
+
+Register implementations in
+[`w3c/vc-test-suite-implementations`](https://github.com/w3c/vc-test-suite-implementations)
+with tag `VCALM` on issuer, verifier, and holder endpoints (and
+`workflows` / `VCALM:status` for optional profiles).
+
+## OpenAPI response checks
+
+`npm test` checks successful responses for:
+
+- `POST /credentials/issue` (201, `verifiableCredential`)
+- `POST /credentials/verify` (200)
+- `POST /presentations/verify` (200)
+
+against `docs/openapi/oas.bundled.json`, bundled from
+`https://w3c.github.io/vcalm/oas.yaml` (version `0.9-unstable`). One `$ref`
+in that file points at `../components/ExchangeVerifiablePresentation.yml`;
+the bundle resolves it to
+`https://w3c.github.io/vcalm/components/ExchangeVerifiablePresentation.yml`.
+The published `servers` entry is one example host, so the bundle uses `/`
+as the service root. The test HTTP client unwraps `verifiableCredential`
+before assertions run; the checker puts that property back before comparing
+the issue response to the schema.
+
+Set `VCALM_OPENAPI=0` to skip these checks.
+
+## Report
+
+`npm test` writes:
+
+- W3C interoperability matrix — `reports/index.html` and `reports/index.json`
+- Mocha suite log — `suite.log`
+
+`reports/` is gitignored except `.gitkeep`; regenerate locally after each run.
 
 ## License
 
-[LICENSE.md](LICENSE.md)
+See [LICENSE.md](LICENSE.md).
