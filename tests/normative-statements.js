@@ -23,8 +23,9 @@ export const NORMATIVE = {
       'options, or option values that it does not understand or know how to ' +
       'process.',
     mustNotStaticCredentials:
-      'Requests MUST NOT use authorization protocols with long-lived static ' +
-      'credentials (e.g. HTTP Basic Authentication with username/password).',
+      'Requests to this API MUST NOT utilize any authorization protocol ' +
+      'that includes long-lived static credentials such as usernames and ' +
+      'passwords or similar values in those requests.',
     vcPayloadBaseline:
       'A default maximum size of 10MB per verifiable credential is ' +
       'RECOMMENDED as an interoperability baseline, with the possibility of ' +
@@ -60,7 +61,11 @@ export const NORMATIVE = {
       'described in Section C.3 Update Status.',
     workflow:
       'A conforming workflow service implementation MUST provide all ' +
-      'interfaces Section 3.6 Workflows and Exchanges.'
+      'interfaces Section 3.6 Workflows and Exchanges.',
+    serviceClient:
+      'A conforming service client implementation MUST provide the ' +
+      'means to communicate with all REQUIRED interfaces provided by the ' +
+      'corresponding service implementation.'
   },
   issuing: {
     issue:
@@ -96,20 +101,92 @@ export const NORMATIVE = {
   },
   requestingPresentation: {
     queryRequired:
-      'query A REQUIRED property that specifies the information requested ' +
-      'by the verifier.',
-    queryType:
-      'The value MUST be one or more maps where each map MUST define a ' +
-      '`type` property with an associated string value.',
+      'query is a REQUIRED property that specifies the information ' +
+      'requested by the verifier.',
+    queryValue:
+      'The value of query MUST be one or more maps.',
+    queryMapType:
+      'Each query map MUST define a type property with an associated ' +
+      'string value.',
+    acceptedIssuerItem:
+      'Each acceptedIssuers item MUST be an issuer URL, an object with an ' +
+      'id URL, or an object with a recognizedIn RecognizedEntityCredential.',
+    matchAlgorithm:
+      'A conforming implementation MUST produce the same output as the ' +
+      'algorithm for matching a credential to a QueryByExample.',
+    acceptedIssuerMatch:
+      'If acceptedIssuers is present, the credential\'s issuer MUST be ' +
+      'acceptable.',
+    emptyStringExists:
+      'An empty string indicates that the property MUST exist, but any ' +
+      'value is acceptable.',
+    emptyMapExists:
+      'An empty map indicates that the property MUST exist, but any value ' +
+      'is acceptable.',
+    emptyListExists:
+      'An empty list indicates that the property MUST exist, but any value ' +
+      'is acceptable.',
+    listElementMap:
+      'If actualValue is a list, then at least one element MUST be a map ' +
+      'for which the property-matching algorithm returns true.',
+    listElementMatch:
+      'At least one element in the expected list MUST match at least one ' +
+      'element in the actual values.',
+    primitiveMatch:
+      'At least one element in the actual values MUST satisfy strict ' +
+      'equality or numeric coercion against the expected primitive.',
+    noPartialNumericCoercion:
+      'Strings that contain non-numeric characters MUST NOT be coerced.',
+    selectiveDisclosureAlgorithm:
+      'A conforming implementation that converts a QueryByExample example ' +
+      'for selective disclosure MUST produce the same output as this ' +
+      'algorithm.',
     queryByExample:
       'To signal that selective-disclosure cryptosuites are acceptable, ' +
       'verifiers SHOULD include cryptosuites such as `bbs-2023` or ' +
       '`ecdsa-sd-2023` in the `acceptedCryptosuites` array.',
-    didAuthentication:
-      'A DID Authentication response MUST be a verifiable presentation of ' +
-      'the following form:',
+    didAuthenticationQuery:
+      'A DID Authentication query MUST be of the following form.',
+    didAuthenticationQueryTypeRequired:
+      'The type of a DID Authentication query is a REQUIRED string value.',
     didAuthenticationQueryType:
-      'A REQUIRED string value that MUST be set to `DIDAuthentication`.',
+      'The type of a DID Authentication query MUST be set to ' +
+      'DIDAuthentication.',
+    didAuthenticationMethod:
+      'Each object in acceptedMethods MUST contain a method property ' +
+      'whose value is a DID Method name.',
+    didAuthenticationCryptosuiteChoice:
+      'The holder MUST choose a cryptosuite from acceptedCryptosuites ' +
+      'when generating a proof for that verifier.',
+    didAuthenticationCryptosuite:
+      'Each object in acceptedCryptosuites MUST contain a cryptosuite ' +
+      'property whose value is a Data Integrity cryptosuite name.',
+    didAuthenticationResponse:
+      'A DID Authentication response MUST be a verifiable presentation ' +
+      'of the following form.',
+    didAuthenticationResponseTypeRequired:
+      'The type of a DID Authentication response is a REQUIRED string value.',
+    didAuthenticationResponseType:
+      'The type of a DID Authentication response MUST be set to ' +
+      'VerifiablePresentation.',
+    didAuthenticationHolderRequired:
+      'The holder of a DID Authentication response is a REQUIRED string ' +
+      'value.',
+    didAuthenticationHolder:
+      'The holder of a DID Authentication response MUST be a DID of the ' +
+      'type requested in the DID Authentication query.',
+    didAuthenticationProofRequired:
+      'The proof of a DID Authentication response is a REQUIRED value.',
+    didAuthenticationProof:
+      'The proof of a DID Authentication response MUST be one or more ' +
+      'proof types requested in the DID Authentication query.',
+    didAuthenticationProofChallenge:
+      'Each proof object MUST include the domain and challenge values ' +
+      'that were provided in the DID Authentication query.',
+    didAuthenticationDomain:
+      'Holder implementations MUST ensure that the domain specified by ' +
+      'the verifier matches the domain used for the current channel of ' +
+      'communication.',
     authorizationCapability:
       'This query type would be included in a request to ask for ' +
       'Authorization ' +
@@ -134,10 +211,10 @@ export const NORMATIVE = {
       'An issue request object MAY include a `variables` property to provide ' +
       'values to be used when evaluating the credential template.',
     issueRequestResult:
-      'An issue request object MAY include an optional `result` property ' +
-      'whose value MUST be either the name of a top-level variable in the ' +
-      'exchange\'s `variables` object or a JSON pointer to any variable ' +
-      'within the exchange\'s `variables` object.',
+      'If an issue request includes a result property, its value MUST be ' +
+      'either the name of a top-level variable in the exchange\'s ' +
+      'variables object or a JSON pointer to any variable within the ' +
+      'exchange\'s variables object.',
     getConfiguration:
       'Gets the configuration of an existing workflow and returns it in the ' +
       'response body.',
@@ -184,9 +261,19 @@ export const NORMATIVE = {
   },
   interactions: {
     interactionUrl:
-      'The format of the interaction URL MUST conform to the syntax for the ' +
-      'URL and contain an `iuv` query parameter encoding the interaction URL ' +
-      'version number, which MUST be `1` when using this version of this API.',
+      'The format of the interaction URL MUST conform to the URL Standard ' +
+      'and contain an iuv query parameter encoding the interaction URL ' +
+      'version number.',
+    interactionUrlVersion:
+      'The interaction URL version number MUST be 1 when using this ' +
+      'version of this API.',
+    digitalCredentialsRequest:
+      'To make a Digital Credentials request backed by the VCALM protocol, ' +
+      'the coordinator MUST provide the interaction URL as the request data.',
+    digitalCredentialsFetch:
+      'The browser MUST fetch the interaction URL, retrieve the supported ' +
+      'protocols, and perform an HTTP GET on the vcapi URL concatenated ' +
+      'with /request.',
     interactionHttps:
       'The interaction URL SHOULD be an HTTPS URL that contains an ' +
       'interaction-specific identifier.',
@@ -225,9 +312,11 @@ export const NORMATIVE = {
       'exchange as described in Section Participate in an Exchange.'
   },
   errorHandling: {
+    problemDetailsTypePresent:
+      'The type key of a ProblemDetails map MUST be present.',
     problemDetailsType:
-      'The `type` map/key MUST be present and its value MUST be a URL ' +
-      'identifying the type of problem.',
+      'The value of the ProblemDetails type key MUST be a URL identifying ' +
+      'the type of problem.',
     problemDetailsReadable:
       'The `title` map/key SHOULD provide a short but specific ' +
       'human-readable string for the problem.',
@@ -235,10 +324,11 @@ export const NORMATIVE = {
       'https://www.w3.org/TR/vcalm#UNKNOWN_OPTION_PROVIDED An option that ' +
       'is unknown to the implementation was provided to the API call.',
     verifiedFalse:
-      'If an error is included, the `verified` property of the ' +
-      '`VerificationResponse` object MUST be set to `false`',
+      'If an error is included, the verified property of the ' +
+      'VerificationResponse object MUST be set to false.',
     verifiedTrue:
-      'if no errors are included, it MUST be set to `true`.'
+      'If no errors are included, the verified property of the ' +
+      'VerificationResponse object MUST be set to true.'
   },
   security: {
     stripUnrecognizedProofs:

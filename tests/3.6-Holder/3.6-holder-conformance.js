@@ -15,15 +15,18 @@ describeNormativeStatement({
   section: 'Holder',
   match,
   columnLabel: 'Holder',
-  unimplemented: true,
   statements: [
     {
       statement: NORMATIVE.conformance.getExchangeProtocols,
-      link
+      link,
+      skip: true,
+      skipMessage: 'Skipped.'
     },
     {
       statement: NORMATIVE.conformance.participateInExchange,
-      link
+      link,
+      skip: true,
+      skipMessage: 'Skipped.'
     }
   ]
 });
