@@ -8,7 +8,8 @@ import {NORMATIVE} from '../normative-statements.js';
 const {requestingPresentation: query} = NORMATIVE;
 
 describeSkippedSection({
-  section: 'Requesting a Presentation',
+  section: 'Verifiable Presentation Request',
+  columnLabel: 'Requesting a Presentation',
   link: `${TR}#verifiable-presentation-request`,
   statements: [
     query.queryRequired,
