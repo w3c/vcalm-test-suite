@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import path from 'node:path';
 
 import chai from 'chai';
 import chaiOpenApiModule from 'chai-openapi-response-validator';
@@ -43,7 +43,7 @@ if(!disabled) {
   try {
     chai.use(chaiResponseValidator(OPENAPI_SPEC_PATH));
     openApiReady = true;
-  } catch (error) {
+  } catch(error) {
     console.warn(
       'VCALM OpenAPI response validation disabled:',
       error.message
@@ -94,10 +94,10 @@ function resolveOperationPath(operation, pathParams = {}) {
 }
 
 /**
- * Adapt vc-test-suite-implementations HTTP results for chai-openapi-response-validator.
+ * Adapt HTTP results for chai-openapi-response-validator.
  *
  * @param {object} options - Adapter options.
- * @param {object} options.result - Sanitized fetch Response from the test client.
+ * @param {object} options.result - Sanitized fetch Response from the client.
  * @param {object} [options.data] - Parsed response body (OAS envelope).
  * @param {string} options.operation - Key from OPENAPI_OPERATIONS.
  * @param {object} [options.pathParams] - Path template parameters.

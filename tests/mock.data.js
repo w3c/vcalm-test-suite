@@ -34,7 +34,8 @@ export function normalizeIssueOptions(options) {
   if(!Array.isArray(normalized.cryptosuite)) {
     return normalized;
   }
-  const suites = normalized.cryptosuite.filter(suite => typeof suite === 'string');
+  const suites = normalized.cryptosuite.filter(
+    suite => typeof suite === 'string');
   delete normalized.cryptosuite;
   if(suites.length === 0) {
     return normalized;
@@ -46,7 +47,9 @@ export function normalizeIssueOptions(options) {
   return normalized;
 }
 
-export function createRequestBody({issuer, vc = validVc, options: optionsOverride}) {
+export function createRequestBody({
+  issuer, vc = validVc, options: optionsOverride
+}) {
   const {settings: {id, options: issuerOptions} = {}} = issuer;
   const credential = klona(vc);
   credential.id = credential.id || `urn:uuid:${uuidv4()}`;
