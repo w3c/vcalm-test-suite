@@ -1,0 +1,316 @@
+<section id="introduction">
+  <h2>Introduction</h2>
+  <section id="design-goals-and-rationale">
+    <h3>Design Goals and Rationale</h3>
+  </section>
+  <section id="architecture-overview">
+    <h3>Architecture Overview</h3>
+  </section>
+  <section id="conformance">
+    {{#matrixByTitle "Service client"}}
+    {{> matrix.hbs matrix=. bare=true}}
+    {{/matrixByTitle}}
+  </section>
+  <section id="terminology">
+    <h3>Terminology</h3>
+  </section>
+</section>
+
+<section id="architecture">
+  <h2>Architecture</h2>
+  <section id="coordinators">
+    <h3>Coordinators</h3>
+  </section>
+  <section id="services">
+    <h3>Services</h3>
+  </section>
+  <section id="instances">
+    <h3>Instances</h3>
+  </section>
+  <section id="configurations">
+    <h3>Configurations</h3>
+    <section class="notoc" id="authorization">
+      <h4>Authorization</h4>
+      {{#matrixByTitle "Authorization"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section class="notoc" id="options">
+      <h4>Options</h4>
+      {{#matrixByTitle "Options"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section class="notoc" id="content-serialization">
+      <h4>Content Serialization</h4>
+      {{#matrixByTitle "Content Serialization"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+  </section>
+</section>
+
+<section id="http-api">
+  <h2>HTTP API</h2>
+  <section id="component-overview">
+    <h3>Component Overview</h3>
+  </section>
+  <section id="issuing">
+    <h3>Issuing</h3>
+    <section id="issue-credential">
+      <h4>Issue Credential</h4>
+      {{#matrixByTitle "Issue Credential"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="get-a-specific-credential">
+      <h4>Get a Specific Credential</h4>
+    </section>
+    <section id="delete-a-specific-credential">
+      <h4>Delete a Specific Credential</h4>
+    </section>
+  </section>
+  <section id="verifying">
+    <h3>Verifying</h3>
+    <section id="verify-credential">
+      <h4>Verify Credential</h4>
+      {{#matrixByTitle "Verify Credential"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="verify-presentation">
+      <h4>Verify Presentation</h4>
+      {{#matrixByTitle "Verify Presentation"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="create-challenge">
+      <h4>Create Challenge</h4>
+    </section>
+  </section>
+  <section id="requesting-a-presentation">
+    <h3>Requesting a Presentation</h3>
+    <section id="verifiable-presentation-request">
+      <h4>Verifiable Presentation Request</h4>
+      {{#matrixByTitle "Verifiable Presentation Request"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="query-by-example">
+      <h4>Query By Example</h4>
+      {{#matrixByTitle "Query By Example"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="did-authentication">
+      <h4>DID Authentication</h4>
+      {{#matrixByTitle "DID Authentication"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="authorization-capability-request">
+      <h4>Authorization Capability Request</h4>
+    </section>
+    <section id="logical-operations-in-queries">
+      <h4>Logical Operations in Queries</h4>
+    </section>
+  </section>
+  <section id="presenting">
+    <h3>Presenting</h3>
+    <section id="derive-credential">
+      <h4>Derive Credential</h4>
+    </section>
+    <section id="create-presentation">
+      <h4>Create Presentation</h4>
+    </section>
+    <section id="get-presentations">
+      <h4>Get Presentations</h4>
+    </section>
+    <section id="get-a-specific-presentation">
+      <h4>Get a Specific Presentation</h4>
+    </section>
+    <section id="delete-a-specific-presentation">
+      <h4>Delete a Specific Presentation</h4>
+    </section>
+  </section>
+  <section id="workflows-and-exchanges">
+    <h3>Workflows and Exchanges</h3>
+    {{#matrixByTitle "Workflows and Exchanges"}}
+    {{> matrix.hbs matrix=. bare=true}}
+    {{/matrixByTitle}}
+    <section id="create-workflow">
+      <h4>Create Workflow</h4>
+      {{#matrixByTitle "Create Workflow"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="get-workflow-configuration">
+      <h4>Get Workflow Configuration</h4>
+    </section>
+    <section id="create-exchange">
+      <h4>Create Exchange</h4>
+    </section>
+    <section id="get-exchange-protocols">
+      <h4>Get Exchange Protocols</h4>
+      {{#matrixByTitle "Get Exchange Protocols"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="get-current-exchange-vpr">
+      <h4>Get Current Exchange VPR</h4>
+      {{#matrixByTitle "Get Current Exchange VPR"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="participate-in-an-exchange">
+      <h4>Participate in an Exchange</h4>
+      {{#matrixByTitle "Participate in an Exchange"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="get-exchange-state">
+      <h4>Get Exchange State</h4>
+    </section>
+    <section id="exchange-step-callbacks">
+      <h4>Exchange Step Callbacks</h4>
+    </section>
+    <section id="exchange-examples">
+      <h4>Exchange Examples</h4>
+    </section>
+  </section>
+  <section id="initiating-interactions">
+    <h3>Initiating Interactions</h3>
+    <section id="interaction-url-format">
+      <h4>Interaction URL Format</h4>
+      {{#matrixByTitle "Interaction URL Format"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="interaction-qr-code-format">
+      <h4>Interaction QR Code Format</h4>
+      {{#matrixByTitle "Interaction QR Code Format"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="interaction-scheme-format">
+      <h4>Interaction Scheme Format</h4>
+      {{#matrixByTitle "Interaction Scheme Format"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="interaction-protocols-response">
+      <h4>Interaction Protocols Response</h4>
+      {{#matrixByTitle "Interaction Protocols Response"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+    <section id="inviterequest-interaction-protocol">
+      <h4><code>inviteRequest</code> Interaction Protocol</h4>
+    </section>
+    <section id="vcapi-interaction-protocol">
+      <h4><code>vcapi</code> Interaction Protocol</h4>
+      {{#matrixByTitle "vcapi Interaction Protocol"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+  </section>
+  <section id="error-handling">
+    <h3>Error Handling</h3>
+    {{#matrixByTitle "Error Handling"}}
+    {{> matrix.hbs matrix=. bare=true}}
+    {{/matrixByTitle}}
+    <section id="verification-errors-vs-warnings">
+      <h4>Verification Errors vs. Warnings</h4>
+      {{#matrixByTitle "Verification Errors vs. Warnings"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+  </section>
+</section>
+
+<section class="appendix" id="threat-model">
+  <h2>Threat Model</h2>
+  <section id="target-threats">
+    <h3>Target Threats</h3>
+  </section>
+  <section id="implementation-threats">
+    <h3>Implementation Threats</h3>
+  </section>
+  <section id="external-threats">
+    <h3>External Threats</h3>
+  </section>
+  <section id="dependency-threats">
+    <h3>Dependency Threats</h3>
+  </section>
+</section>
+
+<section class="appendix" id="privacy-considerations">
+  <h2>Privacy Considerations</h2>
+  <section id="delegation">
+    <h3>Delegation</h3>
+  </section>
+  <section id="phoning-home-considered-harmful">
+    <h3>"Phoning Home" Considered Harmful</h3>
+  </section>
+</section>
+
+<section class="appendix" id="security-considerations">
+  <h2>Security Considerations</h2>
+  <section id="unknown-proof-types">
+    <h3>Unknown Proof Types</h3>
+  </section>
+  <section id="status-list-management">
+    <h3>Status List Management</h3>
+    <section id="create-status-list">
+      <h4>Create Status List</h4>
+    </section>
+    <section id="get-status-list">
+      <h4>Get Status List</h4>
+    </section>
+    <section id="update-status">
+      <h4>Update Status</h4>
+      {{#matrixByTitle "Update Status"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
+    </section>
+  </section>
+  <section id="workflow-step-and-template-examples">
+    <h3>Workflow Step and Template Examples</h3>
+    <section id="minimum-viable-step-and-credential-templates">
+      <h4>Minimum Viable Step and Credential Templates</h4>
+    </section>
+    <section id="complex-examples">
+      <h4>Complex Examples</h4>
+    </section>
+  </section>
+  <section id="swimlane-examples-for-issuance-verification-and-presentation">
+    <h3>Swimlane Examples for Issuance, Verification, and Presentation</h3>
+    <section id="issuance-of-a-vc-to-a-requesting-holder">
+      <h4>Issuance of a VC to a requesting holder</h4>
+    </section>
+    <section id="verification-of-a-single-vc">
+      <h4>Verification of a single VC</h4>
+    </section>
+    <section id="verification-of-multiple-vcs">
+      <h4>Verification of multiple VCs</h4>
+    </section>
+    <section id="presentation-of-a-vc-in-person">
+      <h4>Presentation of a VC in person</h4>
+    </section>
+    <section id="presentation-of-a-vp-in-person">
+      <h4>Presentation of a VP in person</h4>
+    </section>
+  </section>
+  <section id="relationship-to-other-specifications">
+    <h3>Relationship to Other Specifications</h3>
+  </section>
+  <section id="iana-considerations">
+    <h3>IANA Considerations</h3>
+    <section id="uri-scheme-registration">
+      <h4>URI Scheme Registration</h4>
+    </section>
+  </section>
+  <section id="acknowledgements">
+    <h3>Acknowledgements</h3>
+  </section>
+</section>
