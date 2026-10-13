@@ -1,7 +1,7 @@
 {
+  "specStatus": "unofficial",
   "shortName": "vcalm-test-suite",
   "group": "vc",
-  "specStatus": "unofficial",
   "subtitle": "VCALM Interoperability Report",
   "github": "https://github.com/w3c/vcalm-test-suite",
   "edDraftURI": "https://w3c.github.io/vcalm-test-suite/",

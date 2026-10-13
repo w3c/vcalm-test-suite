@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "id": "urn:uuid:reference-foreign-vp-0001",
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "holder": "did:example:holder-foreign",
+  "verifiableCredential": [
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2"
+      ],
+      "id": "urn:uuid:reference-foreign-vc-embedded",
+      "type": [
+        "VerifiableCredential"
+      ],
+      "issuer": "did:web:vcalm-test-fixtures.example:reference-issuer",
+      "credentialSubject": {
+        "id": "did:example:subject-foreign",
+        "description": "Embedded reference VC for VP negative testing"
+      },
+      "proof": {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-rdfc-2022",
+        "created": "2026-01-01T00:00:00Z",
+        "verificationMethod": "did:web:vcalm-test-fixtures.example:reference-issuer#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zInvalidEmbeddedReferenceProofForInteropNegativeTesting"
+      }
+    }
+  ],
+  "proof": {
+    "type": "DataIntegrityProof",
+    "cryptosuite": "eddsa-rdfc-2022",
+    "created": "2026-01-01T00:00:00Z",
+    "verificationMethod": "did:example:holder-foreign#key-1",
+    "proofPurpose": "authentication",
+    "proofValue": "zInvalidReferencePresentationProofForInteropNegativeTesting"
+  }
+}
