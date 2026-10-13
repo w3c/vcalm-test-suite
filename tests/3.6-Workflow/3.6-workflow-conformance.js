@@ -2,20 +2,32 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-import {describeNormativeStatement} from '../statement-suite.js';
-import {filterByTag} from 'vc-test-suite-implementations';
+import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
-import {VCALM_TAG} from '../helpers.js';
 
-const tag = VCALM_TAG;
-const {match} = filterByTag({property: 'workflows', tags: [tag]});
-const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
-
-describeNormativeStatement({
-  section: 'Workflow',
-  statement: NORMATIVE.conformance.workflow,
-  link,
-  match,
+describeSkippedSection({
+  section: 'Conformance',
   columnLabel: 'Workflow',
-  unimplemented: true
+  property: 'workflows',
+  link: `${TR}#conformance`,
+  statements: [NORMATIVE.conformance.workflow]
+});
+
+describeSkippedSection({
+  section: 'Create Workflow',
+  columnLabel: 'Workflow',
+  property: 'workflows',
+  link: `${TR}#create-workflow`,
+  statements: [NORMATIVE.workflows.issueRequestResult]
+});
+
+describeSkippedSection({
+  section: 'Get Current Exchange VPR',
+  columnLabel: 'Workflow',
+  property: 'workflows',
+  link: `${TR}#get-current-exchange-vpr`,
+  statements: [
+    NORMATIVE.workflows.getCurrentVpr,
+    NORMATIVE.workflows.getCurrentVprEmpty
+  ]
 });

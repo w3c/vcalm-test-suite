@@ -31,38 +31,59 @@ function rejectIssue(endpoints, body) {
 }
 
 describeNormativeStatement({
-  section: 'Issuer',
-  statement: NORMATIVE.conformance.issuer,
-  link,
+  section: 'Conformance',
   match,
   columnLabel: 'Issuer',
-  subtests({endpoints}) {
-    return [
-      {
-        name: 'positive: POST /credentials/issue returns a verifiable ' +
-          'credential',
-        run: async () => {
-          const {data, result, error} = await endpoints.issueCredential();
-          shouldReturnHttpResult({result, error});
-          result.status.should.equal(201, 'Expected status code 201.');
-          shouldBeIssuedVc({data, result});
-        }
-      },
-      {
-        name: 'negative: POST /credentials/issue with no credential is ' +
-          'rejected',
-        run: rejectIssue(endpoints, createIssueBodyMissingCredential())
-      },
-      {
-        name: 'negative: POST /credentials/issue with an empty body is ' +
-          'rejected',
-        run: rejectIssue(endpoints, createIssueBodyEmpty())
-      },
-      {
-        name: 'negative: POST /credentials/issue without credential.type ' +
-          'is rejected',
-        run: rejectIssue(endpoints, createIssueBodyCredentialWithoutType())
+  statements: [
+    {
+      statement: NORMATIVE.conformance.issuer,
+      link,
+      subtests({endpoints}) {
+        return [
+          {
+            name: 'positive: POST /credentials/issue returns a verifiable ' +
+              'credential',
+            run: async () => {
+              const {data, result, error} = await endpoints.issueCredential();
+              shouldReturnHttpResult({result, error});
+              result.status.should.equal(201, 'Expected status code 201.');
+              shouldBeIssuedVc({data, result});
+            }
+          },
+          {
+            name: 'negative: POST /credentials/issue with no credential is ' +
+              'rejected',
+            run: rejectIssue(endpoints, createIssueBodyMissingCredential())
+          },
+          {
+            name: 'negative: POST /credentials/issue with an empty body is ' +
+              'rejected',
+            run: rejectIssue(endpoints, createIssueBodyEmpty())
+          },
+          {
+            name: 'negative: POST /credentials/issue without credential.type ' +
+              'is rejected',
+            run: rejectIssue(
+              endpoints,
+              createIssueBodyCredentialWithoutType()
+            )
+          }
+        ];
       }
-    ];
-  }
+    }
+  ]
+});
+
+describeNormativeStatement({
+  section: 'Issue Credential',
+  match,
+  columnLabel: 'Issuer',
+  statements: [
+    {
+      statement: NORMATIVE.issuing.multipleProofs,
+      link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
+      skip: true,
+      skipMessage: 'Skipped.'
+    }
+  ]
 });

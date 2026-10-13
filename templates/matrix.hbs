@@ -1,0 +1,73 @@
+{{#unless bare}}
+<section class="informative" id="{{matrix.title}}">
+  <h2>{{matrix.title}}</h2>
+{{/unless}}
+  <div class="row">
+    <table class="simple">
+      <thead>
+        <th width="20%">
+          <div class="text-right small-font">
+          {{matrix.columnLabel}} &#8658;
+          </div>
+          <div class="text-left small-font">
+          <span>&#8659;</span><span>{{matrix.rowLabel}}</span>
+          </div>
+        </th>
+          {{#each matrix.columns}}
+            <th class="no-wrap small-font text-center">{{this}}</th>
+          {{/each}}
+        </thead>
+      <tbody>
+    {{#each matrix.rows}}
+      <tr class="{{atRisk cells}}">
+        <td class="subtest">
+          {{#if link}}
+            <a href="{{link}}">{{id}}</a>
+          {{else}}
+            {{id}}
+          {{/if}}
+        </td>
+        {{#each cells}}
+          <td class="{{state}} {{getOptional optional}} highlight-on-hover text-center">
+            <div class= "highlight-on-hover">{{getStatusMark state}}</div>
+            {{> error.hbs error=err}}
+          </td>
+        {{/each}}
+      </tr>
+    {{/each}}
+    </tbody>
+    </table>
+  </div>
+  <div>
+    <div class="flex-center">
+      <div class="row">
+        {{#if matrix.images}}
+          {{#each matrix.images}}
+            <img class="qr-code" src={{{this.src}}} />
+            {{#each this.meta}}
+              <div class="text-center small-font">
+                {{this}}
+              </div>
+            {{/each}}
+          {{/each}}
+        {{/if}}
+      </div>
+      <div class="">
+        {{#if matrix.reportData}}
+          {{#each matrix.reportData}}
+            {{#if this.details}}
+              <details>
+                <summary>{{this.label}}</summary>
+                <pre class="small-font">{{{this.data}}}</pre>
+              </details>
+            {{else}}
+              <pre class="small-font">{{{this.data}}}</pre>
+            {{/if}}
+          {{/each}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+{{#unless bare}}
+</section>
+{{/unless}}

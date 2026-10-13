@@ -4,7 +4,7 @@
   "description": "Interoperability tests for VCALM (Verifiable Credential API for Lifecycle Management)",
   "type": "module",
   "scripts": {
-    "test": "mocha 'tests/*/**/*.js' --reporter @digitalbazaar/mocha-w3c-interop-reporter --reporter-options abstract=\"$PWD/abstract.hbs\",reportDir=\"$PWD/reports\",respec=\"$PWD/respecConfig.json\",suiteLog='./suite.log',templateData=\"$PWD/reports/index.json\",title=\"VCALM Interoperability Report\" --timeout 15000 --preserve-symlinks",
+    "test": "mocha --require ./templates/register-helpers.cjs 'tests/*/**/*.js' --reporter @digitalbazaar/mocha-w3c-interop-reporter --reporter-options abstract=\"$PWD/abstract.hbs\",reportDir=\"$PWD/reports\",respec=\"$PWD/respecConfig.json\",suiteLog='./suite.log',templateData=\"$PWD/reports/index.json\",title=\"VCALM Interoperability Report\",metrics=\"$PWD/templates/metrics.hbs\",matrix=\"$PWD/templates/matrix.hbs\",statistics=\"$PWD/templates/test-statistics.hbs\" --timeout 15000 --preserve-symlinks",
     "lint": "eslint ."
   },
   "repository": {
