@@ -8,7 +8,7 @@ import {NORMATIVE} from '../normative-statements.js';
 const link = `${TR}#conformance`;
 
 describeSkippedSection({
-  section: 'Get Exchange Protocols',
+  section: 'Conformance',
   columnLabel: 'Holder',
   property: 'holders',
   link,
@@ -16,7 +16,7 @@ describeSkippedSection({
 });
 
 describeSkippedSection({
-  section: 'Participate in an Exchange',
+  section: 'Conformance',
   columnLabel: 'Holder',
   property: 'holders',
   link,

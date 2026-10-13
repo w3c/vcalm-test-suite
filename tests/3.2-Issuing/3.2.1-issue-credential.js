@@ -31,7 +31,7 @@ function rejectIssue(endpoints, body) {
 }
 
 describeNormativeStatement({
-  section: 'Issue Credential',
+  section: 'Conformance',
   match,
   columnLabel: 'Issuer',
   statements: [
@@ -70,7 +70,15 @@ describeNormativeStatement({
           }
         ];
       }
-    },
+    }
+  ]
+});
+
+describeNormativeStatement({
+  section: 'Issue Credential',
+  match,
+  columnLabel: 'Issuer',
+  statements: [
     {
       statement: NORMATIVE.issuing.multipleProofs,
       link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',

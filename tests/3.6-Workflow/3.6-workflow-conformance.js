@@ -6,7 +6,7 @@ import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
 describeSkippedSection({
-  section: 'Workflows and Exchanges',
+  section: 'Conformance',
   columnLabel: 'Workflow',
   property: 'workflows',
   link: `${TR}#conformance`,

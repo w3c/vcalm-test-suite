@@ -6,9 +6,9 @@ const Handlebars = require('handlebars');
 
 Handlebars.registerHelper('matrixByTitle', (title, options) => {
   const matrices = options.data.root.matrices || [];
-  const matrix = matrices.find(item => item.title === title);
-  if(!matrix) {
+  const matches = matrices.filter(item => item.title === title);
+  if(matches.length === 0) {
     return '';
   }
-  return options.fn(matrix);
+  return matches.map(matrix => options.fn(matrix)).join('');
 });

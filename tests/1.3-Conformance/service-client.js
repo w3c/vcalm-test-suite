@@ -6,7 +6,8 @@ import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
 describeSkippedSection({
-  section: 'Service client',
+  section: 'Conformance',
+  columnLabel: 'Service client',
   link: `${TR}#conformance`,
   statements: [NORMATIVE.conformance.serviceClient]
 });
