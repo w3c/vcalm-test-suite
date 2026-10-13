@@ -281,6 +281,10 @@ export function shouldCreateWorkflow({result, error}) {
   should.exist(location, 'Expected Location header.');
 }
 
+export function shouldCreateExchange({result, error}) {
+  shouldCreateWorkflow({result, error});
+}
+
 export function shouldGetWorkflowConfiguration({data, result, error, sent}) {
   shouldReturnHttpResult({result, error});
   result.status.should.equal(200, 'Expected status code 200.');
@@ -319,8 +323,38 @@ export function shouldGetExchangeState({data, result, error, exchangeId}) {
   shouldReturnExchangeState({data, result, error, exchangeId});
 }
 
+const EXCHANGE_PROTOCOL_URL_KEYS = [
+  'interact',
+  'inviteRequest',
+  'vcapi',
+  'didcomm',
+  'oid4vci-1.0',
+  'oid4vp-1.0',
+  'OID4VCI',
+  'OID4VP'
+];
+
 export function shouldGetExchangeProtocols({data, result, error}) {
-  shouldGetExchangeState({data, result, error});
+  shouldReturnHttpResult({result, error});
+  result.status.should.equal(200, 'Expected status code 200.');
+  data.should.be.an('object');
+  data.should.have.property('protocols');
+  data.protocols.should.be.an('object');
+  const urls = EXCHANGE_PROTOCOL_URL_KEYS.filter(key =>
+    typeof data.protocols[key] === 'string' &&
+    data.protocols[key].length > 0);
+  urls.length.should.be.at.least(
+    1,
+    'Expected protocols to include at least one protocol URL.'
+  );
+}
+
+export function shouldAcceptExchangeCallback({result, error}) {
+  shouldReturnHttpResult({result, error});
+  result.status.should.equal(
+    200,
+    'Expected status code 200 for an exchange step callback.'
+  );
 }
 
 export function shouldGetCurrentExchangeVpr({
