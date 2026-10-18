@@ -1,0 +1,201 @@
+{
+  "matrices": [
+    {
+      "title": "Issuer",
+      "ctx": null,
+      "suites": [],
+      "root": false,
+      "pending": false,
+      "_retries": -1,
+      "_beforeEach": [],
+      "_beforeAll": [],
+      "_afterEach": [],
+      "_afterAll": [],
+      "_timeout": 15000,
+      "_slow": 75,
+      "_bail": false,
+      "_onlyTests": [],
+      "_onlySuites": [],
+      "delayed": false,
+      "parent": "8v8m5I5LUR43lSkrYTSM2",
+      "file": "/home/runner/work/vcalm-test-suite/vcalm-test-suite/tests/3.2-Issuing/3.2.1-issue-credential.js",
+      "matrix": true,
+      "report": true,
+      "rowLabel": "Test Name",
+      "columnLabel": "Issuer",
+      "columns": [],
+      "rows": []
+    },
+    {
+      "title": "Verifier",
+      "ctx": null,
+      "suites": [],
+      "root": false,
+      "pending": false,
+      "_retries": -1,
+      "_beforeEach": [],
+      "_beforeAll": [],
+      "_afterEach": [],
+      "_afterAll": [],
+      "_timeout": 15000,
+      "_slow": 75,
+      "_bail": false,
+      "_onlyTests": [],
+      "_onlySuites": [],
+      "delayed": false,
+      "parent": "8v8m5I5LUR43lSkrYTSM2",
+      "file": "/home/runner/work/vcalm-test-suite/vcalm-test-suite/tests/3.3-Verifying/3.3.1-VerifyCredential.js",
+      "matrix": true,
+      "report": true,
+      "rowLabel": "Test Name",
+      "columnLabel": "Verifier",
+      "columns": [],
+      "rows": []
+    },
+    {
+      "title": "Holder",
+      "ctx": null,
+      "suites": [],
+      "root": false,
+      "pending": false,
+      "_retries": -1,
+      "_beforeEach": [],
+      "_beforeAll": [],
+      "_afterEach": [],
+      "_afterAll": [],
+      "_timeout": 15000,
+      "_slow": 75,
+      "_bail": false,
+      "_onlyTests": [],
+      "_onlySuites": [],
+      "delayed": false,
+      "parent": "8v8m5I5LUR43lSkrYTSM2",
+      "file": "/home/runner/work/vcalm-test-suite/vcalm-test-suite/tests/3.6-Holder/3.6-holder-conformance.js",
+      "matrix": true,
+      "report": true,
+      "rowLabel": "Test Name",
+      "columnLabel": "Holder",
+      "columns": [],
+      "rows": []
+    },
+    {
+      "title": "Workflow",
+      "ctx": null,
+      "suites": [],
+      "root": false,
+      "pending": false,
+      "_retries": -1,
+      "_beforeEach": [],
+      "_beforeAll": [],
+      "_afterEach": [],
+      "_afterAll": [],
+      "_timeout": 15000,
+      "_slow": 75,
+      "_bail": false,
+      "_onlyTests": [],
+      "_onlySuites": [],
+      "delayed": false,
+      "parent": "8v8m5I5LUR43lSkrYTSM2",
+      "file": "/home/runner/work/vcalm-test-suite/vcalm-test-suite/tests/3.6-Workflow/3.6-workflow-conformance.js",
+      "matrix": true,
+      "report": true,
+      "rowLabel": "Test Name",
+      "columnLabel": "Workflow",
+      "columns": [],
+      "rows": []
+    },
+    {
+      "title": "Status",
+      "ctx": null,
+      "suites": [],
+      "root": false,
+      "pending": false,
+      "_retries": -1,
+      "_beforeEach": [],
+      "_beforeAll": [],
+      "_afterEach": [],
+      "_afterAll": [],
+      "_timeout": 15000,
+      "_slow": 75,
+      "_bail": false,
+      "_onlyTests": [],
+      "_onlySuites": [],
+      "delayed": false,
+      "parent": "8v8m5I5LUR43lSkrYTSM2",
+      "file": "/home/runner/work/vcalm-test-suite/vcalm-test-suite/tests/C.3-Status/C.3-update-status.js",
+      "matrix": true,
+      "report": true,
+      "rowLabel": "Test Name",
+      "columnLabel": "Status",
+      "columns": [],
+      "rows": []
+    }
+  ],
+  "tables": [],
+  "summary": [],
+  "respecConfig": {
+    "specStatus": "unofficial",
+    "shortName": "vcalm-test-suite",
+    "group": "vc",
+    "subtitle": "VCALM Interoperability Report",
+    "github": "https://github.com/w3c/vcalm-test-suite",
+    "edDraftURI": "https://w3c.github.io/vcalm-test-suite/",
+    "doJsonLd": true,
+    "includePermalinks": false,
+    "otherLinks": [
+      {
+        "key": "Related Specifications",
+        "data": [
+          {
+            "value": "Verifiable Credential API for Lifecycle Management (VCALM) v1.0",
+            "href": "https://www.w3.org/TR/vcalm-1.0/"
+          }
+        ]
+      }
+    ],
+    "editors": [
+      {
+        "name": "Patrick St. Louis",
+        "url": "https://github.com/PatStLouis",
+        "company": "OpSecId",
+        "companyURL": "https://github.com/OpSecId"
+      }
+    ],
+    "authors": [
+      {
+        "name": "Patrick St. Louis",
+        "url": "https://github.com/PatStLouis",
+        "company": "OpSecId",
+        "companyURL": "https://github.com/OpSecId"
+      }
+    ]
+  },
+  "title": "VCALM Interoperability Report",
+  "stats": [],
+  "statusMarkLabels": {
+    "pending": {
+      "icon": "🚫",
+      "label": "Pending"
+    },
+    "passed": {
+      "icon": "✓",
+      "label": "Passed"
+    },
+    "failed": {
+      "icon": "❌",
+      "label": "Failed"
+    },
+    "accessDenied": {
+      "icon": "⊘",
+      "label": "Access Denied"
+    },
+    "timeout": {
+      "icon": "⏱",
+      "label": "Timeout"
+    },
+    "notImplemented": {
+      "icon": "—",
+      "label": "Not Implemented"
+    }
+  }
+}
