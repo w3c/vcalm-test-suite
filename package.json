@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",
+    "@digitalbazaar/http-client": "3.4.1",
     "chai-openapi-response-validator": "^0.14.2",
     "eslint": "^8.57.1",
     "eslint-config-digitalbazaar": "^5.0.1",
