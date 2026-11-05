@@ -34,31 +34,37 @@ export const NORMATIVE = {
   conformance: {
     issuer:
       'A conforming issuer service implementation MUST provide the interface ' +
-      'described in Section Issue Credential.',
+      'described in Section 3.2.1 Issue Credential.',
     issuingMay:
-      'Other interfaces described in Section Issuing MAY also be provided.',
+      'Other interfaces described in Section 3.2 Issuing MAY also be ' +
+      'provided.',
     verifyCredential:
       'A conforming verifier service implementation MUST provide the ' +
-      'interface described in Section Verify Credential.',
+      'interface described in Section 3.3.1 Verify Credential and Section ' +
+      '3.3.2 Verify Presentation.',
     verifyPresentation:
       'A conforming verifier service implementation MUST provide the ' +
-      'interface described in Section Verify Presentation.',
+      'interface described in Section 3.3.1 Verify Credential and Section ' +
+      '3.3.2 Verify Presentation.',
     verifyingMay:
-      'Other interfaces described in Section Verifying MAY also be provided.',
+      'Other interfaces described in Section 3.3 Verifying MAY also be ' +
+      'provided.',
     getExchangeProtocols:
       'A conforming holder service implementation MUST provide the interface ' +
       'described in Section 3.6.4 Get Exchange Protocols.',
     participateInExchange:
       'A conforming holder service implementation MUST provide the interface ' +
-      'described in Section 3.6.6 Participate in an Exchange.',
+      'described in Section 3.6.4 Get Exchange Protocols and Section 3.6.6 ' +
+      'Participate in an Exchange.',
     holderMay:
-      'Conformance to protocols, query languages, and data formats ' +
-      'described in Section Initiating Interactions, Section Requesting a ' +
-      'Presentation, Section Create Presentation, Section Presenting, and ' +
-      'Section Workflows and Exchanges MAY also be provided.',
+      'Conformance to protocols, query languages, and data formats described ' +
+      'in Section 3.7 Initiating Interactions, Section 3.4 Requesting a ' +
+      'Presentation, Section 3.5.2 Create Presentation, Section 3.5 ' +
+      'Presenting, and Section 3.6 Workflows and Exchanges MAY also be ' +
+      'provided.',
     status:
       'A conforming status service implementation MUST provide the interface ' +
-      'described in Section C.3 Update Status.',
+      'described in Section D.3 Update Status.',
     workflow:
       'A conforming workflow service implementation MUST provide all ' +
       'interfaces Section 3.6 Workflows and Exchanges.',
@@ -85,8 +91,7 @@ export const NORMATIVE = {
       'endpoint.',
     proofHandling:
       'An issuing instance SHOULD be configured to handle existing proofs in ' +
-      'one of the following ways: Proof Sets, Proof Chains, or Error ' +
-      'Handling.'
+      'one of the following ways:'
   },
   verifying: {
     verifyCredential:
@@ -101,13 +106,13 @@ export const NORMATIVE = {
   },
   requestingPresentation: {
     queryRequired:
-      'query is a REQUIRED property that specifies the information ' +
-      'requested by the verifier.',
+      'query A REQUIRED property that specifies the information requested by ' +
+      'the verifier.',
     queryValue:
-      'The value of query MUST be one or more maps.',
+      'The value MUST be one or more maps where each map MUST define a type ' +
+      'property with an associated string value.',
     queryMapType:
-      'Each query map MUST define a type property with an associated ' +
-      'string value.',
+      'each map MUST define a type property with an associated string value.',
     acceptedIssuerItem:
       'Each acceptedIssuers item MUST be an issuer URL, an object with an ' +
       'id URL, or an object with a recognizedIn RecognizedEntityCredential.',
@@ -142,9 +147,9 @@ export const NORMATIVE = {
       'for selective disclosure MUST produce the same output as this ' +
       'algorithm.',
     queryByExample:
-      'To signal that selective-disclosure cryptosuites are acceptable, ' +
-      'verifiers SHOULD include cryptosuites such as `bbs-2023` or ' +
-      '`ecdsa-sd-2023` in the `acceptedCryptosuites` array.',
+      'To signal that selective disclosure cryptosuites are acceptable, ' +
+      'verifiers SHOULD include cryptosuites such as bbs-2023 or ' +
+      'ecdsa-sd-2023 in the acceptedCryptosuites array.',
     didAuthenticationQuery:
       'A DID Authentication query MUST be of the following form.',
     didAuthenticationQueryTypeRequired:
@@ -153,14 +158,18 @@ export const NORMATIVE = {
       'The type of a DID Authentication query MUST be set to ' +
       'DIDAuthentication.',
     didAuthenticationMethod:
-      'Each object in acceptedMethods MUST contain a method property ' +
-      'whose value is a DID Method name.',
+      'Each object in the array MUST contain a property called method with a ' +
+      'value that is a DID Method name, and MAY contain other properties that ' +
+      'are specific to the DID Method.',
     didAuthenticationCryptosuiteChoice:
-      'The holder MUST choose a cryptosuite from acceptedCryptosuites ' +
-      'when generating a proof for that verifier.',
+      'An optional array of objects that conveys the cryptography suites ' +
+      'among which the holder MUST choose when generating a cryptographic ' +
+      'proof to be submitted to this verifier.',
     didAuthenticationCryptosuite:
-      'Each object in acceptedCryptosuites MUST contain a cryptosuite ' +
-      'property whose value is a Data Integrity cryptosuite name.',
+      'Each object in the array MUST contain a property called cryptosuite ' +
+      'with a value that is a Data Integrity cryptosuite name (or ' +
+      'Ed25519Signature2020 for legacy), and MAY contain other properties ' +
+      'that are specific to the cryptosuite.',
     didAuthenticationResponse:
       'A DID Authentication response MUST be a verifiable presentation ' +
       'of the following form.',
@@ -173,13 +182,13 @@ export const NORMATIVE = {
       'The holder of a DID Authentication response is a REQUIRED string ' +
       'value.',
     didAuthenticationHolder:
-      'The holder of a DID Authentication response MUST be a DID of the ' +
-      'type requested in the DID Authentication query.',
+      'A REQUIRED string value that MUST be set to a specific DID that is of ' +
+      'the type that was requested in the DID Authentication query.',
     didAuthenticationProofRequired:
       'The proof of a DID Authentication response is a REQUIRED value.',
     didAuthenticationProof:
-      'The proof of a DID Authentication response MUST be one or more ' +
-      'proof types requested in the DID Authentication query.',
+      'A REQUIRED value that MUST be one or more specific digital proof types ' +
+      'that were requested in the DID Authentication query.',
     didAuthenticationProofChallenge:
       'Each proof object MUST include the domain and challenge values ' +
       'that were provided in the DID Authentication query.',
@@ -208,13 +217,14 @@ export const NORMATIVE = {
       'Creates a new workflow and returns location of workflow metadata in a ' +
       'response header.',
     issueRequestVariables:
-      'An issue request object MAY include a `variables` property to provide ' +
-      'values to be used when evaluating the credential template.',
+      'An issue request object MAY also include a variables property to ' +
+      'provide values to be used when evaluating the credential template.',
     issueRequestResult:
-      'If an issue request includes a result property, its value MUST be ' +
-      'either the name of a top-level variable in the exchange\'s ' +
-      'variables object or a JSON pointer to any variable within the ' +
-      'exchange\'s variables object.',
+      'An issue request object MAY include an optional result property whose ' +
+      'value MUST be either the name of a top-level variable in the ' +
+      'exchange\'s variables object or a JSON pointer to any variable within ' +
+      'the exchange\'s variables object, identifying where the result of the ' +
+      'issue request is to be stored.',
     getConfiguration:
       'Gets the configuration of an existing workflow and returns it in the ' +
       'response body.',
@@ -249,7 +259,7 @@ export const NORMATIVE = {
     referenceIdServerMay:
       'A server MAY include a `referenceId` property in an exchange message.',
     referenceIdUrnUuid:
-      'The value of `referenceId` SHOULD be a `urn:uuid:` value.',
+      'The value of referenceId SHOULD be a urn:uuid value.',
     callbacks:
       'A callback that can be any capability URL (i.e., a URL that is ' +
       'infeasible to guess) that can be notified when an exchange step is ' +
@@ -261,14 +271,14 @@ export const NORMATIVE = {
   },
   interactions: {
     interactionUrl:
-      'The format of the interaction URL MUST conform to the URL Standard ' +
-      'and contain an iuv query parameter encoding the interaction URL ' +
-      'version number.',
-    interactionUrlVersion:
-      'The interaction URL version number MUST be 1 when using this ' +
+      'The format of the interaction URL MUST conform to the syntax for the ' +
+      'URL Standard and contain an iuv query parameter encoding the ' +
+      'interaction URL version number, which MUST be 1 when using this ' +
       'version of this API.',
+    interactionUrlVersion:
+      'which MUST be 1 when using this version of this API.',
     digitalCredentialsRequest:
-      'To make a Digital Credentials request backed by the VCALM protocol, ' +
+      'To make a digital-credentials request backed by the VCALM protocol, ' +
       'the coordinator MUST provide the interaction URL as the request data.',
     digitalCredentialsFetch:
       'The browser MUST fetch the interaction URL, retrieve the supported ' +
@@ -281,15 +291,18 @@ export const NORMATIVE = {
       'The URL SHOULD be opaque and require no URL syntax processing before ' +
       'it is fetched by the receiving system.',
     interactionNoExtraQuery:
-      'Implementers SHOULD NOT put information that can be expressed in ' +
-      'the response to a GET request for an interaction URL into the query ' +
-      'parameters of the interaction URL.',
+      'Implementers SHOULD NOT put information that can be expressed in the ' +
+      'response to a GET request for an interaction URL, defined in Section ' +
+      '3.7.4 Interaction Protocols Response, into the query parameters of the ' +
+      'interaction URL.',
     qrCode:
       'An interaction QR Code MUST be an interaction URL expressed as a QR ' +
-      'code according to ISO 18004.',
+      'code according to ISO18004:2024: QR Code Bar Code Symbology ' +
+      'Specification.',
     qrCodeMaxLength:
-      'The length of the interaction URL MUST NOT exceed 4,296 alphanumeric ' +
-      'characters.',
+      'To ensure broad interoperability, the length of the interaction URL ' +
+      'SHOULD be as short as possible, SHOULD NOT exceed 400 alphanumeric ' +
+      'characters, and MUST NOT exceed 4,296 alphanumeric characters.',
     scheme:
       'The format of the protocol scheme MUST conform to the following syntax:',
     protocolsJson:
@@ -313,13 +326,13 @@ export const NORMATIVE = {
   },
   errorHandling: {
     problemDetailsTypePresent:
-      'The type key of a ProblemDetails map MUST be present.',
-    problemDetailsType:
-      'The value of the ProblemDetails type key MUST be a URL identifying ' +
+      'The type key MUST be present and its value MUST be a URL identifying ' +
       'the type of problem.',
+    problemDetailsType:
+      'its value MUST be a URL identifying the type of problem.',
     problemDetailsReadable:
-      'The `title` map/key SHOULD provide a short but specific ' +
-      'human-readable string for the problem.',
+      'The title key SHOULD provide a short but specific human-readable ' +
+      'string for the problem.',
     unknownOptionType:
       'https://www.w3.org/TR/vcalm#UNKNOWN_OPTION_PROVIDED An option that ' +
       'is unknown to the implementation was provided to the API call.',
@@ -327,8 +340,7 @@ export const NORMATIVE = {
       'If an error is included, the verified property of the ' +
       'VerificationResponse object MUST be set to false.',
     verifiedTrue:
-      'If no errors are included, the verified property of the ' +
-      'VerificationResponse object MUST be set to true.'
+      'if no errors are included, it MUST be set to true.'
   },
   security: {
     stripUnrecognizedProofs:
