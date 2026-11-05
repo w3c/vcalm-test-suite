@@ -5,10 +5,13 @@
 import {createRequire} from 'node:module';
 import {klona} from 'klona';
 import {resolveInteractionStartUrl} from './helpers.js';
-import {UNKNOWN_OPTION_PROBE_KEY} from './normative-statements.js';
 import {v4 as uuidv4} from 'uuid';
 const require = createRequire(import.meta.url);
 const validVc = require('./validVc.json');
+
+// Option name sent to probe how an endpoint handles unknown options. It is a
+// test input, not a spec statement.
+const UNKNOWN_OPTION_PROBE_KEY = 'vcalmInteropUnknownOptionProbe';
 
 /**
  * @param {string|string[]|undefined} cryptosuite - Issuer options.cryptosuite.

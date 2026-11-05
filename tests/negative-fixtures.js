@@ -4,7 +4,6 @@
 
 import {createRequire} from 'node:module';
 import {klona} from 'klona';
-import {NORMATIVE} from './normative-statements.js';
 
 const require = createRequire(import.meta.url);
 const referenceForeignVc = require('./fixtures/reference-foreign-vc.json');
@@ -87,19 +86,25 @@ const verifyOptions = {returnProblemDetails: true};
 export const ISSUE_NEGATIVE_CASES = [
   {
     id: 'missingCredential',
-    title: NORMATIVE.negative.issueMissingCredential,
+    title:
+      'POST /credentials/issue with a missing credential property returns a ' +
+      'client error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
     body: createIssueBodyMissingCredential()
   },
   {
     id: 'emptyBody',
-    title: NORMATIVE.negative.issueEmptyBody,
+    title:
+      'POST /credentials/issue with an empty request body returns a client ' +
+      'error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
     body: createIssueBodyEmpty()
   },
   {
     id: 'credentialWithoutType',
-    title: NORMATIVE.negative.issueCredentialWithoutType,
+    title:
+      'POST /credentials/issue with a credential missing type returns a ' +
+      'client error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
     body: createIssueBodyCredentialWithoutType()
   }
@@ -108,28 +113,36 @@ export const ISSUE_NEGATIVE_CASES = [
 export const VERIFY_CREDENTIAL_NEGATIVE_CASES = [
   {
     id: 'foreignReference',
-    title: NORMATIVE.negative.verifyForeignCredential,
+    title:
+      'POST /credentials/verify returns verified:false for a reference ' +
+      'credential not issued by this service.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-credential',
     credential: loadReferenceForeignVc,
     options: verifyOptions
   },
   {
     id: 'withoutProof',
-    title: NORMATIVE.negative.verifyCredentialWithoutProof,
+    title:
+      'POST /credentials/verify returns verified:false for a credential ' +
+      'without proof.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-credential',
     credential: createVerifyCredentialWithoutProof,
     options: verifyOptions
   },
   {
     id: 'emptyObject',
-    title: NORMATIVE.negative.verifyCredentialEmpty,
+    title:
+      'POST /credentials/verify returns verified:false for an empty ' +
+      'verifiable credential object.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-credential',
     credential: createVerifyCredentialEmptyObject,
     options: verifyOptions
   },
   {
     id: 'wrongType',
-    title: NORMATIVE.negative.verifyCredentialInvalidType,
+    title:
+      'POST /credentials/verify returns verified:false for a credential with ' +
+      'an invalid type.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-credential',
     credential: createVerifyCredentialWrongType,
     options: verifyOptions
@@ -139,14 +152,18 @@ export const VERIFY_CREDENTIAL_NEGATIVE_CASES = [
 export const VERIFY_PRESENTATION_NEGATIVE_CASES = [
   {
     id: 'foreignReference',
-    title: NORMATIVE.negative.verifyForeignPresentation,
+    title:
+      'POST /presentations/verify returns verified:false for a reference ' +
+      'presentation not created by this service.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-presentation',
     presentation: loadReferenceForeignVp,
     options: verifyOptions
   },
   {
     id: 'withoutProof',
-    title: NORMATIVE.negative.verifyPresentationWithoutProof,
+    title:
+      'POST /presentations/verify returns verified:false for a presentation ' +
+      'without proof.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#verify-presentation',
     presentation: createVerifyPresentationWithoutProof,
     options: verifyOptions
@@ -171,13 +188,15 @@ export function createWorkflowBodyMissingSteps() {
 export const WORKFLOW_NEGATIVE_CASES = [
   {
     id: 'stepsNotObject',
-    title: NORMATIVE.negative.workflowStepsNotObject,
+    title:
+      'POST /workflows with invalid steps returns a client error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#create-workflow',
     body: createWorkflowBodyStepsNotObject()
   },
   {
     id: 'missingSteps',
-    title: NORMATIVE.negative.workflowMissingSteps,
+    title:
+      'POST /workflows without steps returns a client error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#create-workflow',
     body: createWorkflowBodyMissingSteps()
   }
@@ -186,7 +205,8 @@ export const WORKFLOW_NEGATIVE_CASES = [
 export const WORKFLOW_EXCHANGE_NEGATIVE_CASES = [
   {
     id: 'unknownWorkflow',
-    title: NORMATIVE.negative.workflowExchangeUnknownWorkflow,
+    title:
+      'POST exchanges for an unknown workflow returns a client error.',
     link: 'https://www.w3.org/TR/vcalm-1.0/#create-exchange',
     workflowId: 'urn:uuid:00000000-0000-4000-8000-000000009999'
   }

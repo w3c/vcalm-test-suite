@@ -1,0 +1,37 @@
+<section id="sotd">
+</section>
+
+<section class="informative introductory" id="conformance-testing-results">
+  <h2> Conformance Testing Results </h2>
+  {{#each stats}}
+  <p>
+  {{this}}
+  </p>
+  {{/each}}
+  <p>
+    These tests were run on <time>{{today}}</time>
+  </p>
+  <section class="informative" id="Key">
+    <h3>Key</h3>
+    <table>
+      {{#each statusMarkLabels}}
+      <tr>
+        <td class="{{@key}} {{getOptional optional}} highlight-on-hover text-center">
+          <div class="highlight-on-hover">{{icon}}</div>
+        </td>
+        <td>{{label}}</td>
+      </tr>
+      {{/each}}
+    </table>
+  </section>
+
+  <p>
+  The results of the tests are shown below:
+  </p>
+  {{#matrixByTitle "At Risk"}}
+  <div id="at-risk">
+    <h3>At Risk</h3>
+    {{> matrix.hbs matrix=. bare=true}}
+  </div>
+  {{/matrixByTitle}}
+</section>

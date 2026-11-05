@@ -3,6 +3,7 @@
  */
 
 import {addPerTestMetadata, setupMatrix, VCALM_TAG} from './helpers.js';
+import {recordRow} from './coverage-registry.js';
 import {TestEndpoints} from './TestEndpoints.js';
 
 /**
@@ -57,6 +58,9 @@ export function describeNormativeStatement({
   unimplemented = false
 }) {
   const cases = statements ?? [{statement, link, subtests}];
+  for(const item of cases) {
+    recordRow(item.statement);
+  }
   const matrix = match instanceof Map ? match : new Map(match);
   describe(section, function() {
     setupMatrix.call(this, matrix, columnLabel);

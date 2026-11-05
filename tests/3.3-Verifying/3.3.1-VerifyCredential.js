@@ -28,12 +28,12 @@ const paired = implementationsWithPresentationFlow(match, tag);
 const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
 
 describeNormativeStatement({
-  section: 'Verifier',
+  section: 'Conformance',
   match: paired,
   columnLabel: 'Verifier',
   statements: [
     {
-      statement: NORMATIVE.conformance.verifyCredential,
+      statement: NORMATIVE['1-3-conformance-3'],
       link,
       subtests({name, endpoints}) {
         return [
@@ -68,9 +68,17 @@ describeNormativeStatement({
           }
         ];
       }
-    },
+    }
+  ]
+});
+
+describeNormativeStatement({
+  section: 'Conformance',
+  match: paired,
+  columnLabel: 'Verifier',
+  statements: [
     {
-      statement: NORMATIVE.conformance.verifyPresentation,
+      statement: NORMATIVE['1-3-conformance-3'],
       link,
       subtests({name, endpoints}) {
         return [

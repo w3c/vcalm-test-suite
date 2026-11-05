@@ -20,8 +20,8 @@ const match = new Map([...statusServices].filter(([name, implementation]) =>
 const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
 
 describeNormativeStatement({
-  section: 'Status',
-  statement: NORMATIVE.conformance.status,
+  section: 'Conformance',
+  statement: NORMATIVE['1-3-conformance-7'],
   link,
   match,
   columnLabel: 'Status',
