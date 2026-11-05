@@ -32,6 +32,25 @@ import {
   resolveWorkflowResourceUrl,
   resolveWorkflowsBaseUrl
 } from './helpers.js';
+import {httpClient} from '@digitalbazaar/http-client';
+
+// POST without a zcap. Returns the shape the signed endpoint calls return.
+async function postUnsigned({url, json}) {
+  try {
+    const result = await httpClient(url, {
+      method: 'POST', json, headers: {Accept: 'application/json'}
+    });
+    let data;
+    try {
+      data = await result.json();
+    } catch(e) {
+      // the response may have no body
+    }
+    return {data, result};
+  } catch(error) {
+    return {error};
+  }
+}
 
 function settleHttp({data, result, error}) {
   const httpResult = result ?? error?.response;
@@ -322,9 +341,9 @@ export class TestEndpoints {
       this.workflow.settings.endpoint,
       callbackId
     );
-    const settled = settleHttp(
-      await this.workflow.post({url, json: body})
-    );
+    // The callback URL is outside the workflow capability's scope, and the
+    // callback is a capability URL, so it is sent without a zcap.
+    const settled = settleHttp(await postUnsigned({url, json: body}));
     return settled;
   }
 
