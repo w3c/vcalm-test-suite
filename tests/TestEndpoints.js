@@ -19,6 +19,7 @@ import {
   extractIssuedCredential,
   extractLocationResourceId
 } from './response.js';
+import {getClientDid, workflowRequest} from './workflow-request.js';
 import {
   resolveCredentialResourceUrl,
   resolveDeriveCredentialUrl,
@@ -31,7 +32,6 @@ import {
   resolveWorkflowResourceUrl,
   resolveWorkflowsBaseUrl
 } from './helpers.js';
-import {workflowRequest} from './workflow-request.js';
 
 function settleHttp({data, result, error}) {
   const httpResult = result ?? error?.response;
@@ -255,10 +255,15 @@ export class TestEndpoints {
   }
 
   async createWorkflow(body = createWorkflowRequest()) {
-    // implementation-supplied create options (see applyWorkflowOptions)
+    // The test client controls the workflows it creates, so its DID is the
+    // default controller. Implementation options (see applyWorkflowOptions)
+    // are applied last and can override it.
+    const keySeed = this.workflow?.settings?.zcap?.keySeed;
+    const withController = keySeed && body.controller === undefined ?
+      {controller: await getClientDid({keySeed}), ...body} : body;
     const options = this.workflow?.settings?.options;
     return this.createWorkflowWithBody(
-      applyWorkflowOptions({body, options}));
+      applyWorkflowOptions({body: withController, options}));
   }
 
   async createWorkflowWithBody(body) {
