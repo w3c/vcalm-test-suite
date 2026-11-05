@@ -17,9 +17,9 @@ import {
   shouldVerifyPresentation
 } from '../assertions.js';
 import chai from 'chai';
+import {DERIVED} from '../derived-statements.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
-import {NORMATIVE} from '../normative-statements.js';
 
 const should = chai.should();
 const tag = VCALM_TAG;
@@ -33,7 +33,7 @@ describeNormativeStatement({
   columnLabel: 'Verifier',
   statements: [
     {
-      statement: NORMATIVE['1-3-conformance-3'],
+      statement: DERIVED.verifyCredential,
       link,
       subtests({name, endpoints}) {
         return [
@@ -78,7 +78,7 @@ describeNormativeStatement({
   columnLabel: 'Verifier',
   statements: [
     {
-      statement: NORMATIVE['1-3-conformance-3'],
+      statement: DERIVED.verifyPresentation,
       link,
       subtests({name, endpoints}) {
         return [

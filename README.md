@@ -48,6 +48,12 @@ It exports three things:
 - `REQUIRED`: the keys whose sentence contains MUST or REQUIRED. The results
   matrix shows only these.
 
+`tests/derived-statements.js` exports `DERIVED`, statements this suite derives
+from the spec and are not spec text. Currently it splits the TR's single
+verifier sentence (`1-3-conformance-3`, kept unchanged in `NORMATIVE`) into a
+Verify Credential statement and a Verify Presentation statement, so each
+verifier endpoint has its own row.
+
 Each matrix row is one of two kinds:
 
 - **Live rows.** A test refers to a statement with `NORMATIVE['<key>']` and
