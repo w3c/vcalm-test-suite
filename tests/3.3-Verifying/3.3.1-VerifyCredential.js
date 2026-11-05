@@ -7,6 +7,7 @@ import {
   createVerifyPresentationWithoutProof
 } from '../negative-fixtures.js';
 import {
+  implementationsWithIssuerAndVerifier,
   implementationsWithPresentationFlow,
   VCALM_TAG
 } from '../helpers.js';
@@ -122,4 +123,46 @@ describeNormativeStatement({
       }
     }
   ]
+});
+
+describeNormativeStatement({
+  section: '3.3.1 Verify Credential',
+  match: implementationsWithIssuerAndVerifier(match, tag),
+  columnLabel: 'Verifier',
+  statements: [{
+    statement: NORMATIVE['3-3-1-verify-credential-2'],
+    link,
+    subtests({endpoints}) {
+      return [{
+        name: 'negative: a problem detail has a type and a title',
+        run: async () => {
+          const {data} = await endpoints.verifyCredential(
+            createVerifyCredentialWithoutProof());
+          should.exist(data, 'Expected a verify response.');
+          const [problem] = data.problemDetails ?? [];
+          should.exist(problem, 'Expected problemDetails for an invalid VC.');
+          problem.type.should.be.a('string');
+          problem.title.should.be.a('string');
+        }
+      }];
+    }
+  }, {
+    statement: NORMATIVE['3-3-1-verify-credential-5'],
+    link,
+    subtests({endpoints}) {
+      return [{
+        name: 'positive: each proof result is a verification result',
+        run: async () => {
+          const issuedVc = await endpoints.issue();
+          should.exist(issuedVc, 'Expected the issuer to issue a VC.');
+          const {data} = await endpoints.verifyCredential(issuedVc);
+          should.exist(data.results, 'Expected verification results.');
+          data.results.proof.should.be.an('array').that.is.not.empty;
+          for(const item of data.results.proof) {
+            item.verified.should.be.a('boolean');
+          }
+        }
+      }];
+    }
+  }]
 });
