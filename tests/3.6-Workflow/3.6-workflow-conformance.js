@@ -63,7 +63,11 @@ describeNormativeStatement({
           const configuration = await endpoints.getWorkflowConfiguration(
             created.workflowId
           );
-          shouldGetWorkflowConfiguration({...configuration, sent});
+          // compare with the body that was sent (after implementation
+          // options), since the server may generate the ID
+          shouldGetWorkflowConfiguration({
+            ...configuration, sent: created.sent
+          });
         }
       },
       {
