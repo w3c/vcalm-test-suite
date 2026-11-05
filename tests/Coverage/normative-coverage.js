@@ -3,13 +3,14 @@
  */
 
 // Results matrix rows for every MUST and REQUIRED statement in the spec that
-// no other test file has a row for. Rows are recorded by describeNormativeStatement
-// (see ../coverage-registry.js), so there is no list to maintain here.
+// no other test file has a row for. Rows are recorded by
+// describeNormativeStatement (see ../coverage-registry.js), so there is no
+// list to maintain here.
 
-import {covered} from '../coverage-registry.js';
-import fs from 'node:fs';
-import {describeSkippedSection} from '../skipped-section.js';
 import {NORMATIVE, REQUIRED, SECTION} from '../normative-statements.js';
+import {covered} from '../coverage-registry.js';
+import {describeSkippedSection} from '../skipped-section.js';
+import fs from 'node:fs';
 
 // Load every test module before reading `covered`. Mocha loads this file
 // in an unspecified order, and imports are cached, so each module still runs
