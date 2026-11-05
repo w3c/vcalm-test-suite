@@ -3,6 +3,7 @@
  */
 
 import {
+  applyWorkflowOptions,
   createDeriveRequestBody,
   createExchangeRequest,
   createIssueRequestWithExistingProof,
@@ -254,7 +255,10 @@ export class TestEndpoints {
   }
 
   async createWorkflow(body = createWorkflowRequest()) {
-    return this.createWorkflowWithBody(body);
+    // implementation-supplied create options (see applyWorkflowOptions)
+    const options = this.workflow?.settings?.options;
+    return this.createWorkflowWithBody(
+      applyWorkflowOptions({body, options}));
   }
 
   async createWorkflowWithBody(body) {
