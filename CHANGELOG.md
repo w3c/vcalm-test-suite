@@ -4,6 +4,26 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
 
 # w3c/vcalm-test-suite ChangeLog
 
+## 0.2.0 - 2026-11-dd
+
+### Added
+
+- `tests/normative-statements.js` holds every VCALM TR sentence with an RFC
+  2119 keyword (138), keyed by section. It is generated from the spec.
+- `tests/Coverage/normative-coverage.js` adds a skipped results-matrix row for
+  each MUST and REQUIRED statement that no live test covers.
+
+### Changed
+
+- Statement text matches the TR word for word, including section numbers.
+- The results matrix shows MUST and REQUIRED statements only.
+- Negative test titles moved from `tests/normative-statements.js` into
+  `tests/negative-fixtures.js`.
+- Query by example and DID Authentication rows come from the TR statements in
+  those sections, replacing the hand-picked statements that the TR does not
+  contain.
+- Statements that the TR does not state are removed.
+
 ## 0.1.0 - 2026-07-07
 
 ### Added

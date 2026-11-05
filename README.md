@@ -15,7 +15,7 @@ Lifecycle Management).
 
 | Layer | Tool | Where |
 |-------|------|--------|
-| Normative statements | Mocha | `tests/3.2-Issuing`, `tests/3.3-Verifying` |
+| Normative statements | Mocha | `tests/<section>/` (one folder per VCALM section), plus `tests/Coverage/` for untested MUST and REQUIRED statements |
 | Response shape | Chai OpenAPI | `docs/openapi/oas.bundled.json` via `tests/openapi.js` |
 
 Mocha tests are adapted from the CCG
@@ -32,6 +32,34 @@ sufficient to exercise the API.
 Mocha tests under `tests/<section>/` mirror the VCALM TOC (helpers live at
 `tests/*.js` and are excluded from the `tests/*/**/*.js` glob). Per-file
 coverage matrix: branch `feature/vcalm-docs` → `docs/test-coverage.md`.
+
+## Normative statements and the results matrix
+
+`tests/normative-statements.js` holds every sentence in the
+[VCALM TR](https://www.w3.org/TR/vcalm-1.0/) that contains an RFC 2119 keyword
+(MUST, MUST NOT, SHOULD, MAY, REQUIRED, and so on). Each value is the spec's own
+text, and the file is generated from the spec. Do not edit it by hand.
+
+It exports three things:
+
+- `NORMATIVE`: key to sentence. Keys are `<section>-<n>`, for example
+  `3-2-1-issue-credential-1`.
+- `SECTION`: key to the spec section heading.
+- `REQUIRED`: the keys whose sentence contains MUST or REQUIRED. The results
+  matrix shows only these.
+
+Each matrix row is one of two kinds:
+
+- **Live rows.** A test refers to a statement with `NORMATIVE['<key>']` and
+  checks it.
+- **Skipped rows.** `tests/Coverage/normative-coverage.js` adds a skipped row for
+  each MUST or REQUIRED statement without a live test. Its `LIVE` set lists the
+  keys that live tests cover. When you add a live test for a key, add that key to
+  `LIVE`. Otherwise the statement appears twice.
+
+When the spec changes, regenerate `tests/normative-statements.js` from the TR
+and check that every key a test uses still exists. Statement text must match the
+spec exactly, so a changed spec sentence changes the matrix row.
 
 ## Install
 
