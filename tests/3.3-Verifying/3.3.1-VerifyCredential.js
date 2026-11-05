@@ -8,6 +8,7 @@ import {
 } from '../negative-fixtures.js';
 import {
   implementationsWithPresentationFlow,
+  implementationsWithVerifier,
   VCALM_TAG
 } from '../helpers.js';
 import {
@@ -20,32 +21,33 @@ import chai from 'chai';
 import {DERIVED} from '../derived-statements.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
+import {issueTestCredential} from '../test-issuer.js';
 
 const should = chai.should();
 const tag = VCALM_TAG;
 const {match} = filterByTag({tags: [tag]});
 const paired = implementationsWithPresentationFlow(match, tag);
+const verifiers = implementationsWithVerifier(match, tag);
 const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
 
 describeNormativeStatement({
   section: 'Conformance',
-  match: paired,
+  match: verifiers,
   columnLabel: 'Verifier',
   statements: [
     {
       statement: DERIVED.verifyCredential,
       link,
-      subtests({name, endpoints}) {
+      subtests({endpoints}) {
         return [
           {
             name: 'positive: POST /credentials/verify accepts an issued ' +
               'credential',
             run: async () => {
-              const issuedVc = await endpoints.issue();
-              should.exist(
-                issuedVc,
-                `Expected ${name} to issue a VC first.`
-              );
+              // The test issuer signs the credential, so the verifier is the
+              // only endpoint under test.
+              const issuedVc = await issueTestCredential();
+              should.exist(issuedVc, 'Expected the test issuer to sign a VC.');
               const verifiedVc = await endpoints.verifyCredential(issuedVc);
               shouldVerifyCredential({
                 data: verifiedVc.data,
