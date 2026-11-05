@@ -53,9 +53,9 @@ Each matrix row is one of two kinds:
 - **Live rows.** A test refers to a statement with `NORMATIVE['<key>']` and
   checks it.
 - **Skipped rows.** `tests/Coverage/normative-coverage.js` adds a skipped row for
-  each MUST or REQUIRED statement without a live test. Its `LIVE` set lists the
-  keys that live tests cover. When you add a live test for a key, add that key to
-  `LIVE`. Otherwise the statement appears twice.
+  each MUST or REQUIRED statement that no other test file has a row for. Every
+  row is recorded as the test files load (see `tests/coverage-registry.js`), so
+  adding a live test needs no change to the coverage file.
 
 When the spec changes, regenerate `tests/normative-statements.js` from the TR
 and check that every key a test uses still exists. Statement text must match the
