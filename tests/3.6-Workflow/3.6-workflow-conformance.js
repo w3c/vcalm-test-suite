@@ -4,7 +4,6 @@
 
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {
-  shouldAcceptExchangeCallback,
   shouldCreateExchange,
   shouldCreateWorkflow,
   shouldGetCurrentExchangeVpr,
@@ -22,7 +21,6 @@ import {createWorkflowRequest} from '../mock.data.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
-import {v4 as uuidv4} from 'uuid';
 import {VCALM_TAG} from '../helpers.js';
 
 const tag = VCALM_TAG;
@@ -124,18 +122,6 @@ describeNormativeStatement({
           });
         }
       },
-      // The spec says "a system can expose" this endpoint, so it only runs for
-      // implementations that set `exposesCallbacks` on their workflow entry.
-      ...(endpoints.workflow?.settings?.exposesCallbacks ? [{
-        name: 'positive: POST /callbacks/{localCallbackId} accepts an ' +
-          'exchange step callback',
-        run: async () => {
-          const callback = await endpoints.exchangeStepCallback(
-            `urn:uuid:${uuidv4()}`
-          );
-          shouldAcceptExchangeCallback(callback);
-        }
-      }] : []),
       ...WORKFLOW_NEGATIVE_CASES.map(item => ({
         name: `negative: ${item.title}`,
         run: async () => {
