@@ -124,7 +124,9 @@ describeNormativeStatement({
           });
         }
       },
-      {
+      // The spec says "a system can expose" this endpoint, so it only runs for
+      // implementations that set `exposesCallbacks` on their workflow entry.
+      ...(endpoints.workflow?.settings?.exposesCallbacks ? [{
         name: 'positive: POST /callbacks/{localCallbackId} accepts an ' +
           'exchange step callback',
         run: async () => {
@@ -133,7 +135,7 @@ describeNormativeStatement({
           );
           shouldAcceptExchangeCallback(callback);
         }
-      },
+      }] : []),
       ...WORKFLOW_NEGATIVE_CASES.map(item => ({
         name: `negative: ${item.title}`,
         run: async () => {
