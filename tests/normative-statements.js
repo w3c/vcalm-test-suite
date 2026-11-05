@@ -3,8 +3,8 @@
  */
 
 /**
- * Exact normative statement text for Mocha `it()` titles.
- * Source: VCALM TR / editor draft, plus suite-defined `negative.*` titles.
+ * Exact normative statement text: only sentences with an RFC 2119 keyword.
+ * Source: VCALM TR. Test titles and endpoint descriptions do not belong here.
  *
  * @see branch feature/vcalm-docs — docs/normative-requirements.md
  */
@@ -74,16 +74,6 @@ export const NORMATIVE = {
       'corresponding service implementation.'
   },
   issuing: {
-    issue:
-      'Issues a credential and returns it in the response body.',
-    get:
-      'Gets a credential or verifiable credential by ID. To get a credential ' +
-      'that does not have credential.id set but has an associated ' +
-      'credentialId value, pass credentialId instead.',
-    delete:
-      'Deletes a credential or verifiable credential by ID. To delete a ' +
-      'credential that does not have credential.id set but has an associated ' +
-      'credentialId value, pass credentialId instead.',
     multipleProofs:
       'If a use case requires an issuer instance to attach multiple proofs ' +
       'to the provided `credential`, the instance MUST attach all of these ' +
@@ -92,17 +82,6 @@ export const NORMATIVE = {
     proofHandling:
       'An issuing instance SHOULD be configured to handle existing proofs in ' +
       'one of the following ways:'
-  },
-  verifying: {
-    verifyCredential:
-      'Verifies a verifiableCredential and returns a verificationResult in ' +
-      'the response body.',
-    verifyPresentation:
-      'Verifies a Presentation and all Verifiable Credentials it contains, ' +
-      'returning detailed verification results.',
-    challenge:
-      'Passing an empty body to this endpoint creates and returns a ' +
-      'challenge string in the response body.'
   },
   requestingPresentation: {
     queryRequired:
@@ -195,27 +174,9 @@ export const NORMATIVE = {
     didAuthenticationDomain:
       'Holder implementations MUST ensure that the domain specified by ' +
       'the verifier matches the domain used for the current channel of ' +
-      'communication.',
-    authorizationCapability:
-      'This query type would be included in a request to ask for ' +
-      'Authorization ' +
-      'Capabilities or "zcaps" in the Verifiable Presentation.',
-    logicalOperations:
-      'Multiple queries with the same `group` value are processed as "AND" ' +
-      'operations, while queries with different or missing `group` values ' +
-      'are processed as "OR" operations.'
-  },
-  presenting: {
-    derive: 'Derives a credential and returns it in the response body.',
-    create: 'Creates a presentation and returns it in the response body.',
-    getList: 'Gets list of presentations or verifiable presentations',
-    getById: 'Gets a presentation or verifiable presentation by ID',
-    deleteById: 'Deletes a presentation or verifiable presentation by ID'
+      'communication.'
   },
   workflows: {
-    create:
-      'Creates a new workflow and returns location of workflow metadata in a ' +
-      'response header.',
     issueRequestVariables:
       'An issue request object MAY also include a variables property to ' +
       'provide values to be used when evaluating the credential template.',
@@ -225,14 +186,6 @@ export const NORMATIVE = {
       'exchange\'s variables object or a JSON pointer to any variable within ' +
       'the exchange\'s variables object, identifying where the result of the ' +
       'issue request is to be stored.',
-    getConfiguration:
-      'Gets the configuration of an existing workflow and returns it in the ' +
-      'response body.',
-    createExchange:
-      'Creates a new exchange and returns location of exchange metadata in a ' +
-      'response header.',
-    getProtocols:
-      'Gets the supported protocols for interacting with a specific exchange.',
     getCurrentVpr:
       'This endpoint MUST return the current verifiable presentation ' +
       'request to be returned by an exchange when accessed with an Accept ' +
@@ -246,28 +199,13 @@ export const NORMATIVE = {
       'exchange in the current step, the value of the ' +
       '`verifiablePresentationRequest` property returned by this endpoint ' +
       'MUST be an empty JSON object.',
-    participate:
-      'Participate in an exchange. Posting an empty body will start the ' +
-      'exchange or return what the exchange is expecting to complete the ' +
-      'next step.',
-    getState:
-      'Gets the state of an existing exchange and returns it in the response ' +
-      'body.',
     referenceIdEcho:
       'If the client receives a `referenceId`, it SHOULD include the same ' +
       '`referenceId` in its next message to the server.',
     referenceIdServerMay:
       'A server MAY include a `referenceId` property in an exchange message.',
     referenceIdUrnUuid:
-      'The value of referenceId SHOULD be a urn:uuid value.',
-    callbacks:
-      'A callback that can be any capability URL (i.e., a URL that is ' +
-      'infeasible to guess) that can be notified when an exchange step is ' +
-      'performed.',
-    examples:
-      'The APIs in this specification enables unmediated (automated, ' +
-      'machine-to-machine) or mediated (person in the loop) exchanges to be ' +
-      'executed.',
+      'The value of referenceId SHOULD be a urn:uuid value.'
   },
   interactions: {
     interactionUrl:
@@ -314,15 +252,7 @@ export const NORMATIVE = {
       'When the interaction URL is fetched using any unrecognized `Accept` ' +
       'header value, a `text/html` document MUST be returned with ' +
       'directions instructing a human being to use specific software that ' +
-      'understands how to process interaction URLs.',
-    inviteRequest:
-      'The `inviteRequest` interaction protocol is used by a local system ' +
-      'to signal to the remote system that it would like an invitation ' +
-      'to a remote system via a specific URL, such as a website where an ' +
-      'individual can engage in a use-case specific interaction.',
-    vcapi:
-      'The `vcapi` interaction protocol is used to initiate a specific ' +
-      'exchange as described in Section Participate in an Exchange.'
+      'understands how to process interaction URLs.'
   },
   errorHandling: {
     problemDetailsTypePresent:
@@ -333,61 +263,10 @@ export const NORMATIVE = {
     problemDetailsReadable:
       'The title key SHOULD provide a short but specific human-readable ' +
       'string for the problem.',
-    unknownOptionType:
-      'https://www.w3.org/TR/vcalm#UNKNOWN_OPTION_PROVIDED An option that ' +
-      'is unknown to the implementation was provided to the API call.',
     verifiedFalse:
       'If an error is included, the verified property of the ' +
       'VerificationResponse object MUST be set to false.',
     verifiedTrue:
       'if no errors are included, it MUST be set to true.'
   },
-  security: {
-    stripUnrecognizedProofs:
-      'Implementations maintain allow lists of understood proofs and ensure ' +
-      'that any proofs not present are stripped prior to presentation.',
-    instancePayloadLimits:
-      'It\'s recommended to configure the payload size accepted by endpoints ' +
-      'at an instance level.'
-  },
-  negative: {
-    issueMissingCredential:
-      'POST /credentials/issue with a missing credential property returns a ' +
-      'client error.',
-    issueEmptyBody:
-      'POST /credentials/issue with an empty request body returns a client ' +
-      'error.',
-    issueCredentialWithoutType:
-      'POST /credentials/issue with a credential missing type returns a ' +
-      'client error.',
-    verifyForeignCredential:
-      'POST /credentials/verify returns verified:false for a reference ' +
-      'credential not issued by this service.',
-    verifyCredentialWithoutProof:
-      'POST /credentials/verify returns verified:false for a credential ' +
-      'without proof.',
-    verifyCredentialEmpty:
-      'POST /credentials/verify returns verified:false for an empty ' +
-      'verifiable credential object.',
-    verifyCredentialInvalidType:
-      'POST /credentials/verify returns verified:false for a credential with ' +
-      'an invalid type.',
-    verifyForeignPresentation:
-      'POST /presentations/verify returns verified:false for a reference ' +
-      'presentation not created by this service.',
-    verifyPresentationWithoutProof:
-      'POST /presentations/verify returns verified:false for a presentation ' +
-      'without proof.',
-    conformanceProbeIssue:
-      'Issue Credential endpoint rejects a malformed issue request.',
-    conformanceProbeVerify:
-      'Verify endpoint processes a malformed verify request and reports ' +
-      'verification failure.',
-    workflowStepsNotObject:
-      'POST /workflows with invalid steps returns a client error.',
-    workflowMissingSteps:
-      'POST /workflows without steps returns a client error.',
-    workflowExchangeUnknownWorkflow:
-      'POST exchanges for an unknown workflow returns a client error.'
-  }
 };
