@@ -12,7 +12,7 @@ describeSkippedSection({
   columnLabel: 'Holder',
   property: 'holders',
   link,
-  statements: [NORMATIVE.conformance.getExchangeProtocols]
+  statements: [NORMATIVE['1-3-conformance-5']]
 });
 
 describeSkippedSection({
@@ -20,5 +20,5 @@ describeSkippedSection({
   columnLabel: 'Holder',
   property: 'holders',
   link,
-  statements: [NORMATIVE.conformance.participateInExchange]
+  statements: [NORMATIVE['1-3-conformance-5']]
 });

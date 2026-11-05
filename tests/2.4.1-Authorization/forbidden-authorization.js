@@ -8,5 +8,5 @@ import {NORMATIVE} from '../normative-statements.js';
 describeSkippedSection({
   section: 'Authorization',
   link: `${TR}#authorization`,
-  statements: [NORMATIVE.configuration.mustNotStaticCredentials]
+  statements: [NORMATIVE['forbidden-authorization-1']]
 });

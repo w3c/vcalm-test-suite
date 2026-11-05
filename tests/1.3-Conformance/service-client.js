@@ -9,5 +9,5 @@ describeSkippedSection({
   section: 'Conformance',
   columnLabel: 'Service client',
   link: `${TR}#conformance`,
-  statements: [NORMATIVE.conformance.serviceClient]
+  statements: [NORMATIVE['1-3-conformance-9']]
 });

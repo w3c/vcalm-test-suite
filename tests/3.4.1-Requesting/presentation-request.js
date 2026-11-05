@@ -5,15 +5,12 @@
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
-const {requestingPresentation: query} = NORMATIVE;
-
 describeSkippedSection({
   section: 'Verifiable Presentation Request',
   columnLabel: 'Requesting a Presentation',
   link: `${TR}#verifiable-presentation-request`,
   statements: [
-    query.queryRequired,
-    query.queryValue,
-    query.queryMapType
+    NORMATIVE['3-4-1-verifiable-presentation-request-1'],
+    NORMATIVE['3-4-1-verifiable-presentation-request-2']
   ]
 });

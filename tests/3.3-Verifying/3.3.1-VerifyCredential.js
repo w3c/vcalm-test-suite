@@ -33,7 +33,7 @@ describeNormativeStatement({
   columnLabel: 'Verifier',
   statements: [
     {
-      statement: NORMATIVE.conformance.verifyCredential,
+      statement: NORMATIVE['1-3-conformance-3'],
       link,
       subtests({name, endpoints}) {
         return [
@@ -78,7 +78,7 @@ describeNormativeStatement({
   columnLabel: 'Verifier',
   statements: [
     {
-      statement: NORMATIVE.conformance.verifyPresentation,
+      statement: NORMATIVE['1-3-conformance-3'],
       link,
       subtests({name, endpoints}) {
         return [

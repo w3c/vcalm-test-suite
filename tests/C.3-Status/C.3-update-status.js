@@ -21,7 +21,7 @@ const link = 'https://www.w3.org/TR/vcalm-1.0/#conformance';
 
 describeNormativeStatement({
   section: 'Conformance',
-  statement: NORMATIVE.conformance.status,
+  statement: NORMATIVE['1-3-conformance-7'],
   link,
   match,
   columnLabel: 'Status',

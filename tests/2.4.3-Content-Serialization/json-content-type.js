@@ -8,5 +8,5 @@ import {NORMATIVE} from '../normative-statements.js';
 describeSkippedSection({
   section: 'Content Serialization',
   link: `${TR}#content-serialization`,
-  statements: [NORMATIVE.configuration.jsonContentType]
+  statements: [NORMATIVE['content-serialization-1']]
 });

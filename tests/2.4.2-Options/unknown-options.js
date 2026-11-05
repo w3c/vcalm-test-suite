@@ -8,5 +8,5 @@ import {NORMATIVE} from '../normative-statements.js';
 describeSkippedSection({
   section: 'Options',
   link: `${TR}#options`,
-  statements: [NORMATIVE.configuration.unknownOptions]
+  statements: [NORMATIVE['options-5']]
 });

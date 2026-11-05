@@ -10,7 +10,7 @@ describeSkippedSection({
   columnLabel: 'Workflow',
   property: 'workflows',
   link: `${TR}#conformance`,
-  statements: [NORMATIVE.conformance.workflow]
+  statements: [NORMATIVE['1-3-conformance-8']]
 });
 
 describeSkippedSection({
@@ -18,7 +18,7 @@ describeSkippedSection({
   columnLabel: 'Workflow',
   property: 'workflows',
   link: `${TR}#create-workflow`,
-  statements: [NORMATIVE.workflows.issueRequestResult]
+  statements: [NORMATIVE['3-6-1-create-workflow-22']]
 });
 
 describeSkippedSection({
@@ -27,7 +27,7 @@ describeSkippedSection({
   property: 'workflows',
   link: `${TR}#get-current-exchange-vpr`,
   statements: [
-    NORMATIVE.workflows.getCurrentVpr,
-    NORMATIVE.workflows.getCurrentVprEmpty
+    NORMATIVE['3-6-5-get-current-exchange-vpr-1'],
+    NORMATIVE['3-6-5-get-current-exchange-vpr-3']
   ]
 });

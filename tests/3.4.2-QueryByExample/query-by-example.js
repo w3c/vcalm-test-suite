@@ -5,25 +5,13 @@
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
-const {requestingPresentation: query} = NORMATIVE;
+// Every normative statement in section 3.4.2 of the spec, in document order.
+const statements = Object.keys(NORMATIVE)
+  .filter(key => key.startsWith('3-4-2-'))
+  .map(key => NORMATIVE[key]);
 
 describeSkippedSection({
   section: 'Query By Example',
   link: `${TR}#query-by-example`,
-  statements: [
-    query.acceptedIssuerItem,
-    query.matchAlgorithm,
-    query.acceptedIssuerMatch,
-    query.emptyStringExists,
-    query.emptyMapExists,
-    query.emptyListExists,
-    query.listElementMap,
-    query.listElementMatch,
-    query.primitiveMatch,
-    query.noPartialNumericCoercion,
-    {
-      statement: query.selectiveDisclosureAlgorithm,
-      link: `${TR}#converting-querybyexample-to-json-pointers`
-    }
-  ]
+  statements
 });

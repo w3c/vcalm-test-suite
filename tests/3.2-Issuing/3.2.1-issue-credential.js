@@ -36,7 +36,7 @@ describeNormativeStatement({
   columnLabel: 'Issuer',
   statements: [
     {
-      statement: NORMATIVE.conformance.issuer,
+      statement: NORMATIVE['1-3-conformance-1'],
       link,
       subtests({endpoints}) {
         return [
@@ -80,7 +80,7 @@ describeNormativeStatement({
   columnLabel: 'Issuer',
   statements: [
     {
-      statement: NORMATIVE.issuing.multipleProofs,
+      statement: NORMATIVE['3-2-1-issue-credential-9'],
       link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
       skip: true,
       skipMessage: 'Skipped.'

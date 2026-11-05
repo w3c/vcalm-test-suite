@@ -5,27 +5,18 @@
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
-const {requestingPresentation: did} = NORMATIVE;
-const queryLink = `${TR}#the-did-authentication-query-format`;
-const responseLink = `${TR}#the-did-authentication-response-format`;
+// Every normative statement in section 3.4.3 of the spec, in document order.
+// Statements under 3.4.3.1 link to the query format, 3.4.3.2 to the response.
+const statements = Object.keys(NORMATIVE)
+  .filter(key => key.startsWith('3-4-3-'))
+  .map(key => ({
+    statement: NORMATIVE[key],
+    link: key.startsWith('3-4-3-1-')
+      ? `${TR}#the-did-authentication-query-format`
+      : `${TR}#the-did-authentication-response-format`
+  }));
 
 describeSkippedSection({
   section: 'DID Authentication',
-  statements: [
-    {statement: did.didAuthenticationQuery, link: queryLink},
-    {statement: did.didAuthenticationQueryTypeRequired, link: queryLink},
-    {statement: did.didAuthenticationQueryType, link: queryLink},
-    {statement: did.didAuthenticationMethod, link: queryLink},
-    {statement: did.didAuthenticationCryptosuiteChoice, link: queryLink},
-    {statement: did.didAuthenticationCryptosuite, link: queryLink},
-    {statement: did.didAuthenticationResponse, link: responseLink},
-    {statement: did.didAuthenticationResponseTypeRequired, link: responseLink},
-    {statement: did.didAuthenticationResponseType, link: responseLink},
-    {statement: did.didAuthenticationHolderRequired, link: responseLink},
-    {statement: did.didAuthenticationHolder, link: responseLink},
-    {statement: did.didAuthenticationProofRequired, link: responseLink},
-    {statement: did.didAuthenticationProof, link: responseLink},
-    {statement: did.didAuthenticationProofChallenge, link: responseLink},
-    {statement: did.didAuthenticationDomain, link: responseLink}
-  ]
+  statements
 });

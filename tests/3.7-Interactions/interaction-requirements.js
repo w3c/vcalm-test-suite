@@ -5,15 +5,13 @@
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
-const {interactions} = NORMATIVE;
-
 describeSkippedSection({
   section: 'Interaction URL Format',
   columnLabel: 'Interactions',
   link: `${TR}#interaction-url-format`,
   statements: [
-    interactions.interactionUrl,
-    interactions.interactionUrlVersion
+    NORMATIVE['3-7-1-interaction-url-format-1'],
+    NORMATIVE['3-7-1-interaction-url-format-1']
   ]
 });
 
@@ -22,8 +20,8 @@ describeSkippedSection({
   columnLabel: 'Interactions',
   link: `${TR}#interaction-qr-code-format`,
   statements: [
-    interactions.qrCode,
-    interactions.qrCodeMaxLength
+    NORMATIVE['3-7-2-interaction-qr-code-format-1'],
+    NORMATIVE['3-7-2-interaction-qr-code-format-2']
   ]
 });
 
@@ -31,7 +29,7 @@ describeSkippedSection({
   section: 'Interaction Scheme Format',
   columnLabel: 'Interactions',
   link: `${TR}#interaction-scheme-format`,
-  statements: [interactions.scheme]
+  statements: [NORMATIVE['3-7-3-interaction-scheme-format-1']]
 });
 
 describeSkippedSection({
@@ -39,8 +37,8 @@ describeSkippedSection({
   columnLabel: 'Interactions',
   link: `${TR}#interaction-protocols-response`,
   statements: [
-    interactions.protocolsJson,
-    interactions.protocolsHtml
+    NORMATIVE['3-7-4-interaction-protocols-response-1'],
+    NORMATIVE['3-7-4-interaction-protocols-response-2']
   ]
 });
 
@@ -49,7 +47,7 @@ describeSkippedSection({
   columnLabel: 'Interactions',
   link: `${TR}#vcapi-interaction-protocol`,
   statements: [
-    interactions.digitalCredentialsRequest,
-    interactions.digitalCredentialsFetch
+    NORMATIVE['3-6-5-get-current-exchange-vpr-4'],
+    NORMATIVE['3-6-5-get-current-exchange-vpr-5']
   ]
 });

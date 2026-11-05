@@ -5,14 +5,12 @@
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {NORMATIVE} from '../normative-statements.js';
 
-const {errorHandling} = NORMATIVE;
-
 describeSkippedSection({
   section: 'Error Handling',
   link: `${TR}#error-handling`,
   statements: [
-    errorHandling.problemDetailsTypePresent,
-    errorHandling.problemDetailsType
+    NORMATIVE['3-8-error-handling-1'],
+    NORMATIVE['3-8-error-handling-1']
   ]
 });
 
@@ -21,7 +19,7 @@ describeSkippedSection({
   columnLabel: 'Error Handling',
   link: `${TR}#verification-errors-vs-warnings`,
   statements: [
-    errorHandling.verifiedFalse,
-    errorHandling.verifiedTrue
+    NORMATIVE['3-8-1-verification-errors-vs-warnings-1'],
+    NORMATIVE['3-8-1-verification-errors-vs-warnings-2']
   ]
 });
