@@ -64,6 +64,13 @@ export function implementationsWithPresentationFlow(match, tag = VCALM_TAG) {
     hasTaggedEndpoint(implementation, 'verifiers', tag));
 }
 
+// Verifier-only tests: a verifier needs no issuer or holder, since the test
+// issuer (tests/test-issuer.js) supplies the credentials.
+export function implementationsWithVerifier(match, tag = VCALM_TAG) {
+  return [...match].filter(([, implementation]) =>
+    hasTaggedEndpoint(implementation, 'verifiers', tag));
+}
+
 export function implementationsWithIssuerAndHolder(match, tag = VCALM_TAG) {
   return [...match].filter(([, implementation]) =>
     hasTaggedEndpoint(implementation, 'issuers', tag) &&
