@@ -219,12 +219,25 @@ export class TestEndpoints {
       verifier: this.verifier, vp, options
     });
     const url = resolveVerifyPresentationUrl(this.verifier.settings.endpoint);
-    const {data, result, error} = await this.verifier.post({
-      url,
-      json: verifyBody
-    });
+    // a verifier may hold a separate capability for presentations
+    const {presentationZcap} = this.verifier.settings;
+    const response = presentationZcap ?
+      await this.verifierOperationRequest({
+        url, json: verifyBody, zcap: presentationZcap
+      }) :
+      await this.verifier.post({url, json: verifyBody});
+    const {data, result, error} = response;
     const httpResult = result ?? error?.response;
     return {data, result: httpResult, error: httpResult ? undefined : error};
+  }
+
+  // POST with the capability for one verifier operation.
+  verifierOperationRequest({url, json, zcap}) {
+    const capability = typeof zcap.capability === 'string' ?
+      JSON.parse(zcap.capability) : zcap.capability;
+    return workflowRequest({
+      method: 'POST', url, json, capability, keySeed: zcap.keySeed
+    });
   }
 
   async verifyVp(vp, options = {}) {
@@ -237,8 +250,14 @@ export class TestEndpoints {
       this.verifier.settings.endpoint,
       '/challenges'
     );
-    const settled = settleHttp(await this.verifier.post({url, json: {}}));
-    return settled;
+    // a verifier may hold a separate capability for the challenges operation
+    const {challengeZcap} = this.verifier.settings;
+    if(challengeZcap) {
+      return settleHttp(await this.verifierOperationRequest({
+        url, json: {}, zcap: challengeZcap
+      }));
+    }
+    return settleHttp(await this.verifier.post({url, json: {}}));
   }
 
   workflowsBaseUrl() {
