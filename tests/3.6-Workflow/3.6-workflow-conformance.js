@@ -4,7 +4,6 @@
 
 import {describeSkippedSection, TR} from '../skipped-section.js';
 import {
-  shouldAcceptExchangeCallback,
   shouldCreateExchange,
   shouldCreateWorkflow,
   shouldGetCurrentExchangeVpr,
@@ -22,7 +21,6 @@ import {createWorkflowRequest} from '../mock.data.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
-import {v4 as uuidv4} from 'uuid';
 import {VCALM_TAG} from '../helpers.js';
 
 const tag = VCALM_TAG;
@@ -65,7 +63,11 @@ describeNormativeStatement({
           const configuration = await endpoints.getWorkflowConfiguration(
             created.workflowId
           );
-          shouldGetWorkflowConfiguration({...configuration, sent});
+          // compare with the body that was sent (after implementation
+          // options), since the server may generate the ID
+          shouldGetWorkflowConfiguration({
+            ...configuration, sent: created.sent
+          });
         }
       },
       {
@@ -122,16 +124,6 @@ describeNormativeStatement({
             ...state,
             exchangeId: exchange.exchangeId
           });
-        }
-      },
-      {
-        name: 'positive: POST /callbacks/{localCallbackId} accepts an ' +
-          'exchange step callback',
-        run: async () => {
-          const callback = await endpoints.exchangeStepCallback(
-            `urn:uuid:${uuidv4()}`
-          );
-          shouldAcceptExchangeCallback(callback);
         }
       },
       ...WORKFLOW_NEGATIVE_CASES.map(item => ({

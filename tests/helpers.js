@@ -287,14 +287,6 @@ export function resolveHolderExchangeUrl(workflowEndpoint, requirementId) {
  * @param {string} callbackId - Callback id.
  * @returns {string} Callback URL.
  */
-export function resolveCallbackUrl(workflowEndpoint, callbackId) {
-  const trimmed = workflowEndpoint.replace(/\/+$/, '');
-  const base = trimmed.endsWith('/workflows') ?
-    trimmed.slice(0, -'/workflows'.length) :
-    trimmed;
-  return `${base}/callbacks/${encodeURIComponent(callbackId)}`;
-}
-
 /**
  * Build a §3.7.1 interaction start URL with required `iuv=1`.
  *

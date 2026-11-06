@@ -3,6 +3,7 @@
  */
 
 import {
+  applyWorkflowOptions,
   createDeriveRequestBody,
   createExchangeRequest,
   createIssueRequestWithExistingProof,
@@ -18,8 +19,8 @@ import {
   extractIssuedCredential,
   extractLocationResourceId
 } from './response.js';
+import {getClientDid, workflowRequest} from './workflow-request.js';
 import {
-  resolveCallbackUrl,
   resolveCredentialResourceUrl,
   resolveDeriveCredentialUrl,
   resolveInteractionStartUrl,
@@ -218,12 +219,25 @@ export class TestEndpoints {
       verifier: this.verifier, vp, options
     });
     const url = resolveVerifyPresentationUrl(this.verifier.settings.endpoint);
-    const {data, result, error} = await this.verifier.post({
-      url,
-      json: verifyBody
-    });
+    // a verifier may hold a separate capability for presentations
+    const {presentationZcap} = this.verifier.settings;
+    const response = presentationZcap ?
+      await this.verifierOperationRequest({
+        url, json: verifyBody, zcap: presentationZcap
+      }) :
+      await this.verifier.post({url, json: verifyBody});
+    const {data, result, error} = response;
     const httpResult = result ?? error?.response;
     return {data, result: httpResult, error: httpResult ? undefined : error};
+  }
+
+  // POST with the capability for one verifier operation.
+  verifierOperationRequest({url, json, zcap}) {
+    const capability = typeof zcap.capability === 'string' ?
+      JSON.parse(zcap.capability) : zcap.capability;
+    return workflowRequest({
+      method: 'POST', url, json, capability, keySeed: zcap.keySeed
+    });
   }
 
   async verifyVp(vp, options = {}) {
@@ -236,8 +250,14 @@ export class TestEndpoints {
       this.verifier.settings.endpoint,
       '/challenges'
     );
-    const settled = settleHttp(await this.verifier.post({url, json: {}}));
-    return settled;
+    // a verifier may hold a separate capability for the challenges operation
+    const {challengeZcap} = this.verifier.settings;
+    if(challengeZcap) {
+      return settleHttp(await this.verifierOperationRequest({
+        url, json: {}, zcap: challengeZcap
+      }));
+    }
+    return settleHttp(await this.verifier.post({url, json: {}}));
   }
 
   workflowsBaseUrl() {
@@ -254,29 +274,59 @@ export class TestEndpoints {
   }
 
   async createWorkflow(body = createWorkflowRequest()) {
-    return this.createWorkflowWithBody(body);
+    // The test client controls the workflows it creates, so its DID is the
+    // default controller. Implementation options (see applyWorkflowOptions)
+    // are applied last and can override it.
+    const keySeed = this.workflow?.settings?.zcap?.keySeed;
+    const withController = keySeed && body.controller === undefined ?
+      {controller: await getClientDid({keySeed}), ...body} : body;
+    const options = this.workflow?.settings?.options;
+    return this.createWorkflowWithBody(
+      applyWorkflowOptions({body: withController, options}));
   }
 
   async createWorkflowWithBody(body) {
     const settled = settleHttp(await this.workflow.post({json: body}));
     return {
       workflowId: body?.id ?? extractLocationResourceId(settled.result),
+      sent: body,
       ...settled
     };
   }
 
+  // Requests to a workflow instance, signed with the instance's root. Without
+  // a zcap on the workflow entry, the endpoint's unsigned calls are used.
+  async workflowInstanceRequest({method, url, json, headers, workflowId}) {
+    const zcap = this.workflow.settings.zcap;
+    if(!zcap) {
+      return method === 'GET' ?
+        this.workflow.get({url, headers}) :
+        this.workflow.post({url, json, headers});
+    }
+    const instanceUrl = this.workflowResourceUrl(workflowId);
+    return workflowRequest({
+      method,
+      url,
+      json,
+      headers,
+      capability: `urn:zcap:root:${encodeURIComponent(instanceUrl)}`,
+      keySeed: zcap.keySeed
+    });
+  }
+
   async getWorkflowConfiguration(workflowId) {
     const url = this.workflowResourceUrl(workflowId);
-    const settled = settleHttp(await this.workflow.get({url}));
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'GET', url, workflowId
+    }));
     return {configuration: settled.data, ...settled};
   }
 
   async createExchange(workflowId, body = createExchangeRequest()) {
     const url = this.workflowResourceUrl(workflowId, undefined);
     const exchangesUrl = `${url}/exchanges`;
-    const settled = settleHttp(await this.workflow.post({
-      url: exchangesUrl,
-      json: body
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'POST', url: exchangesUrl, json: body, workflowId
     }));
     return {
       exchangeId: extractLocationResourceId(settled.result),
@@ -286,42 +336,37 @@ export class TestEndpoints {
 
   async getExchangeProtocols(workflowId, exchangeId) {
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'protocols');
-    const settled = settleHttp(await this.workflow.get({url}));
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'GET', url, workflowId
+    }));
     return {protocols: settled.data, ...settled};
   }
 
   async getCurrentExchangeVpr(workflowId, exchangeId) {
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'request');
-    const settled = settleHttp(await this.workflow.get({
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'GET',
       url,
-      headers: {Accept: 'application/json'}
+      headers: {Accept: 'application/json'},
+      workflowId
     }));
     return {vpr: settled.data, ...settled};
   }
 
   async participateInExchange(workflowId, exchangeId, body = {}) {
     const url = this.workflowResourceUrl(workflowId, exchangeId);
-    const settled = settleHttp(
-      await this.workflow.post({url, json: body})
-    );
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'POST', url, json: body, workflowId
+    }));
     return {message: settled.data, ...settled};
   }
 
   async getExchangeState(workflowId, exchangeId) {
     const url = this.workflowResourceUrl(workflowId, exchangeId);
-    const settled = settleHttp(await this.workflow.get({url}));
+    const settled = settleHttp(await this.workflowInstanceRequest({
+      method: 'GET', url, workflowId
+    }));
     return {state: settled.data, ...settled};
-  }
-
-  async exchangeStepCallback(callbackId, body = {event: {data: {}}}) {
-    const url = resolveCallbackUrl(
-      this.workflow.settings.endpoint,
-      callbackId
-    );
-    const settled = settleHttp(
-      await this.workflow.post({url, json: body})
-    );
-    return settled;
   }
 
   async startInteraction({interactionId, accept = 'application/json'} = {}) {

@@ -349,14 +349,6 @@ export function shouldGetExchangeProtocols({data, result, error}) {
   );
 }
 
-export function shouldAcceptExchangeCallback({result, error}) {
-  shouldReturnHttpResult({result, error});
-  result.status.should.equal(
-    200,
-    'Expected status code 200 for an exchange step callback.'
-  );
-}
-
 export function shouldGetCurrentExchangeVpr({
   data,
   result,

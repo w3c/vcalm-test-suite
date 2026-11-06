@@ -168,6 +168,23 @@ Register implementations in
 with tag `VCALM` on issuer, verifier, and holder endpoints (and
 `workflows` / `VCALM:status` for optional profiles).
 
+### Workflow create options
+
+A workflow entry can set `options`, which are merged into each
+`POST /workflows` request body the suite sends. This is how an implementation
+supplies fields the spec leaves out or makes optional. Options are merged last,
+so they override the suite's values.
+
+- A key with a value replaces or adds that field in the request.
+- A key with `null` is removed from the request. For example, `id: null` lets
+  the server generate the workflow ID.
+- If the entry has a `zcap`, the suite sets `controller` to the DID of the
+  zcap's key by default, so the client controls the workflows it creates. An
+  explicit `controller` in `options` overrides this.
+
+The options are implementation-specific, so they belong in the implementation's
+registration, not in the suite.
+
 ## OpenAPI response checks
 
 `npm test` checks successful responses for:
