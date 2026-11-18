@@ -22,11 +22,11 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@digitalbazaar/mocha-w3c-interop-reporter": "^1.6.0",
-    "chai": "^4.3.7",
+    "@digitalbazaar/mocha-w3c-interop-reporter": "^1.10.0",
+    "chai": "^4.5.0",
     "klona": "^2.0.6",
-    "mocha": "^11.7.5",
-    "uuid": "^11.1.0",
+    "mocha": "^11.8.0",
+    "uuid": "^11.1.1",
     "vc-test-suite-implementations": "github:w3c/vc-test-suite-implementations"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "bnid": "3.0.0",
     "chai-openapi-response-validator": "^0.14.2",
     "eslint": "^8.57.1",
-    "eslint-config-digitalbazaar": "^5.0.1",
+    "eslint-config-digitalbazaar": "^5.2.0",
     "eslint-plugin-jsdoc": "^48.11.0",
     "eslint-plugin-unicorn": "^49.0.0"
   }
