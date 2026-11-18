@@ -6,14 +6,17 @@
 // credentialStatus result arrays. The OpenAPI schema defines the options
 // object and the item shapes, so the response is checked against it.
 
+import {implementationsWithIssuerAndVerifier, VCALM_TAG} from '../helpers.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
 import {shouldVerifyCredential} from '../assertions.js';
 import {TR} from '../skipped-section.js';
-import {VCALM_TAG} from '../helpers.js';
 
-const {match} = filterByTag({property: 'verifiers', tags: [VCALM_TAG]});
+// The positive check issues a credential with the implementation's own issuer
+// before verifying it, so only entries with an issuer and a verifier match.
+const {match: tagged} = filterByTag({tags: [VCALM_TAG]});
+const match = implementationsWithIssuerAndVerifier(tagged, VCALM_TAG);
 
 describeNormativeStatement({
   section: '3.3.1 Verify Credential',
