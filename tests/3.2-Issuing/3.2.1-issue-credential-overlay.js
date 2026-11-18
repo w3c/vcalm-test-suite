@@ -3,7 +3,8 @@
  */
 
 // Checks an issued credential against the overlay constraints in ../overlay.js.
-// These rules are not in the OpenAPI schema, so they are checked here.
+// The rules are in the OpenAPI description, not in a normative statement, so
+// they are checked as part of the issuer's interface conformance.
 
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
@@ -14,39 +15,32 @@ import {VCALM_TAG} from '../helpers.js';
 
 const {match} = filterByTag({property: 'issuers', tags: [VCALM_TAG]});
 
+// Issue a credential and check that every item of `field` is a string.
+function itemsAreStrings(endpoints, field) {
+  return {
+    name: `positive: issued credential "${field}" items are strings`,
+    run: async () => {
+      const issuedVc = await endpoints.issue();
+      const problems = findNonStringItems(issuedVc, field);
+      if(problems.length > 0) {
+        throw new Error(problems.join('; '));
+      }
+    }
+  };
+}
+
 describeNormativeStatement({
-  section: '3.2.1 Issue Credential',
+  section: 'Conformance',
   match,
   columnLabel: 'Issuer',
   statements: [{
-    statement: NORMATIVE['3-2-1-issue-credential-1'],
-    link: `${TR}#issue-credential`,
+    statement: NORMATIVE['1-3-conformance-1'],
+    link: `${TR}#conformance`,
     subtests({endpoints}) {
-      return [{
-        name: 'positive: issued credential "@context" items are strings',
-        run: async () => {
-          const issuedVc = await endpoints.issue();
-          const problems = findNonStringItems(issuedVc, '@context');
-          if(problems.length > 0) {
-            throw new Error(problems.join('; '));
-          }
-        }
-      }];
-    }
-  }, {
-    statement: NORMATIVE['3-2-1-issue-credential-2'],
-    link: `${TR}#issue-credential`,
-    subtests({endpoints}) {
-      return [{
-        name: 'positive: issued credential "type" items are strings',
-        run: async () => {
-          const issuedVc = await endpoints.issue();
-          const problems = findNonStringItems(issuedVc, 'type');
-          if(problems.length > 0) {
-            throw new Error(problems.join('; '));
-          }
-        }
-      }];
+      return [
+        itemsAreStrings(endpoints, '@context'),
+        itemsAreStrings(endpoints, 'type')
+      ];
     }
   }]
 });

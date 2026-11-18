@@ -11,6 +11,7 @@ import {
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
+import {randomUUID} from 'node:crypto';
 
 const tag = VCALM_TAG;
 const {match: issuers} = filterByTag({property: 'issuers', tags: [tag]});
@@ -31,8 +32,12 @@ describeNormativeStatement({
         name: 'positive: POST /credentials/status updates an issued ' +
           'credential',
         run: async () => {
+          // The status purpose comes from the issuer's status list options.
+          // The VCALM issue options do not define one. The credential is
+          // referred to by the `credentialId` the issue request sets.
+          const credentialId = `urn:uuid:${randomUUID()}`;
           const issued = await endpoints.issueCredential(undefined, {
-            statusPurpose: 'revocation'
+            credentialId
           });
           shouldReturnHttpResult(issued);
           issued.result.status.should.equal(201, 'Expected status code 201.');
@@ -40,12 +45,12 @@ describeNormativeStatement({
           const credentialStatus = Array.isArray(credential?.credentialStatus) ?
             credential.credentialStatus[0] :
             credential?.credentialStatus;
-          const {data, result} = await endpoints.updateCredentialStatus({
-            credentialId: credential?.id,
+          const {result} = await endpoints.updateCredentialStatus({
+            credentialId,
             credentialStatus,
             status: false
           });
-          shouldUpdateCredentialStatus({data, result});
+          shouldUpdateCredentialStatus({result});
         }
       },
       {

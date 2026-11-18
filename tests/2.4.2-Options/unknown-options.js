@@ -22,6 +22,19 @@ describeNormativeStatement({
     link: `${TR}#options`,
     subtests({endpoints}) {
       return [{
+        // control for the negative below: the same issue request without
+        // the unknown option is accepted
+        name: 'positive: an issue request with only known options is ' +
+          'accepted',
+        run: async () => {
+          const {result, issuedVc} = await endpoints.issueCredential();
+          should.exist(result, 'Expected an HTTP response.');
+          result.status.should.equal(201,
+            'Expected the issue request without the unknown option to ' +
+            'succeed.');
+          should.exist(issuedVc, 'Expected an issued credential.');
+        }
+      }, {
         name: 'negative: an issue request with an unknown option is rejected',
         run: async () => {
           const {result} = await endpoints.issueWithUnknownOption();

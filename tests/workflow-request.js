@@ -62,10 +62,10 @@ async function getZcapClient({keySeed}) {
 }
 
 /**
- * Send a signed GET or POST with a capability.
+ * Send a signed GET, POST or DELETE with a capability.
  *
  * @param {object} options - Options.
- * @param {string} options.method - `GET` or `POST`.
+ * @param {string} options.method - `GET`, `POST` or `DELETE`.
  * @param {string} options.url - The request URL.
  * @param {object} [options.json] - JSON body for POST.
  * @param {object} [options.headers] - Extra headers.
@@ -80,9 +80,17 @@ export async function workflowRequest({
 }) {
   try {
     const zcapClient = await getZcapClient({keySeed});
-    const result = method === 'GET' ?
-      await zcapClient.read({url, capability, headers}) :
-      await zcapClient.write({url, json, capability, headers});
+    let result;
+    if(method === 'GET') {
+      result = await zcapClient.read({url, capability, headers});
+    } else if(method === 'DELETE') {
+      // deleting a resource is a write action on its zcap
+      result = await zcapClient.request({
+        url, capability, method: 'delete', action: 'write', headers
+      });
+    } else {
+      result = await zcapClient.write({url, json, capability, headers});
+    }
     // ezcap parses the response body onto `data`
     return {data: result.data, result};
   } catch(error) {

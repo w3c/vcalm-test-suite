@@ -32,6 +32,7 @@ import {
   resolveWorkflowResourceUrl,
   resolveWorkflowsBaseUrl
 } from './helpers.js';
+import {requireResourceId} from './not-applicable.js';
 
 function settleHttp({data, result, error}) {
   const httpResult = result ?? error?.response;
@@ -91,6 +92,34 @@ export class TestEndpoints {
     };
   }
 
+  // Issue a credential and read the id the issue response gives it. The
+  // spec does not say the issuer keeps an id the request set, so the id
+  // comes from the returned credential, not from the request.
+  async issueAndGetCredentialId(credential) {
+    const issued = await this.issueCredential(credential);
+    return {...issued, credentialId: issued.issuedVc?.id};
+  }
+
+  // POST a raw request body to the issuer, for bodies that are not JSON.
+  // A zcap invocation signs a JSON body, so an issuer reached through a zcap
+  // cannot be sent one; the result is then undefined.
+  async issueWithRawBody(body) {
+    if(this.issuer.settings.zcap) {
+      return undefined;
+    }
+    const {headers: _headers = {}, endpoint, oauth2} = this.issuer.settings;
+    const {makeHttpsRequest} = await import(
+      'vc-test-suite-implementations/lib/requests.js'
+    );
+    return settleHttp(await makeHttpsRequest({
+      url: endpoint,
+      method: 'POST',
+      body,
+      headers: {..._headers, 'content-type': 'application/json'},
+      oauth2
+    }));
+  }
+
   credentialResourceUrl(credentialId) {
     return resolveCredentialResourceUrl(
       this.issuer.settings.endpoint,
@@ -98,9 +127,22 @@ export class TestEndpoints {
     );
   }
 
+  // A signed call to the issuer, for an issuer entry that has a `zcap`.
+  issuerOperationRequest({method, url, zcap}) {
+    const capability = typeof zcap.capability === 'string' ?
+      JSON.parse(zcap.capability) : zcap.capability;
+    return workflowRequest({
+      method, url, capability, keySeed: zcap.keySeed
+    });
+  }
+
   async getCredential(credentialId) {
     const url = this.credentialResourceUrl(credentialId);
-    const settled = settleHttp(await this.issuer.get({url}));
+    const {zcap} = this.issuer.settings;
+    const settled = zcap ?
+      settleHttp(await this.issuerOperationRequest(
+        {method: 'GET', url, zcap})) :
+      settleHttp(await this.issuer.get({url}));
     return {
       credential: extractIssuedCredential(settled.data),
       ...settled
@@ -109,6 +151,11 @@ export class TestEndpoints {
 
   async deleteCredential(credentialId) {
     const url = this.credentialResourceUrl(credentialId);
+    const {zcap} = this.issuer.settings;
+    if(zcap) {
+      return settleHttp(await this.issuerOperationRequest(
+        {method: 'DELETE', url, zcap}));
+    }
     const {headers: _headers = {}, oauth2} = this.issuer.settings;
     const {makeHttpsRequest} = await import(
       'vc-test-suite-implementations/lib/requests.js'
@@ -123,7 +170,12 @@ export class TestEndpoints {
 
   async updateCredentialStatus(body) {
     const url = resolveUpdateStatusUrl(this.status.settings.endpoint);
-    return settleHttp(await this.status.post({url, json: body}));
+    // implementation options (for example, the indexAllocator the status
+    // service uses) are merged into the body, as verifier options are
+    const {options = {}} = this.status.settings;
+    return settleHttp(await this.status.post({
+      url, json: {...body, ...options}
+    }));
   }
 
   async verify(vc, options) {
@@ -288,7 +340,9 @@ export class TestEndpoints {
   async createWorkflowWithBody(body) {
     const settled = settleHttp(await this.workflow.post({json: body}));
     return {
-      workflowId: body?.id ?? extractLocationResourceId(settled.result),
+      // the Location header names the created workflow; the sent id is
+      // used only when the response has no Location header
+      workflowId: extractLocationResourceId(settled.result) ?? body?.id,
       sent: body,
       ...settled
     };
@@ -315,6 +369,7 @@ export class TestEndpoints {
   }
 
   async getWorkflowConfiguration(workflowId) {
+    requireResourceId(workflowId, 'workflow');
     const url = this.workflowResourceUrl(workflowId);
     const settled = settleHttp(await this.workflowInstanceRequest({
       method: 'GET', url, workflowId
@@ -323,6 +378,7 @@ export class TestEndpoints {
   }
 
   async createExchange(workflowId, body = createExchangeRequest()) {
+    requireResourceId(workflowId, 'workflow');
     const url = this.workflowResourceUrl(workflowId, undefined);
     const exchangesUrl = `${url}/exchanges`;
     const settled = settleHttp(await this.workflowInstanceRequest({
@@ -335,6 +391,7 @@ export class TestEndpoints {
   }
 
   async getExchangeProtocols(workflowId, exchangeId) {
+    requireResourceId(exchangeId, 'exchange');
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'protocols');
     const settled = settleHttp(await this.workflowInstanceRequest({
       method: 'GET', url, workflowId
@@ -343,6 +400,7 @@ export class TestEndpoints {
   }
 
   async getCurrentExchangeVpr(workflowId, exchangeId) {
+    requireResourceId(exchangeId, 'exchange');
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'request');
     const settled = settleHttp(await this.workflowInstanceRequest({
       method: 'GET',
@@ -354,6 +412,7 @@ export class TestEndpoints {
   }
 
   async participateInExchange(workflowId, exchangeId, body = {}) {
+    requireResourceId(exchangeId, 'exchange');
     const url = this.workflowResourceUrl(workflowId, exchangeId);
     const settled = settleHttp(await this.workflowInstanceRequest({
       method: 'POST', url, json: body, workflowId
@@ -362,6 +421,7 @@ export class TestEndpoints {
   }
 
   async getExchangeState(workflowId, exchangeId) {
+    requireResourceId(exchangeId, 'exchange');
     const url = this.workflowResourceUrl(workflowId, exchangeId);
     const settled = settleHttp(await this.workflowInstanceRequest({
       method: 'GET', url, workflowId

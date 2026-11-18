@@ -157,23 +157,18 @@ export function createVerifiablePresentationRequest({queries} = {}) {
 }
 
 /**
- * §3.4.3 DID Authentication query fixture.
+ * §3.4.3.1 DID Authentication query fixture, in the form of the spec's query
+ * table: type, and the optional acceptedMethods and acceptedCryptosuites.
+ * The challenge and domain belong to the Verifiable Presentation Request,
+ * not to the query.
  *
- * @param {object} [options] - Options.
- * @param {string} [options.challenge] - Challenge string.
- * @param {string} [options.domain] - Domain string.
  * @returns {object} DID Authentication query map.
  */
-export function createDidAuthenticationQuery({
-  challenge = `urn:uuid:${uuidv4()}`,
-  domain = 'vcalm.test'
-} = {}) {
+export function createDidAuthenticationQuery() {
   return {
     type: 'DIDAuthentication',
-    acceptedMethods: [{method: 'web'}],
-    acceptedCryptosuites: [{cryptosuite: 'eddsa-rdfc-2022'}],
-    challenge,
-    domain
+    acceptedMethods: [{method: 'key'}],
+    acceptedCryptosuites: [{cryptosuite: 'eddsa-rdfc-2022'}]
   };
 }
 

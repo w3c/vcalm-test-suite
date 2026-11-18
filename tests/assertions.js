@@ -59,26 +59,11 @@ export function shouldBeIssuedVc({
   }
 }
 
-export function skipIfNotImplemented(test, {result, label}) {
-  if(result?.status === 404 || result?.status === 501) {
-    test.skip(`${label} not implemented (HTTP ${result.status}).`);
-  }
-}
-
-export function skipIfVerificationClientError(test, {result, label}) {
-  if(result?.status >= 400 && result?.status < 500) {
-    test.skip(
-      `${label} returned HTTP ${result.status} instead of 200 with ` +
-      'verified: false.'
-    );
-  }
-}
-
-export function shouldUpdateCredentialStatus({data, result}) {
+// The OpenAPI defines the 200 response of the status update with no body, so
+// only the status code is checked.
+export function shouldUpdateCredentialStatus({result}) {
   shouldReturnHttpResult({result});
   result.status.should.equal(200, 'Expected status code 200.');
-  should.exist(data, 'Expected a response body.');
-  data.should.be.an('object', 'Expected the response body to be an object.');
 }
 
 export function shouldRejectMalformedStatusRequest({result}) {
@@ -117,51 +102,6 @@ export function shouldRejectMalformedWorkflowRequest({result}) {
   );
 }
 
-export function shouldSatisfyConformanceProbe({
-  result,
-  error,
-  data,
-  label,
-  probeKind
-}) {
-  const httpResult = result ?? error?.response;
-  should.exist(
-    httpResult,
-    `Expected HTTP response for ${label}, got error: ${error?.message}`
-  );
-  httpResult.status.should.not.equal(
-    404,
-    `Expected ${label} to be exposed (got 404 Not Found).`
-  );
-  httpResult.status.should.not.equal(
-    501,
-    `Expected ${label} to be implemented (got 501 Not Implemented).`
-  );
-
-  switch(probeKind) {
-    case 'issueMalformed':
-      shouldRejectMalformedIssueRequest({result: httpResult});
-      break;
-    case 'verifyMalformed':
-      if(httpResult.status === 200) {
-        should.exist(
-          data,
-          `Expected verification response body for ${label}.`
-        );
-        data.should.have.property('verified');
-        data.verified.should.equal(
-          false,
-          `Expected verified:false for malformed ${label} probe.`
-        );
-      } else {
-        shouldRejectMalformedIssueRequest({result: httpResult});
-      }
-      break;
-    default:
-      break;
-  }
-}
-
 export function shouldVerifyCredential({
   data,
   result,
@@ -194,18 +134,17 @@ export function verificationWarningsIn(data) {
   return [];
 }
 
+// The spec sets verified to true when no errors were detected, and false
+// otherwise. problemDetails holds errors and warnings together, and the spec
+// does not mark which is which, so a problemDetails item cannot contradict
+// verified. Only an explicit errors list can.
 export function shouldReflectVerificationErrorsVsWarnings(data) {
   data.should.have.property('verified');
-  const errors = verificationErrorsIn(data);
-  if(errors.length > 0) {
+  data.verified.should.be.a('boolean');
+  if(Array.isArray(data.errors)) {
     data.verified.should.equal(
-      false,
-      'Expected verified to be false when errors are included.'
-    );
-  } else {
-    data.verified.should.equal(
-      true,
-      'Expected verified to be true when no errors are included.'
+      data.errors.length === 0,
+      'Expected verified to be true exactly when no errors are included.'
     );
   }
 }
@@ -227,25 +166,6 @@ export function shouldNotReportVerifiedTrue({data, result}) {
     false,
     'Expected verification of invalid input to report verified:false.'
   );
-}
-
-export function shouldReportVerificationFailure({
-  data,
-  result,
-  operation = 'verifyCredential'
-}) {
-  shouldReturnHttpResult({result});
-  result.status.should.equal(200, 'Expected status code 200.');
-  data.should.be.an('object', 'Expected a verification result object.');
-  data.verified.should.equal(false, 'Expected verified to be false.');
-  const errors = verificationErrorsIn(data);
-  const problemDetails = Array.isArray(data.problemDetails) ?
-    data.problemDetails : [];
-  (errors.length > 0 || problemDetails.length > 0).should.equal(
-    true,
-    'Expected verification errors or problemDetails in the response.'
-  );
-  shouldSatisfyOpenApi({result, data, operation});
 }
 
 export function shouldVerifyPresentation({data, result}) {
@@ -270,40 +190,36 @@ export function shouldSatisfyVprQueryRequirements(vpr) {
   }
 }
 
+// The OpenAPI lists 201 and 204 and describes a Location header for both,
+// but does not mark the header required, so it is checked only when present.
 export function shouldCreateWorkflow({result, error}) {
   shouldReturnHttpResult({result, error});
   [201, 204].should.include(
     result.status,
     'Expected status code 201 or 204.'
   );
-  const location = result.headers?.get?.('location') ??
-    result.headers?.get?.('Location');
-  should.exist(location, 'Expected Location header.');
+  const location = result.headers?.get?.('location');
+  if(location !== null && location !== undefined) {
+    location.should.be.a('string').and.not.be.empty;
+  }
 }
 
 export function shouldCreateExchange({result, error}) {
   shouldCreateWorkflow({result, error});
 }
 
-export function shouldGetWorkflowConfiguration({data, result, error, sent}) {
+// GetWorkflowResponse has no required properties, and the spec does not say
+// the configuration echoes what was sent, so fields are checked only when
+// present.
+export function shouldGetWorkflowConfiguration({data, result, error}) {
   shouldReturnHttpResult({result, error});
   result.status.should.equal(200, 'Expected status code 200.');
   data.should.be.an('object');
-  data.should.have.property('steps');
-  if(sent) {
-    shouldRoundTripWorkflowConfiguration({sent, configuration: data});
+  if(data.steps !== undefined) {
+    data.steps.should.be.an('object');
   }
-}
-
-export function shouldRoundTripWorkflowConfiguration({sent, configuration}) {
-  if(sent.id) {
-    configuration.should.have.property('id', sent.id);
-  }
-  if(sent.initialStep) {
-    configuration.should.have.property('initialStep', sent.initialStep);
-  }
-  for(const stepName of Object.keys(sent.steps ?? {})) {
-    configuration.steps.should.have.property(stepName);
+  if(data.initialStep !== undefined) {
+    data.initialStep.should.be.a('string');
   }
 }
 
@@ -432,22 +348,6 @@ export function shouldBeCreatedPresentation({data, result, error}) {
   });
 }
 
-export function shouldExposeServiceEndpoint({result, error, label}) {
-  const httpResult = result ?? error?.response;
-  should.exist(
-    httpResult,
-    `Expected HTTP response for ${label}, got error: ${error?.message}`
-  );
-  httpResult.status.should.not.equal(
-    404,
-    `Expected ${label} to be exposed (got 404 Not Found).`
-  );
-  httpResult.status.should.not.equal(
-    501,
-    `Expected ${label} to be implemented (got 501 Not Implemented).`
-  );
-}
-
 export function shouldUseJsonContentType(result) {
   should.exist(result, 'Expected an HTTP result.');
   const contentType = result.headers?.get?.('content-type') ??
@@ -459,13 +359,14 @@ export function shouldUseJsonContentType(result) {
   );
 }
 
+// 3-8-error-handling-1: type is present and is a URL. The spec says only
+// "a URL", so any absolute URL is accepted.
 export function shouldBeProblemDetails(problem) {
   problem.should.be.an('object');
   problem.should.have.property('type');
-  problem.type.should.be.a('string').and.match(
-    /^https?:\/\//,
-    'Expected ProblemDetails.type to be a URL.'
-  );
+  problem.type.should.be.a('string');
+  (() => new URL(problem.type)).should.not.throw(
+    TypeError, undefined, 'Expected ProblemDetails.type to be a URL.');
 }
 
 export function shouldHaveReadableProblemDetails(problem) {
@@ -478,41 +379,59 @@ export function shouldHaveReadableProblemDetails(problem) {
   }
 }
 
-export function shouldRejectUnknownOption({data, result}) {
-  should.exist(result, 'Expected an HTTP result.');
-  result.status.should.be.at.least(
-    400,
-    'Expected HTTP error for unknown option.'
-  );
-  result.status.should.be.below(
-    500,
-    'Expected client error for unknown option.'
-  );
-  const problems = [];
-  if(data?.type) {
-    problems.push(data);
+// 3.4.3.1: type is DIDAuthentication. acceptedMethods and
+// acceptedCryptosuites are optional; when present, each is an array of
+// objects with a method or cryptosuite name.
+export function shouldBeDidAuthenticationQuery(query) {
+  query.should.be.an('object', 'Expected the query to be an object.');
+  should.exist(query.type, 'Expected a type.');
+  query.type.should.equal('DIDAuthentication');
+  if(query.acceptedMethods !== undefined) {
+    shouldBeAcceptedMethods(query.acceptedMethods);
   }
-  if(Array.isArray(data?.problemDetails)) {
-    problems.push(...data.problemDetails);
+  if(query.acceptedCryptosuites !== undefined) {
+    shouldBeAcceptedCryptosuites(query.acceptedCryptosuites);
   }
-  if(Array.isArray(data?.errors)) {
-    problems.push(...data.errors);
-  }
-  problems.length.should.be.above(
-    0,
-    'Expected ProblemDetails in the error response.'
-  );
-  problems.some(problem =>
-    String(problem.type).includes('UNKNOWN_OPTION_PROVIDED')
-  ).should.equal(
-    true,
-    'Expected UNKNOWN_OPTION_PROVIDED ProblemDetails type.'
-  );
 }
 
-export function shouldBeDidAuthenticationQuery(query) {
-  query.should.be.an('object');
-  query.type.should.equal('DIDAuthentication');
+export function shouldBeAcceptedMethods(acceptedMethods) {
+  acceptedMethods.should.be.an('array', 'Expected acceptedMethods array.');
+  for(const item of acceptedMethods) {
+    item.should.be.an('object', 'Expected each acceptedMethods item ' +
+      'to be an object.');
+    should.exist(item.method, 'Expected each acceptedMethods item to ' +
+      'have a method.');
+    item.method.should.be.a('string').and.not.be.empty;
+  }
+}
+
+export function shouldBeAcceptedCryptosuites(acceptedCryptosuites) {
+  acceptedCryptosuites.should.be.an('array',
+    'Expected acceptedCryptosuites array.');
+  for(const item of acceptedCryptosuites) {
+    item.should.be.an('object', 'Expected each acceptedCryptosuites item ' +
+      'to be an object.');
+    should.exist(item.cryptosuite, 'Expected each acceptedCryptosuites ' +
+      'item to have a cryptosuite.');
+    item.cryptosuite.should.be.a('string').and.not.be.empty;
+  }
+}
+
+/**
+ * Self-test of a checker: it must reject a known-bad value.
+ *
+ * @param {Function} check - The assertion to test.
+ * @param {*} value - A value that violates the statement.
+ * @param {string} label - What is wrong with the value.
+ */
+export function shouldRejectKnownBad(check, value, label) {
+  let rejected = false;
+  try {
+    check(value);
+  } catch{
+    rejected = true;
+  }
+  rejected.should.equal(true, `Expected the checker to reject ${label}.`);
 }
 
 export function shouldBeDidAuthenticationPresentation({

@@ -14,11 +14,3 @@ describeSkippedSection({
   link,
   statements: [NORMATIVE['1-3-conformance-5']]
 });
-
-describeSkippedSection({
-  section: 'Conformance',
-  columnLabel: 'Holder',
-  property: 'holders',
-  link,
-  statements: [NORMATIVE['1-3-conformance-5']]
-});

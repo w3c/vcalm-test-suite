@@ -140,8 +140,10 @@ presentation). The suite derives the sibling path from `endpoint`:
 | `workflows` | `…/workflows` or gateway root (optional) |
 | `interactions` | gateway root or `…/interactions` (optional) |
 
-Optional endpoints that return **404** or **501** are skipped. See
-`localConfig.example.cjs` for unified-gateway vs explicit-path templates.
+A role with no configured endpoint gets skipped rows. The suite does not
+treat a 404 or 501 as "not implemented", since the OpenAPI does not list
+those codes for these operations. See `localConfig.example.cjs` for
+unified-gateway vs explicit-path templates.
 
 ### Optional profiles
 
@@ -181,6 +183,11 @@ so they override the suite's values.
 - If the entry has a `zcap`, the suite sets `controller` to the DID of the
   zcap's key by default, so the client controls the workflows it creates. An
   explicit `controller` in `options` overrides this.
+- With a `zcap`, requests to a created workflow instance (get configuration,
+  exchanges) invoke the instance's root capability
+  (`urn:zcap:root:<instance URL>`) with the zcap's key. This is a harness
+  convention for zcap-based implementations such as Veres, not a requirement
+  of the VCALM spec, and no test treats it as normative.
 
 The options are implementation-specific, so they belong in the implementation's
 registration, not in the suite.

@@ -9,10 +9,7 @@ describeSkippedSection({
   section: 'Interaction URL Format',
   columnLabel: 'Interactions',
   link: `${TR}#interaction-url-format`,
-  statements: [
-    NORMATIVE['3-7-1-interaction-url-format-1'],
-    NORMATIVE['3-7-1-interaction-url-format-1']
-  ]
+  statements: [NORMATIVE['3-7-1-interaction-url-format-1']]
 });
 
 describeSkippedSection({

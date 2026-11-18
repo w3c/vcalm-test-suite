@@ -6,6 +6,7 @@ import chai from 'chai';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
+import {NotApplicable} from '../not-applicable.js';
 import {TR} from '../skipped-section.js';
 import {VCALM_TAG} from '../helpers.js';
 
@@ -13,7 +14,7 @@ const should = chai.should();
 const {match} = filterByTag({property: 'issuers', tags: [VCALM_TAG]});
 
 describeNormativeStatement({
-  section: '3.2.2 Get a Specific Credential',
+  section: 'Conformance',
   match,
   columnLabel: 'Issuer',
   statements: [{
@@ -23,9 +24,14 @@ describeNormativeStatement({
       return [{
         name: 'positive: GET of an issued credential does not return 418',
         run: async () => {
-          const issuedVc = await endpoints.issue();
+          const {issuedVc, credentialId} =
+            await endpoints.issueAndGetCredentialId();
           should.exist(issuedVc, 'Expected the issuer to issue a VC.');
-          const {result} = await endpoints.getCredential(issuedVc.id);
+          if(!credentialId) {
+            throw new NotApplicable('The issued credential has no id, so ' +
+              'the suite cannot address it.');
+          }
+          const {result} = await endpoints.getCredential(credentialId);
           should.exist(result, 'Expected an HTTP response.');
           result.status.should.not.equal(
             418, 'Expected a credential GET to be answered normally.');

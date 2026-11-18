@@ -66,10 +66,14 @@ export function describeNormativeStatement({
   unimplemented = false
 }) {
   const cases = statements ?? [{statement, link, subtests}];
-  for(const item of cases) {
-    recordRow(item.statement);
-  }
   const matrix = match instanceof Map ? match : new Map(match);
+  // a statement has a row only when an implementation matches the endpoint,
+  // so statements nobody implements stay uncovered and get a skipped row
+  if(matrix.size > 0) {
+    for(const item of cases) {
+      recordRow(item.statement);
+    }
+  }
   describe(section, function() {
     setupMatrix.call(this, matrix, columnLabel);
     if(unimplemented) {

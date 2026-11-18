@@ -57,17 +57,15 @@ describeNormativeStatement({
         name: 'positive: GET /workflows/{localWorkflowId} returns the ' +
           'configuration',
         run: async () => {
-          const sent = createWorkflowRequest();
-          const created = await endpoints.createWorkflow(sent);
+          const created = await endpoints.createWorkflow(
+            createWorkflowRequest());
           shouldCreateWorkflow(created);
           const configuration = await endpoints.getWorkflowConfiguration(
             created.workflowId
           );
-          // compare with the body that was sent (after implementation
-          // options), since the server may generate the ID
-          shouldGetWorkflowConfiguration({
-            ...configuration, sent: created.sent
-          });
+          // the spec does not say the configuration echoes what was sent,
+          // so it is not compared with the request
+          shouldGetWorkflowConfiguration(configuration);
         }
       },
       {
@@ -153,7 +151,7 @@ describeSkippedSection({
   columnLabel: 'Workflow',
   property: 'workflows',
   link: `${TR}#create-workflow`,
-  statements: [NORMATIVE['3-6-1-create-workflow-22']]
+  statements: [NORMATIVE['3-6-1-create-workflow-2']]
 });
 
 describeSkippedSection({

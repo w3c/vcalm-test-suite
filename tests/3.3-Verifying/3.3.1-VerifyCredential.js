@@ -23,6 +23,7 @@ import {filterByTag} from 'vc-test-suite-implementations';
 import {issueTestCredential} from '../test-issuer.js';
 import {NORMATIVE} from '../normative-statements.js';
 import {randomUUID} from 'node:crypto';
+import {shouldBeListedStatus} from '../openapi.js';
 
 const should = chai.should();
 const tag = VCALM_TAG;
@@ -108,39 +109,45 @@ describeNormativeStatement({
 });
 
 describeNormativeStatement({
-  section: '3.3.1 Verify Credential',
+  section: 'Conformance',
   match: implementationsWithIssuerAndVerifier(match, tag),
   columnLabel: 'Verifier',
   statements: [{
-    statement: NORMATIVE['3-3-1-verify-credential-2'],
+    statement: NORMATIVE['1-3-conformance-3'],
     link,
     subtests({endpoints}) {
       return [{
-        name: 'negative: a problem detail has a type and a title',
+        name: 'negative: a problem detail has a type',
         run: async () => {
-          const {data} = await endpoints.verifyCredential(
-            createVerifyCredentialWithoutProof());
-          should.exist(data, 'Expected a verify response.');
-          const [problem] = data.problemDetails ?? [];
-          should.exist(problem, 'Expected problemDetails for an invalid VC.');
-          problem.type.should.be.a('string');
-          problem.title.should.be.a('string');
+          const {data, result, error} = await endpoints.verifyCredential(
+            createVerifyCredentialWithoutProof(),
+            {returnProblemDetails: true});
+          should.exist(result, `Expected an HTTP response: ${error?.message}`);
+          // 400 is listed with no body, so a body is checked only with 200
+          shouldBeListedStatus(result.status, 'verifyCredential');
+          if(result.status !== 200) {
+            return;
+          }
+          should.exist(data, 'Expected a VerificationResult body with 200.');
+          data.verified.should.equal(false);
+          for(const problem of data.problemDetails ?? []) {
+            problem.type.should.be.a('string');
+            // title is SHOULD in the spec, so it is not required here.
+            if(problem.title !== undefined) {
+              problem.title.should.be.a('string');
+            }
+          }
         }
-      }];
-    }
-  }, {
-    statement: NORMATIVE['3-3-1-verify-credential-5'],
-    link,
-    subtests({endpoints}) {
-      return [{
+      }, {
         name: 'positive: each proof result is a verification result',
         run: async () => {
           const issuedVc = await endpoints.issue();
           should.exist(issuedVc, 'Expected the issuer to issue a VC.');
-          const {data} = await endpoints.verifyCredential(issuedVc);
-          should.exist(data.results, 'Expected verification results.');
-          data.results.proof.should.be.an('array').that.is.not.empty;
-          for(const item of data.results.proof) {
+          const {data} = await endpoints.verifyCredential(issuedVc,
+            {returnResults: true});
+          should.exist(data, 'Expected a VerificationResult body.');
+          // results and results.proof are not required by the schema
+          for(const item of data.results?.proof ?? []) {
             item.verified.should.be.a('boolean');
           }
         }

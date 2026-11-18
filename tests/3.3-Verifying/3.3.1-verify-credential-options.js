@@ -2,9 +2,11 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-// Statements about the verify request options and the credentialSchema and
-// credentialStatus result arrays. The OpenAPI schema defines the options
-// object and the item shapes, so the response is checked against it.
+// The verify request options are checked as part of the verifier's interface
+// conformance. The response is checked against the OpenAPI schema, which
+// defines the options object and the credentialSchema and credentialStatus
+// result items. Those result items are only present when the verifier returns
+// them, and our verifier does not, so they are not exercised here.
 
 import {implementationsWithIssuerAndVerifier, VCALM_TAG} from '../helpers.js';
 import {describeNormativeStatement} from '../statement-suite.js';
@@ -19,12 +21,12 @@ const {match: tagged} = filterByTag({tags: [VCALM_TAG]});
 const match = implementationsWithIssuerAndVerifier(tagged, VCALM_TAG);
 
 describeNormativeStatement({
-  section: '3.3.1 Verify Credential',
+  section: 'Conformance',
   match,
   columnLabel: 'Verifier',
   statements: [{
-    statement: NORMATIVE['3-3-1-verify-credential-1'],
-    link: `${TR}#verify-credential`,
+    statement: NORMATIVE['1-3-conformance-3'],
+    link: `${TR}#conformance`,
     subtests({endpoints}) {
       return [{
         name: 'positive: a verify request with the documented options is ' +
@@ -39,17 +41,5 @@ describeNormativeStatement({
         }
       }];
     }
-  }, {
-    statement: NORMATIVE['3-3-1-verify-credential-3'],
-    link: `${TR}#verify-credential`,
-    skip: true,
-    skipMessage: 'Not exercised: the verifier is not configured to return ' +
-      'credentialSchema results.'
-  }, {
-    statement: NORMATIVE['3-3-1-verify-credential-4'],
-    link: `${TR}#verify-credential`,
-    skip: true,
-    skipMessage: 'Not exercised: the verifier is not configured to return ' +
-      'credentialStatus results.'
   }]
 });

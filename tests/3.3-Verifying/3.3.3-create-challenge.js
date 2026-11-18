@@ -12,7 +12,7 @@ import {VCALM_TAG} from '../helpers.js';
 const {match} = filterByTag({property: 'verifiers', tags: [VCALM_TAG]});
 
 describeNormativeStatement({
-  section: '3.3.3 Create Challenge',
+  section: 'Conformance',
   match,
   columnLabel: 'Verifier',
   statements: [{

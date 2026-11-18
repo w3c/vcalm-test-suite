@@ -9,8 +9,9 @@
 
 import {NORMATIVE, REQUIRED, SECTION} from '../normative-statements.js';
 import {covered} from '../coverage-registry.js';
-import {describeSkippedSection} from '../skipped-section.js';
+import {describeNormativeStatement} from '../statement-suite.js';
 import fs from 'node:fs';
+import {TR} from '../skipped-section.js';
 
 // Load every test module before reading `covered`. Mocha loads this file
 // in an unspecified order, and imports are cached, so each module still runs
@@ -34,6 +35,20 @@ for(const key of REQUIRED) {
   }
   bySection.get(SECTION[key]).push(NORMATIVE[key]);
 }
+// Uncovered statements get one skipped row, under a single placeholder
+// column for an implementation that does not exist, so no implementation
+// appears to have tested them.
+const NOT_IMPLEMENTED = new Map([['Not implemented', {}]]);
 for(const [section, statements] of bySection) {
-  describeSkippedSection({section, statements});
+  describeNormativeStatement({
+    section,
+    match: NOT_IMPLEMENTED,
+    columnLabel: 'Implementation',
+    statements: statements.map(statement => ({
+      statement,
+      link: `${TR}#conformance`,
+      skip: true,
+      skipMessage: 'Not implemented.'
+    }))
+  });
 }
