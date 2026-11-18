@@ -6,6 +6,7 @@ import chai from 'chai';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
+import {shouldBeListedStatus} from '../openapi.js';
 import {TR} from '../skipped-section.js';
 import {VCALM_TAG} from '../helpers.js';
 
@@ -25,8 +26,10 @@ describeNormativeStatement({
         run: async () => {
           const {result} = await endpoints.issueWithUnknownOption();
           should.exist(result, 'Expected an HTTP response.');
-          result.status.should.be.within(
-            400, 499, 'Expected a client error for an unknown option.');
+          // the OpenAPI lists 201 and 400 for issueCredential
+          shouldBeListedStatus(result.status, 'issueCredential');
+          result.status.should.not.equal(
+            201, 'Expected an error for an unknown option.');
         }
       }];
     }

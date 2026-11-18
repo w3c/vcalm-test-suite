@@ -26,8 +26,13 @@ export const OPENAPI_SPEC_PATH = path.join(
  * VCALM operation paths from pinned oas.yaml (path only, no server prefix).
  */
 export const OPENAPI_OPERATIONS = {
-  issueCredential: {method: 'POST', path: '/credentials/issue'},
-  verifyCredential: {method: 'POST', path: '/credentials/verify'},
+  // statuses: the response codes oas.yaml lists for the operation
+  issueCredential: {
+    method: 'POST', path: '/credentials/issue', statuses: [201, 400]
+  },
+  verifyCredential: {
+    method: 'POST', path: '/credentials/verify', statuses: [200, 400]
+  },
   verifyPresentation: {method: 'POST', path: '/presentations/verify'},
   createPresentation: {method: 'POST', path: '/presentations'},
   deriveCredential: {method: 'POST', path: '/credentials/derive'},
@@ -35,6 +40,19 @@ export const OPENAPI_OPERATIONS = {
   getCredential: {pathTemplate: '/credentials/{id}', method: 'GET'},
   deleteCredential: {pathTemplate: '/credentials/{id}', method: 'DELETE'}
 };
+
+/**
+ * Assert a status is one the OpenAPI lists for an operation.
+ *
+ * @param {number} status - The HTTP status.
+ * @param {string} operation - Key from OPENAPI_OPERATIONS.
+ */
+export function shouldBeListedStatus(status, operation) {
+  const {statuses} = OPENAPI_OPERATIONS[operation];
+  chai.expect(statuses).to.include(status,
+    `Expected a status the OpenAPI lists for ${operation} ` +
+    `(${statuses.join(', ')}).`);
+}
 
 const disabled = process.env.VCALM_OPENAPI === '0';
 let openApiReady = false;

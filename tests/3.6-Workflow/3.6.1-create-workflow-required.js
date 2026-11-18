@@ -2,37 +2,32 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-// REQUIRED fields of a create-workflow request. The OpenAPI schema has no
-// `required` list, so this checks the server rejects a request that omits
-// each field. See ../overlay.js.
+// REQUIRED fields of a create-workflow request. The sentences require the
+// client to pass each field and state no server behavior for a request that
+// omits one, so there is no refusal to test on the wire. Each row's cell is
+// not applicable (skipped), not passed.
 
-import {createWorkflowRequest} from '../mock.data.js';
+import * as notApplicable from '../not-applicable.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
-import {shouldRejectMalformedWorkflowRequest} from '../assertions.js';
 import {TR} from '../skipped-section.js';
 import {VCALM_TAG} from '../helpers.js';
 
 const {match} = filterByTag({property: 'workflows', tags: [VCALM_TAG]});
 
-function withoutField(field) {
-  const body = {...createWorkflowRequest()};
-  delete body[field];
-  return body;
-}
+// No refusal is defined for these sentences, so there is no implementation
+// negative.
+const NO_REFUSAL =
+  'no refusal is defined by this sentence; no implementation negative yet';
 
-function rejectsRequestWithout(field) {
-  return {
-    name: `negative: a create request without "${field}" is rejected`,
-    run: async ({endpoints}) => {
-      const created = await endpoints.createWorkflowWithBody(
-        withoutField(field));
-      shouldRejectMalformedWorkflowRequest({
-        result: created.result ?? created.error?.response
-      });
+function noRefusalFor(field) {
+  return [{
+    name: `negative: no refusal is defined for a request without "${field}"`,
+    run: async () => {
+      throw new notApplicable.NotApplicable(NO_REFUSAL);
     }
-  };
+  }];
 }
 
 describeNormativeStatement({
@@ -42,20 +37,14 @@ describeNormativeStatement({
   statements: [{
     statement: NORMATIVE['3-6-1-create-workflow-2'],
     link: `${TR}#create-workflow`,
-    subtests({endpoints}) {
-      return [rejectsRequestWithout('initialStep')].map(item => ({
-        ...item,
-        run: () => item.run({endpoints})
-      }));
+    subtests() {
+      return noRefusalFor('initialStep');
     }
   }, {
     statement: NORMATIVE['3-6-1-create-workflow-6'],
     link: `${TR}#create-workflow`,
-    subtests({endpoints}) {
-      return [rejectsRequestWithout('steps')].map(item => ({
-        ...item,
-        run: () => item.run({endpoints})
-      }));
+    subtests() {
+      return noRefusalFor('steps');
     }
   }]
 });

@@ -8,12 +8,23 @@
 // It cannot see what an implementation actually sends. OAuth2 client secrets
 // are not checked, because they are exchanged for short-lived tokens and are
 // not sent with each API request.
+//
+// The sentence constrains requests, and states no server behavior for a
+// request that uses a forbidden protocol, so there is no refusal to test on
+// the wire. The settings check reads the suite's own configuration, not the
+// implementation, so the implementation's cell is not applicable.
 
+import * as notApplicable from '../not-applicable.js';
 import {describeNormativeStatement} from '../statement-suite.js';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {NORMATIVE} from '../normative-statements.js';
 import {TR} from '../skipped-section.js';
 import {VCALM_TAG} from '../helpers.js';
+
+// No refusal is defined for the sentence, so there is no implementation
+// negative.
+const NO_REFUSAL =
+  'no refusal is defined by this sentence; no implementation negative yet';
 
 const ENDPOINT_KINDS = ['issuer', 'verifier', 'workflow'];
 const STATIC_FIELD = /^(username|password|passwd)$/i;
@@ -52,11 +63,11 @@ describeNormativeStatement({
   match,
   columnLabel: 'Implementation',
   subtests({endpoints}) {
-    return ENDPOINT_KINDS
+    const positives = ENDPOINT_KINDS
       .filter(kind => endpoints[kind])
       .map(kind => ({
-        name: `config: ${kind} endpoint declares no long-lived static ` +
-          'credentials',
+        name: `positive: the ${kind} endpoint settings declare no ` +
+          'long-lived static credentials',
         run: async () => {
           const problems = findStaticCredentials(endpoints[kind].settings);
           if(problems.length > 0) {
@@ -64,5 +75,14 @@ describeNormativeStatement({
           }
         }
       }));
+    // No refusal is defined for this sentence, so there is no implementation
+    // negative. The subtest is not applicable: the cell is skipped.
+    const negatives = [{
+      name: 'negative: no refusal is defined by this sentence',
+      run: async () => {
+        throw new notApplicable.NotApplicable(NO_REFUSAL);
+      }
+    }];
+    return [...positives, ...negatives];
   }
 });

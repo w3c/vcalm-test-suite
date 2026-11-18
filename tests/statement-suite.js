@@ -3,6 +3,7 @@
  */
 
 import {addPerTestMetadata, setupMatrix, VCALM_TAG} from './helpers.js';
+import {NotApplicable} from './not-applicable.js';
 import {recordRow} from './coverage-registry.js';
 import {TestEndpoints} from './TestEndpoints.js';
 
@@ -12,20 +13,27 @@ import {TestEndpoints} from './TestEndpoints.js';
  * if any check fails.
  *
  * @param {Array<object>} subtests - Named checks.
- * @returns {Promise<void>} Resolves when every check has run.
+ * @returns {Promise<Array<string>>} Reasons for checks that could not be
+ *   observed. Empty when every check ran.
  */
 async function runSubtests(subtests) {
   const failures = [];
+  const notApplicable = [];
   for(const subtest of subtests) {
     try {
       await subtest.run();
     } catch(error) {
-      failures.push(`${subtest.name}: ${error.message}`);
+      if(error instanceof NotApplicable) {
+        notApplicable.push(`${subtest.name}: ${error.message}`);
+      } else {
+        failures.push(`${subtest.name}: ${error.message}`);
+      }
     }
   }
   if(failures.length > 0) {
     throw new Error(failures.join('\n'));
   }
+  return notApplicable;
 }
 
 /**
@@ -87,7 +95,13 @@ export function describeNormativeStatement({
               implementation,
               link: item.link
             });
-            await runSubtests(checks);
+            const notApplicable = await runSubtests(checks);
+            // a check that could not be observed means the row is not
+            // shown as passed for this implementation
+            if(notApplicable.length > 0) {
+              this.test.cell.skipMessage = notApplicable.join('; ');
+              this.skip();
+            }
           };
           it(item.statement, run);
         }
