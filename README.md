@@ -122,6 +122,24 @@ the other VC test suites can be reused.
 An `issuers` or `holders` entry may also carry `headers` and `oauth2`
 settings, which the suite uses for its requests to that endpoint.
 
+### Workflow entries
+
+A `workflows` entry can set `options`, which are merged into each
+`POST /workflows` request body the suite sends. This is how an implementation
+supplies fields the spec leaves out or makes optional, such as a meter. Options
+are merged last, so they override the suite's values.
+
+- A key with a value replaces or adds that field in the request.
+- A key with `null` is removed from the request. For example, `id: null` lets
+  the server generate the workflow ID.
+
+A `workflows` entry can also set `zcap: {capability, keySeed}`, where
+`keySeed` names an environment variable that holds the client's secret key
+seed. The create request is signed with `capability`. The suite then sets the
+workflow's `controller` to the client's DID, unless `options` sets one, and
+signs its requests to each workflow it created with that workflow's root
+capability (`urn:zcap:root:<workflow URL>`).
+
 ### Running locally
 
 ```sh

@@ -12,13 +12,19 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   normative, keyed by section. It is generated from the spec.
 - `tests/Coverage/normative-coverage.js` adds a skipped results-matrix row for
   each MUST and REQUIRED statement that no live test covers.
-
 - `tests/sections/1-3-conformance.spec.js`: the 1.3 Conformance rows in the
   Recognized Entities test pattern (`tests/statement-test.js`), with labelled
   accepts and refuses checks. Verifier checks use a test issuer and test
   holder (`tests/signing.js`, `eddsa-rdfc-2022`).
 - `tests/normative-links.js` and `scripts/build-links.mjs`: a link to each
   statement's sentence in the TR.
+- `tests/sections/3-6-1-create-workflow.spec.js` and
+  `tests/sections/3-6-5-get-current-exchange-vpr.spec.js`: the 3.6 rows in the
+  new pattern. 3.6.5 (1) and (3) check the current exchange request of a step
+  with and without a verifiable presentation request.
+- Workflow entries can set `options`, merged into create workflow requests,
+  and a `zcap`, with which the suite signs requests to the workflows it
+  creates.
 
 ### Changed
 
@@ -34,6 +40,8 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   TR marks as normative (89, of which 45 are MUST or REQUIRED). Keywords in
   OpenAPI descriptions are checked by OpenAPI response validation instead.
 - Refusals in the new section files must use a status the OpenAPI lists.
+- The workflow conformance check no longer posts an exchange step callback,
+  which the specification describes as optional.
 - The status conformance check issues with `credentialId` instead of a
   `statusPurpose` option, which VCALM does not define. Status updates merge the
   status entry's `options` (for example `indexAllocator`), and their 200 is not

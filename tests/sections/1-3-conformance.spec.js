@@ -18,7 +18,6 @@ import {
   NotApplicable, setupStatementMatrix, statementTest
 } from '../statement-test.js';
 import {
-  shouldAcceptExchangeCallback,
   shouldBeIssuedVc,
   shouldCreateExchange,
   shouldCreateWorkflow,
@@ -34,7 +33,6 @@ import {
 } from '../assertions.js';
 import {testCredential, testPresentation} from '../signing.js';
 import chai from 'chai';
-import {createWorkflowRequest} from '../mock.data.js';
 import {describe} from 'mocha';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {randomUUID} from 'node:crypto';
@@ -197,12 +195,13 @@ describe('Conformance', function() {
         };
         await accepts('1.3 (8): create a workflow', createdWorkflow);
         await accepts('1.3 (8): get the workflow configuration', async () => {
-          const sent = createWorkflowRequest();
-          const created = await endpoints.createWorkflow(sent);
+          const created = await endpoints.createWorkflow();
           shouldCreateWorkflow(created);
           const configuration = await endpoints.getWorkflowConfiguration(
             created.workflowId);
-          shouldGetWorkflowConfiguration({...configuration, sent});
+          // compare with the body sent, after the implementation's options
+          shouldGetWorkflowConfiguration(
+            {...configuration, sent: created.sent});
         });
         await accepts('1.3 (8): create an exchange', createdExchange);
         await accepts('1.3 (8): get the exchange protocols', async () => {
@@ -226,10 +225,6 @@ describe('Conformance', function() {
           const state = await endpoints.getExchangeState(
             workflowId, exchangeId);
           shouldGetExchangeState({...state, exchangeId});
-        });
-        await accepts('1.3 (8): accept an exchange step callback', async () => {
-          shouldAcceptExchangeCallback(await endpoints.exchangeStepCallback(
-            `urn:uuid:${randomUUID()}`));
         });
         for(const item of WORKFLOW_NEGATIVE_CASES) {
           await refuses(`1.3 (8): ${item.title}`, async () => {

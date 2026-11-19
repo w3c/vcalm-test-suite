@@ -269,6 +269,27 @@ export function createWorkflowRequest({id, initialStep = 'start'} = {}) {
 }
 
 /**
+ * Merge implementation-supplied create options into a workflow request, as
+ * issuer options are merged into issue requests. Options take precedence, and
+ * a `null` value removes that key, so `id: null` lets the server generate the
+ * workflow ID. Options are implementation-specific, not part of the spec.
+ *
+ * @param {object} options - Options.
+ * @param {object} options.body - The create workflow request body.
+ * @param {object} [options.options] - Implementation-supplied options.
+ * @returns {object} The request body to send.
+ */
+export function applyWorkflowOptions({body, options = {}} = {}) {
+  const merged = {...body, ...options};
+  for(const key of Object.keys(merged)) {
+    if(merged[key] === null) {
+      delete merged[key];
+    }
+  }
+  return merged;
+}
+
+/**
  * §3.6.1 workflow step with issue-request `variables`.
  *
  * @returns {object} Create workflow request body.
