@@ -6,6 +6,7 @@
 // sections. The exchange protocol is used as a wallet uses it: POST {} to
 // the exchange returns the step's request (section 3.6.6).
 
+import {CompactEncrypt, importJWK} from 'jose';
 import chai from 'chai';
 import {createWorkflowRequest} from './mock.data.js';
 import {shouldBeListedRefusal} from './openapi.js';
@@ -103,4 +104,28 @@ export async function shouldRefuseRequest({endpoints, request, step}) {
   const {result} = await endpoints.createWorkflow(
     stepWorkflow({endpoints, request, step}));
   shouldBeListedRefusal({result, operation: 'createWorkflow'});
+}
+
+/**
+ * Encrypts a presentation to a key from a request's `acceptedEncryption`, as
+ * section 3.4.1 describes: an EnvelopedVerifiablePresentation whose `id` is a
+ * `data:application/jwt,` URL carrying a JWE compact serialization.
+ *
+ * @param {object} options - Options.
+ * @param {object} options.presentation - The presentation to encrypt.
+ * @param {object} options.jwk - A public JWK from `acceptedEncryption.jwks`.
+ * @returns {Promise<object>} The enveloped presentation.
+ */
+export async function encryptPresentation({presentation, jwk}) {
+  const alg = jwk.alg ?? 'ECDH-ES';
+  const key = await importJWK(jwk, alg);
+  const jwe = await new CompactEncrypt(
+    new TextEncoder().encode(JSON.stringify(presentation)))
+    .setProtectedHeader({alg, enc: 'A128GCM', kid: jwk.kid})
+    .encrypt(key);
+  return {
+    '@context': ['https://www.w3.org/ns/credentials/v2'],
+    type: 'EnvelopedVerifiablePresentation',
+    id: `data:application/jwt,${jwe}`
+  };
 }

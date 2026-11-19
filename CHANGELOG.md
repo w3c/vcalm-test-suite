@@ -50,8 +50,10 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   request the exchange returns for POST `{}`, and that creating a workflow
   whose step request breaks the form is refused. The 3.4.1
   `acceptedEncryption` rows check the keys the service generates, for a
-  workflows entry that sets `encryptionStep`. 3.4.1 (8) is not tested yet
-  (needs an encrypted response); 3.4.3.2 (6) is skipped: it binds holders.
+  workflows entry that sets `encryptionStep`, and 3.4.1 (8) that the exchange
+  accepts a response encrypted to those keys (JWE, `jose`) and refuses an
+  unencrypted one when `required` is true. 3.4.3.2 (6) is skipped: it binds
+  holders.
 - The test holder can sign with `eddsa-jcs-2022`
   (`@digitalbazaar/eddsa-jcs-2022-cryptosuite`), for a response that
   `eddsa-rdfc-2022` cannot sign.

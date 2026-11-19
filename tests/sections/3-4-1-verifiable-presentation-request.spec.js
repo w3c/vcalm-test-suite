@@ -18,12 +18,17 @@
 // acceptedEncryption rows are skipped.
 
 import {
-  DID_AUTHENTICATION_QUERY, servedRequest, shouldRefuseRequest
+  DID_AUTHENTICATION_QUERY, encryptPresentation, requestDomain,
+  servedRequest, shouldRefuseRequest
 } from '../presentation-request.js';
-import {setupStatementMatrix, statementTest} from '../statement-test.js';
+import {
+  NotApplicable, setupStatementMatrix, statementTest
+} from '../statement-test.js';
 import chai from 'chai';
 import {describe} from 'mocha';
 import {filterByTag} from 'vc-test-suite-implementations';
+import {shouldBeListedRefusal} from '../openapi.js';
+import {testDidAuthenticationResponse} from '../signing.js';
 import {VCALM_TAG} from '../helpers.js';
 
 const {expect} = chai;
@@ -129,10 +134,45 @@ describe('Verifiable Presentation Request', function() {
         });
       });
 
+      // The sentence says the response is acceptable only if encrypted, so
+      // the exchange must refuse an unencrypted one when `required` is true.
       statementTest({
-        name, implementation,
-        rowId: '3-4-1-verifiable-presentation-request-8',
-        skip: 'not tested yet: needs an encrypted (JWE) response'
+        name, implementation, role: 'workflow', skip: noEncryption,
+        rowId: '3-4-1-verifiable-presentation-request-8'
+      }, async ({endpoints, accepts, refuses}) => {
+        // Answers a fresh request with the test holder's DID Authentication
+        // response, encrypted to the request's first key or not.
+        const answer = async ({encrypt}) => {
+          const {workflowId, exchangeId, served} = await servedRequest(
+            {endpoints, request, step: encryptionStep});
+          if(served.acceptedEncryption?.required !== true) {
+            throw new NotApplicable('the encryptionStep request does not ' +
+              'set acceptedEncryption.required to true');
+          }
+          let verifiablePresentation = await testDidAuthenticationResponse({
+            challenge: served.challenge, domain: requestDomain(endpoints)
+          });
+          if(encrypt) {
+            verifiablePresentation = await encryptPresentation({
+              presentation: verifiablePresentation,
+              jwk: served.acceptedEncryption.jwks[0]
+            });
+          }
+          const {result} = await endpoints.participateInExchange(
+            workflowId, exchangeId, {verifiablePresentation});
+          return result;
+        };
+        await accepts('3.4.1 (8): an encrypted response when required',
+          async () => {
+            const result = await answer({encrypt: true});
+            expect(result?.status).to.equal(200);
+          });
+        await refuses('3.4.1 (8): an unencrypted response when required',
+          async () => {
+            const result = await answer({encrypt: false});
+            shouldBeListedRefusal(
+              {result, operation: 'participateInExchange'});
+          });
       });
 
       statementTest({
