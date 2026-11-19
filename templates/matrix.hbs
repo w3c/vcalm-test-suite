@@ -22,9 +22,9 @@
       <tr class="{{atRisk cells}}">
         <td class="subtest">
           {{#if link}}
-            <a href="{{link}}">{{id}}</a>
+            <a href="{{link}}">{{rowStatement this}}</a>
           {{else}}
-            {{id}}
+            {{rowStatement this}}
           {{/if}}
         </td>
         {{#each cells}}
