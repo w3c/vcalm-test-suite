@@ -8,10 +8,17 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
 
 ### Added
 
-- `tests/normative-statements.js` holds every VCALM TR sentence with an RFC
-  2119 keyword (138), keyed by section. It is generated from the spec.
+- `tests/normative-statements.js` holds every sentence the VCALM TR marks as
+  normative, keyed by section. It is generated from the spec.
 - `tests/Coverage/normative-coverage.js` adds a skipped results-matrix row for
   each MUST and REQUIRED statement that no live test covers.
+
+- `tests/sections/1-3-conformance.spec.js`: the 1.3 Conformance rows in the
+  Recognized Entities test pattern (`tests/statement-test.js`), with labelled
+  accepts and refuses checks. Verifier checks use a test issuer and test
+  holder (`tests/signing.js`, `eddsa-rdfc-2022`).
+- `tests/normative-links.js` and `scripts/build-links.mjs`: a link to each
+  statement's sentence in the TR.
 
 ### Changed
 
@@ -23,6 +30,10 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   those sections, replacing the hand-picked statements that the TR does not
   contain.
 - Statements that the TR does not state are removed.
+- Statements are regenerated from the current TR, keeping only sentences the
+  TR marks as normative (89, of which 45 are MUST or REQUIRED). Keywords in
+  OpenAPI descriptions are checked by OpenAPI response validation instead.
+- Refusals in the new section files must use a status the OpenAPI lists.
 
 ## 0.1.0 - 2026-07-07
 
