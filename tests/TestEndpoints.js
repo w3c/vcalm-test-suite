@@ -386,6 +386,26 @@ export class TestEndpoints {
     return {protocols: settled.data, ...settled};
   }
 
+  // Sends `body` as-is, with a JSON Content-Type. A signed request always
+  // carries a JSON body, so for an issuer entry with a `zcap` this returns
+  // undefined and sends nothing.
+  async issueWithRawBody(body) {
+    if(this.issuer.settings.zcap) {
+      return undefined;
+    }
+    const {headers: _headers = {}, oauth2} = this.issuer.settings;
+    const {makeHttpsRequest} = await import(
+      'vc-test-suite-implementations/lib/requests.js'
+    );
+    return settleHttp(await makeHttpsRequest({
+      url: this.issueCredentialUrl(),
+      method: 'POST',
+      body,
+      headers: {..._headers, 'content-type': 'application/json'},
+      oauth2
+    }));
+  }
+
   async issueWithUnknownOption() {
     const body = createUnknownOptionIssueBody(this.issuer);
     return this.issueCredentialWithBody(body);

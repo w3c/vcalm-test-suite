@@ -25,6 +25,13 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
 - Workflow entries can set `options`, merged into create workflow requests,
   and a `zcap`, with which the suite signs requests to the workflows it
   creates.
+- `tests/sections/2-4-1-authorization.spec.js`,
+  `tests/sections/2-4-2-options.spec.js` and
+  `tests/sections/2-4-3-content-serialization.spec.js`: the 2.4 rows in the
+  new pattern. 2.4.2 (5) sends issuers and verifiers the same request with and
+  without an unknown option. 2.4.3 (1) checks that issue and verify responses
+  are JSON, and that an issuer refuses a body that is not JSON (skipped for an
+  issuer entry with a `zcap`). 2.4.1 (1) is skipped: it binds clients.
 
 ### Changed
 

@@ -11,7 +11,7 @@ const validVc = require('./validVc.json');
 
 // Option name sent to probe how an endpoint handles unknown options. It is a
 // test input, not a spec statement.
-const UNKNOWN_OPTION_PROBE_KEY = 'vcalmInteropUnknownOptionProbe';
+export const UNKNOWN_OPTION_PROBE_KEY = 'vcalmInteropUnknownOptionProbe';
 
 /**
  * @param {string|string[]|undefined} cryptosuite - Issuer options.cryptosuite.
