@@ -2,7 +2,7 @@
 //
 // Two URL conventions (pick one per deployment):
 //
-// A) Unified gateway — one URL routes by path/body (e.g. credential.ninja).
+// A) Unified gateway — one URL routes by path/body.
 //    Set every role's `endpoint` to the same BASE_URL.
 //
 // B) Explicit paths — each role points at the operation URL (typical ACA-Py /
@@ -10,7 +10,7 @@
 //    path helpers below.
 //
 // BASE_URL=http://localhost:40443/my-instance npm test
-const baseUrl = process.env.BASE_URL || 'https://credential.ninja';
+const baseUrl = process.env.BASE_URL || 'https://vcalm.example';
 
 /** Append VCALM paths when using explicit-path style (B). */
 const paths = {
@@ -23,7 +23,7 @@ const paths = {
   interactions: `${baseUrl}/interactions`
 };
 
-// --- Pattern A: unified gateway (credential.ninja) ---
+// --- Pattern A: unified gateway ---
 const endpoint = baseUrl;
 
 // --- Pattern B: explicit paths (uncomment and comment out Pattern A) ---
@@ -38,12 +38,12 @@ module.exports = {
     // instancePayloadLimitBytes: 10485760
   },
   implementations: [{
-    name: 'credential.ninja',
-    implementation: 'The VC DOJO',
+    name: 'My implementation',
+    implementation: 'My implementation',
 
     // Issuer — §3.2.1 issue (required for §1.3 issuer service)
     issuers: [{
-      id: 'did:web:credential.ninja',
+      id: 'did:web:vcalm.example',
       endpoint: endpoint /* or issuersEndpoint */,
       tags: ['VCALM']
       // options: {
