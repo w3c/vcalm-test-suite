@@ -37,6 +37,9 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
 - For an issuer entry with a `zcap`, a body that is not JSON is signed over
   its bytes (`signRawPost` in `tests/workflow-request.js`), so it can be sent.
   `@digitalbazaar/http-signature-zcap-invoke` is now a direct dependency.
+- `tests/sections/3-2-1-issue-credential.spec.js`: the 3.2.1 row in the new
+  pattern. An `issuers` entry tagged `multiProofs` must return two or more
+  distinct proofs from one issue call.
 
 ### Changed
 

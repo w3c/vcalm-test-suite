@@ -122,6 +122,28 @@ the other VC test suites can be reused.
 An `issuers` or `holders` entry may also carry `headers` and `oauth2`
 settings, which the suite uses for its requests to that endpoint.
 
+### Issuer entries
+
+Section 3.2.1 requires an issuer instance that attaches multiple proofs to
+attach all of them in response to a single call to `/credentials/issue`. Tag
+such an instance's entry `multiProofs`, next to `VCALM`; the suite then checks
+that one issue response has two or more distinct proofs. Proof sets and proof
+chains both count. The entry can sit next to the implementation's main issuer
+entry:
+
+```js
+issuers: [{
+  endpoint: 'https://issuer.example/issuers/main/credentials/issue',
+  tags: ['VCALM']
+}, {
+  endpoint: 'https://issuer.example/issuers/two-proofs/credentials/issue',
+  tags: ['VCALM', 'multiProofs']
+}]
+```
+
+The other tests use the first `issuers` entry tagged `VCALM`. Without an entry
+tagged `multiProofs`, the 3.2.1 row is skipped.
+
 ### Workflow entries
 
 A `workflows` entry can set `options`, which are merged into each
