@@ -5,7 +5,8 @@
 // Each statement is one test per implementation (see statementTest in
 // ../statement-test.js). Each check is labelled `2.4.2 (n): what it does`.
 // The issuer and the verifier both take an `options` object, so each gets
-// the same request with and without an option no implementation knows.
+// the same request with and without an option no implementation knows. The
+// issuer also gets a body that is not JSON.
 
 import {setupStatementMatrix, statementTest} from '../statement-test.js';
 import {shouldBeIssuedVc, shouldReturnHttpResult} from '../assertions.js';
@@ -48,6 +49,13 @@ describe('Options', function() {
             const {result} = await endpoints.issueWithUnknownOption();
             shouldBeListedRefusal({result, operation: 'issueCredential'});
           });
+          // A body that does not parse is data the endpoint cannot process.
+          await refuses('2.4.2 (5): issue with a body that is not JSON',
+            async () => {
+              const {result} = await endpoints.issueWithRawBody(
+                '{"credential":');
+              shouldBeListedRefusal({result, operation: 'issueCredential'});
+            });
         }
         if(endpoints.verifier) {
           // The test issuer (../signing.js) signs the credential, so only

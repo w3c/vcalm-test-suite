@@ -29,9 +29,14 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   `tests/sections/2-4-2-options.spec.js` and
   `tests/sections/2-4-3-content-serialization.spec.js`: the 2.4 rows in the
   new pattern. 2.4.2 (5) sends issuers and verifiers the same request with and
-  without an unknown option. 2.4.3 (1) checks that issue and verify responses
-  are JSON, and that an issuer refuses a body that is not JSON (skipped for an
-  issuer entry with a `zcap`). 2.4.1 (1) is skipped: it binds clients.
+  without an unknown option, and issuers a body that is not JSON. 2.4.3 (1)
+  checks that responses with a body (issue, an issue error, verify credential
+  and presentation, workflow configuration, exchange protocols, request and
+  state) are JSON with a Content-Type of application/json. 2.4.1 (1) is
+  skipped: it binds clients.
+- For an issuer entry with a `zcap`, a body that is not JSON is signed over
+  its bytes (`signRawPost` in `tests/workflow-request.js`), so it can be sent.
+  `@digitalbazaar/http-signature-zcap-invoke` is now a direct dependency.
 
 ### Changed
 
