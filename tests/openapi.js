@@ -3,6 +3,7 @@
  */
 
 import {fileURLToPath} from 'node:url';
+import fs from 'node:fs';
 import path from 'node:path';
 
 import chai from 'chai';
@@ -33,8 +34,46 @@ export const OPENAPI_OPERATIONS = {
   deriveCredential: {method: 'POST', path: '/credentials/derive'},
   challenge: {method: 'POST', path: '/challenges'},
   getCredential: {pathTemplate: '/credentials/{id}', method: 'GET'},
-  deleteCredential: {pathTemplate: '/credentials/{id}', method: 'DELETE'}
+  deleteCredential: {pathTemplate: '/credentials/{id}', method: 'DELETE'},
+  updateStatus: {method: 'POST', path: '/credentials/status'},
+  createWorkflow: {method: 'POST', path: '/workflows'},
+  createExchange: {
+    method: 'POST', pathTemplate: '/workflows/{localWorkflowId}/exchanges'
+  }
 };
+
+const OPENAPI_DOCUMENT = JSON.parse(fs.readFileSync(OPENAPI_SPEC_PATH, 'utf8'));
+
+/**
+ * The response statuses the OpenAPI lists for an operation.
+ *
+ * @param {object} options - Options.
+ * @param {string} options.operation - Key from OPENAPI_OPERATIONS.
+ * @returns {Array<number>} The listed statuses.
+ */
+export function listedStatuses({operation} = {}) {
+  const {method, path: opPath, pathTemplate} = OPENAPI_OPERATIONS[operation];
+  const responses = OPENAPI_DOCUMENT.paths[opPath ?? pathTemplate]
+    ?.[method.toLowerCase()]?.responses ?? {};
+  return Object.keys(responses).map(Number);
+}
+
+/**
+ * Assert a refusal: a client error status that the OpenAPI lists for the
+ * operation.
+ *
+ * @param {object} options - Options.
+ * @param {object} options.result - The HTTP result.
+ * @param {string} options.operation - Key from OPENAPI_OPERATIONS.
+ */
+export function shouldBeListedRefusal({result, operation} = {}) {
+  const refusals = listedStatuses({operation})
+    .filter(status => status >= 400 && status < 500);
+  chai.expect(result, 'Expected an HTTP result.').to.exist;
+  chai.expect(refusals).to.include(result.status,
+    `Expected a client error the OpenAPI lists for ${operation} ` +
+    `(${refusals.join(', ')}), got ${result.status}.`);
+}
 
 const disabled = process.env.VCALM_OPENAPI === '0';
 let openApiReady = false;
