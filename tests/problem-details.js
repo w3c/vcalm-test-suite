@@ -113,14 +113,16 @@ export async function tamperedCredential() {
 }
 
 /**
- * A presentation from the test holder, with its challenge and domain.
+ * Sends a presentation from the test holder to the verifier, with the
+ * challenge and domain it was signed for.
  *
- * @param {object} [options] - Options.
+ * @param {object} options - Options.
+ * @param {object} options.endpoints - TestEndpoints with a verifier.
  * @param {boolean} [options.tampered] - Changes the presentation after
  *   signing so its proof fails.
- * @returns {Promise<object>} `{presentation, challenge, domain}`.
+ * @returns {Promise<object>} The verifyPresentation result, `{data, result}`.
  */
-export async function presentationToVerify({tampered = false} = {}) {
+export async function verifyTestPresentation({endpoints, tampered = false}) {
   const challenge = randomUUID();
   const presentation = await testPresentation({
     credentials: [await testCredential()], challenge, domain: VERIFY_DOMAIN
@@ -128,5 +130,6 @@ export async function presentationToVerify({tampered = false} = {}) {
   if(tampered) {
     presentation.id = `urn:uuid:${randomUUID()}`;
   }
-  return {presentation, challenge, domain: VERIFY_DOMAIN};
+  return endpoints.verifyPresentation(
+    presentation, {challenge, domain: VERIFY_DOMAIN});
 }

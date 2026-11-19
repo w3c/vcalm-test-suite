@@ -12,7 +12,7 @@
 // read as in includedErrors (../problem-details.js).
 
 import {
-  includedErrors, presentationToVerify, tamperedCredential
+  includedErrors, tamperedCredential, verifyTestPresentation
 } from '../problem-details.js';
 import {NotApplicable, setupStatementMatrix, statementTest} from
   '../statement-test.js';
@@ -44,12 +44,6 @@ function shouldBeVerifiedTrueWithoutErrors({data} = {}) {
   expect(data.verified, 'verified').to.equal(true);
 }
 
-async function verifyPresentation(endpoints, {tampered}) {
-  const {presentation, challenge, domain} =
-    await presentationToVerify({tampered});
-  return endpoints.verifyPresentation(presentation, {challenge, domain});
-}
-
 describe('Verification Errors vs. Warnings', function() {
   setupStatementMatrix({suite: this, names: [...implementations.keys()]});
 
@@ -64,7 +58,7 @@ describe('Verification Errors vs. Warnings', function() {
             await endpoints.verifyCredential(await tamperedCredential())));
         await responds('3.8.1 (1): a presentation that fails verification',
           async () => shouldBeVerifiedFalseWithErrors(
-            await verifyPresentation(endpoints, {tampered: true})));
+            await verifyTestPresentation({endpoints, tampered: true})));
       });
 
       statementTest({
@@ -76,7 +70,7 @@ describe('Verification Errors vs. Warnings', function() {
             await endpoints.verifyCredential(await testCredential())));
         await responds('3.8.1 (2): a valid presentation', async () =>
           shouldBeVerifiedTrueWithoutErrors(
-            await verifyPresentation(endpoints, {tampered: false})));
+            await verifyTestPresentation({endpoints})));
       });
     });
   }

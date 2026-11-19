@@ -16,8 +16,8 @@
 import {NotApplicable, setupStatementMatrix, statementTest} from
   '../statement-test.js';
 import {
-  presentationToVerify, problemDetailsIn, shouldHaveUrlTypes,
-  tamperedCredential
+  problemDetailsIn, shouldHaveUrlTypes, tamperedCredential,
+  verifyTestPresentation
 } from '../problem-details.js';
 import {requestDomain, servedRequest} from '../presentation-request.js';
 import {describe} from 'mocha';
@@ -79,10 +79,8 @@ describe('Error Handling', function() {
             });
           await responds('3.8 (1): a presentation that fails verification',
             async () => {
-              const {presentation, challenge, domain} =
-                await presentationToVerify({tampered: true});
-              const {data} = await endpoints.verifyPresentation(
-                presentation, {challenge, domain});
+              const {data} = await verifyTestPresentation(
+                {endpoints, tampered: true});
               shouldHaveUrlTypesIn(data);
             });
         }
