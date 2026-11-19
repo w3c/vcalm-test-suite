@@ -8,7 +8,7 @@ Lifecycle Management).
 
 | Layer | Tool | Where |
 |-------|------|--------|
-| Normative statements | Mocha | `tests/<section>/` (one folder per VCALM section), plus `tests/Coverage/` for untested MUST and REQUIRED statements |
+| Normative statements | Mocha | `tests/sections/` (one file per spec section) and the older `tests/<section>/` folders, plus `tests/Coverage/` for untested MUST and REQUIRED statements |
 | Response shape | Chai OpenAPI | `docs/openapi/oas.bundled.json` via `tests/openapi.js` |
 
 Mocha tests are adapted from the CCG
@@ -27,31 +27,43 @@ Mocha tests under `tests/<section>/` mirror the VCALM TOC (helpers live at
 
 ## Normative statements and the results matrix
 
-`tests/normative-statements.js` holds every sentence in the
-[VCALM TR](https://www.w3.org/TR/vcalm-1.0/) that contains an RFC 2119 keyword
-(MUST, MUST NOT, SHOULD, MAY, REQUIRED, and so on). Each value is the spec's own
-text, and the file is generated from the spec. Do not edit it by hand.
+`tests/normative-statements.js` holds every sentence that the
+[VCALM TR](https://www.w3.org/TR/vcalm-1.0/) marks as normative: its RFC 2119
+keyword is in an `<em class="rfc2119">` element. A keyword in an OpenAPI
+description rendered into the TR is not marked, so it is not a statement here;
+those rules are checked by validating responses against the OpenAPI document
+(see "OpenAPI response checks"). The file is generated from the TR with the
+respec-normative-statements tooling. Do not edit it by hand.
 
-It exports three things:
+It exports:
 
 - `NORMATIVE`: key to sentence. Keys are `<section>-<n>`, for example
-  `3-2-1-issue-credential-1`.
+  `1-3-conformance-3`.
 - `SECTION`: key to the spec section heading.
-- `REQUIRED`: the keys whose sentence contains MUST or REQUIRED. The results
-  matrix shows only these.
+- `REQUIRED`: the keys whose sentence contains MUST or REQUIRED. These are the
+  rows of the results matrix.
+- `MARKED`: the keys the TR marks as normative.
 
-Each matrix row is one of two kinds:
+`tests/normative-links.js` maps each key to a link that highlights the
+sentence in the TR. `scripts/build-links.mjs` writes it from the extractor's
+output; rerun it whenever the statements are regenerated.
 
-- **Live rows.** A test refers to a statement with `NORMATIVE['<key>']` and
-  checks it.
-- **Skipped rows.** `tests/Coverage/normative-coverage.js` adds a skipped row for
-  each MUST or REQUIRED statement that no other test file has a row for. Every
-  row is recorded as the test files load (see `tests/coverage-registry.js`), so
-  adding a live test needs no change to the coverage file.
+Rows are being moved to one file per spec section in `tests/sections/`, in the
+shape of the Recognized Entities test suite: each statement is one test per
+implementation (`statementTest` in `tests/statement-test.js`), and each check
+in it is labelled `N.N (n): what it does`. A test needs an `accepts` and a
+`refuses` check, or, for a statement about the implementation's own response,
+a `responds` check. A statement with no test yet is a skipped row with its
+reason. Refusals must use a client error status that the OpenAPI lists for
+the operation.
 
-When the spec changes, regenerate `tests/normative-statements.js` from the TR
-and check that every key a test uses still exists. Statement text must match the
-spec exactly, so a changed spec sentence changes the matrix row.
+Verifier tests sign their own credentials and presentations
+(`tests/signing.js`, `eddsa-rdfc-2022`), with keys derived from public labels,
+so they need no issuer or holder endpoint.
+
+Until every section is moved, `tests/Coverage/normative-coverage.js` adds a
+skipped row for each MUST or REQUIRED statement that no test file has a row
+for.
 
 ## Install
 

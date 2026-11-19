@@ -74,11 +74,10 @@ export function skipIfVerificationClientError(test, {result, label}) {
   }
 }
 
-export function shouldUpdateCredentialStatus({data, result}) {
+// The OpenAPI defines no body for the 200 of POST /credentials/status.
+export function shouldUpdateCredentialStatus({result}) {
   shouldReturnHttpResult({result});
   result.status.should.equal(200, 'Expected status code 200.');
-  should.exist(data, 'Expected a response body.');
-  data.should.be.an('object', 'Expected the response body to be an object.');
 }
 
 export function shouldRejectMalformedStatusRequest({result}) {

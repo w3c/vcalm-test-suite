@@ -135,7 +135,12 @@ export class TestEndpoints {
 
   async updateCredentialStatus(body) {
     const url = resolveUpdateStatusUrl(this.status.settings.endpoint);
-    return settleHttp(await this.status.post({url, json: body}));
+    // implementation options (for example, the indexAllocator the status
+    // service uses) are merged into the body, as verifier options are
+    const {options = {}} = this.status.settings;
+    return settleHttp(await this.status.post({
+      url, json: {...body, ...options}
+    }));
   }
 
   async verify(vc, options) {

@@ -12,3 +12,16 @@ Handlebars.registerHelper('matrixByTitle', (title, options) => {
   }
   return matches.map(matrix => options.fn(matrix)).join('');
 });
+
+// The text of a matrix row. Rows from tests/sections/ use the statement key as
+// their id and carry the spec sentence in each cell as `statement`. Rows the
+// reporter marks at risk lose their cells, so their text comes from the
+// registry the tests fill (row key -> statement text). Older rows use the
+// sentence itself as their id.
+Handlebars.registerHelper('rowStatement', row => {
+  const cell = (row?.cells ?? []).find(c => c?.cell?.statement);
+  if(cell) {
+    return cell.cell.statement;
+  }
+  return globalThis.interopRowText?.[row?.id] ?? (row?.id ?? '');
+});
