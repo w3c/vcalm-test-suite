@@ -19,7 +19,9 @@ import {
   extractIssuedCredential,
   extractLocationResourceId
 } from './response.js';
-import {getClientDid, workflowRequest} from './workflow-request.js';
+import {
+  getClientDid, signRawPost, workflowRequest
+} from './workflow-request.js';
 import {
   resolveCredentialResourceUrl,
   resolveDeriveCredentialUrl,
@@ -384,6 +386,31 @@ export class TestEndpoints {
       headers: {Accept: accept}
     }));
     return {protocols: settled.data, ...settled};
+  }
+
+  // Sends `body` as-is, with a JSON Content-Type. For an issuer entry with a
+  // `zcap`, the request is signed over the body's bytes.
+  async issueWithRawBody(body) {
+    const url = this.issueCredentialUrl();
+    const {headers: _headers = {}, oauth2, zcap} = this.issuer.settings;
+    const {makeHttpsRequest} = await import(
+      'vc-test-suite-implementations/lib/requests.js'
+    );
+    if(zcap) {
+      const signed = await signRawPost({
+        url, body, capability: zcap.capability, keySeed: zcap.keySeed
+      });
+      return settleHttp(await makeHttpsRequest({
+        url, method: 'POST', body: signed.body, headers: signed.headers
+      }));
+    }
+    return settleHttp(await makeHttpsRequest({
+      url,
+      method: 'POST',
+      body,
+      headers: {..._headers, 'content-type': 'application/json'},
+      oauth2
+    }));
   }
 
   async issueWithUnknownOption() {

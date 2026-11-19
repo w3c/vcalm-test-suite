@@ -11,6 +11,9 @@
 import * as didKey from '@digitalbazaar/did-method-key';
 import {decodeSecretKeySeed} from 'bnid';
 import {Ed25519Signature2020} from '@digitalbazaar/ed25519-signature-2020';
+import {
+  signCapabilityInvocation
+} from '@digitalbazaar/http-signature-zcap-invoke';
 import {ZcapClient} from '@digitalbazaar/ezcap';
 
 const clientKeys = new Map();
@@ -89,4 +92,42 @@ export async function workflowRequest({
   } catch(error) {
     return {error};
   }
+}
+
+/**
+ * Signs a POST whose body is sent as given, for checks that need a body
+ * ezcap would not send (it serializes a JSON object itself). The digest is
+ * over the body's bytes, and the Content-Type is application/json.
+ *
+ * @param {object} options - Options.
+ * @param {string} options.url - The request URL.
+ * @param {string} options.body - The body, sent as-is.
+ * @param {string|object} options.capability - A root capability URN, or a
+ *   delegated zcap (an object, or JSON text as in the implementations
+ *   package).
+ * @param {string} options.keySeed - Name of the environment variable holding
+ *   the client's secret key seed.
+ * @returns {Promise<object>} `{headers, body}` to send.
+ */
+export async function signRawPost({url, body, capability, keySeed}) {
+  const key = await getClientKey({keySeed});
+  const invocationSigner = key.keyPairs.get(
+    key.didDocument.capabilityInvocation[0]).signer();
+  const zcap = typeof capability === 'string' &&
+    !capability.startsWith('urn:zcap:root:') ?
+    JSON.parse(capability) : capability;
+  const bytes = new TextEncoder().encode(body);
+  const headers = await signCapabilityInvocation({
+    url,
+    method: 'post',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json'
+    },
+    body: bytes,
+    capability: zcap,
+    capabilityAction: 'write',
+    invocationSigner
+  });
+  return {headers, body: bytes};
 }
