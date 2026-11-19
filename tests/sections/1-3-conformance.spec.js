@@ -155,18 +155,22 @@ describe('Conformance', function() {
               throw new NotApplicable(
                 'needs an issuers entry to issue a credential with a status');
             }
+            // The status purpose comes from the issuer's status list
+            // options; VCALM defines no issue option for it. The credential
+            // is referred to by the credentialId the issue request sets.
+            const credentialId = `urn:uuid:${randomUUID()}`;
             const issued = await endpoints.issueCredential(undefined, {
-              statusPurpose: 'revocation'
+              credentialId
             });
             shouldReturnHttpResult(issued);
             expect(issued.result.status).to.equal(201);
             const {credentialStatus} = issued.issuedVc ?? {};
-            const {data, result} = await endpoints.updateCredentialStatus({
-              credentialId: issued.issuedVc?.id,
+            const {result} = await endpoints.updateCredentialStatus({
+              credentialId,
               credentialStatus: [credentialStatus].flat()[0],
               status: false
             });
-            shouldUpdateCredentialStatus({data, result});
+            shouldUpdateCredentialStatus({result});
           });
         await refuses('1.3 (7): update status with an empty body',
           async () => {

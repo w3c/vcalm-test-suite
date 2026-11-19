@@ -34,6 +34,10 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   TR marks as normative (89, of which 45 are MUST or REQUIRED). Keywords in
   OpenAPI descriptions are checked by OpenAPI response validation instead.
 - Refusals in the new section files must use a status the OpenAPI lists.
+- The status conformance check issues with `credentialId` instead of a
+  `statusPurpose` option, which VCALM does not define. Status updates merge the
+  status entry's `options` (for example `indexAllocator`), and their 200 is not
+  required to have a body, which the OpenAPI does not define.
 
 ## 0.1.0 - 2026-07-07
 
