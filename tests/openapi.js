@@ -39,6 +39,10 @@ export const OPENAPI_OPERATIONS = {
   createWorkflow: {method: 'POST', path: '/workflows'},
   createExchange: {
     method: 'POST', pathTemplate: '/workflows/{localWorkflowId}/exchanges'
+  },
+  participateInExchange: {
+    method: 'POST',
+    pathTemplate: '/workflows/{localWorkflowId}/exchanges/{localExchangeId}'
   }
 };
 

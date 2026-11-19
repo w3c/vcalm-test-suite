@@ -22,8 +22,10 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@digitalbazaar/eddsa-jcs-2022-cryptosuite": "1.0.0",
     "@digitalbazaar/mocha-w3c-interop-reporter": "^1.6.0",
     "chai": "^4.3.7",
+    "jose": "6.2.15",
     "klona": "^2.0.6",
     "mocha": "^11.7.5",
     "uuid": "^11.1.0",

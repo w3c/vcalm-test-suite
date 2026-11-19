@@ -11,6 +11,8 @@
 import * as credentialsContext from '@digitalbazaar/credentials-context';
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import {createHash, randomUUID} from 'node:crypto';
+import {createSignCryptosuite} from
+  '@digitalbazaar/eddsa-jcs-2022-cryptosuite';
 import {cryptosuite} from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 import {DataIntegrityProof} from '@digitalbazaar/data-integrity';
 import jsonldSignatures from 'jsonld-signatures';
@@ -89,8 +91,18 @@ export async function documentLoader(url) {
   return {contextUrl: null, documentUrl: url, document};
 }
 
-async function sign({document, key, purpose}) {
-  const suite = new DataIntegrityProof({signer: key.signer(), cryptosuite});
+// The cryptosuites the test issuer and holder can sign with.
+const CRYPTOSUITES = {
+  'eddsa-rdfc-2022': () => cryptosuite,
+  'eddsa-jcs-2022': () => createSignCryptosuite()
+};
+
+async function sign({
+  document, key, purpose, cryptosuiteName = 'eddsa-rdfc-2022'
+}) {
+  const suite = new DataIntegrityProof({
+    signer: key.signer(), cryptosuite: CRYPTOSUITES[cryptosuiteName]()
+  });
   const proof = await suite.createProof({document, purpose, documentLoader});
   return {...document, proof};
 }
@@ -137,6 +149,37 @@ export async function testPresentation({credentials, challenge, domain} = {}) {
   };
   return sign({
     document, key,
+    purpose: new AuthenticationProofPurpose({challenge, domain})
+  });
+}
+
+/**
+ * A DID Authentication response (3.4.3.2) from the test holder: a
+ * presentation with the holder's DID, signed for `challenge` and `domain`.
+ * The eddsa-jcs-2022 cryptosuite can sign documents that eddsa-rdfc-2022
+ * cannot, for example one whose type is not VerifiablePresentation, where
+ * JSON-LD safe mode drops `holder`.
+ *
+ * @param {object} options - Options.
+ * @param {string} options.challenge - The proof challenge.
+ * @param {string} [options.domain] - The proof domain; omitted if undefined.
+ * @param {string} [options.cryptosuite] - The cryptosuite name:
+ *   `eddsa-rdfc-2022` (default) or `eddsa-jcs-2022`.
+ * @param {Function} [options.change] - Changes the document before signing.
+ * @returns {Promise<object>} The signed presentation.
+ */
+export async function testDidAuthenticationResponse({
+  challenge, domain, cryptosuite: cryptosuiteName = 'eddsa-rdfc-2022',
+  change = document => document
+} = {}) {
+  const {did, key} = await holderKey();
+  const document = change({
+    '@context': [CREDENTIALS_V2],
+    type: ['VerifiablePresentation'],
+    holder: did
+  });
+  return sign({
+    document, key, cryptosuiteName,
     purpose: new AuthenticationProofPurpose({challenge, domain})
   });
 }

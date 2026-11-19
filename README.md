@@ -162,6 +162,14 @@ workflow's `controller` to the client's DID, unless `options` sets one, and
 signs its requests to each workflow it created with that workflow's root
 capability (`urn:zcap:root:<workflow URL>`).
 
+A `workflows` entry can also set `encryptionStep`: the step fields that make
+a workflow step ask the holder to encrypt the response, so that the request
+the exchange sends has `acceptedEncryption` (section 3.4.1). VCALM defines no
+step field for this, so each implementation names its own, for example
+`{acceptedEncryption: {required: true}}`. The 3.4.1 `acceptedEncryption` rows
+check the keys the service puts in that request. Without `encryptionStep`
+they are skipped.
+
 ### Running locally
 
 ```sh
