@@ -71,6 +71,25 @@ export function implementationsWithIssuerAndHolder(match, tag = VCALM_TAG) {
 }
 
 /**
+ * Resolve POST /credentials/issue from an issuer endpoint setting. The
+ * setting may be the issue URL itself or the service root.
+ *
+ * @param {object} options - Options.
+ * @param {string} options.issuerEndpoint - Issue URL or service root.
+ * @returns {string} Issue credential URL.
+ */
+export function resolveIssueCredentialUrl({issuerEndpoint} = {}) {
+  const trimmed = issuerEndpoint.replace(/\/+$/, '');
+  if(trimmed.endsWith('/credentials/issue')) {
+    return trimmed;
+  }
+  if(trimmed.endsWith('/credentials')) {
+    return `${trimmed}/issue`;
+  }
+  return `${trimmed}/credentials/issue`;
+}
+
+/**
  * Build GET/DELETE URL for `/credentials/{id}` from an issuer endpoint setting.
  *
  * @param {string} issuerEndpoint - Issuer POST URL or instance root.

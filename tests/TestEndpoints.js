@@ -23,6 +23,7 @@ import {
   resolveCredentialResourceUrl,
   resolveDeriveCredentialUrl,
   resolveInteractionStartUrl,
+  resolveIssueCredentialUrl,
   resolvePresentationResourceUrl,
   resolveUpdateStatusUrl,
   resolveVerifierResourceUrl,
@@ -70,7 +71,10 @@ export class TestEndpoints {
       vc: credential,
       options
     });
-    const {data, result, error} = await this.issuer.post({json: issueBody});
+    const {data, result, error} = await this.issuer.post({
+      url: this.issueCredentialUrl(),
+      json: issueBody
+    });
     return {
       issuedVc: extractIssuedCredential(data),
       data,
@@ -80,7 +84,10 @@ export class TestEndpoints {
   }
 
   async issueCredentialWithBody(body) {
-    const {data, result, error} = await this.issuer.post({json: body});
+    const {data, result, error} = await this.issuer.post({
+      url: this.issueCredentialUrl(),
+      json: body
+    });
     const httpResult = result ?? error?.response;
     return {
       issuedVc: extractIssuedCredential(data),
@@ -88,6 +95,12 @@ export class TestEndpoints {
       error: httpResult ? undefined : error,
       data
     };
+  }
+
+  issueCredentialUrl() {
+    return resolveIssueCredentialUrl({
+      issuerEndpoint: this.issuer.settings.endpoint
+    });
   }
 
   credentialResourceUrl(credentialId) {
@@ -150,7 +163,10 @@ export class TestEndpoints {
       presentation,
       options
     });
-    const {data, result, error} = await this.holder.post({json: body});
+    const {data, result, error} = await this.holder.post({
+      url: resolvePresentationResourceUrl(this.holder.settings.endpoint),
+      json: body
+    });
     return {
       verifiablePresentation: extractCreatedPresentation(data),
       data,
@@ -258,7 +274,10 @@ export class TestEndpoints {
   }
 
   async createWorkflowWithBody(body) {
-    const settled = settleHttp(await this.workflow.post({json: body}));
+    const settled = settleHttp(await this.workflow.post({
+      url: resolveWorkflowsBaseUrl(this.workflow.settings.endpoint),
+      json: body
+    }));
     return {
       workflowId: body?.id ?? extractLocationResourceId(settled.result),
       ...settled

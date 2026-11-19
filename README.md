@@ -4,13 +4,6 @@ Interoperability tests for implementations of
 [VCALM](https://www.w3.org/TR/vcalm-1.0/) (Verifiable Credential API for
 Lifecycle Management).
 
-## Branches
-
-| Branch | Contents |
-|--------|----------|
-| `feature/vcalm-required-endpoints` | Required issuer and verifier POSTs, plus Chai OpenAPI checks |
-| `feature/vcalm-docs` | Coverage matrix, normative traceability, stats (`docs/` tree) |
-
 ## Strategy
 
 | Layer | Tool | Where |
@@ -30,8 +23,7 @@ document. This suite does
 sufficient to exercise the API.
 
 Mocha tests under `tests/<section>/` mirror the VCALM TOC (helpers live at
-`tests/*.js` and are excluded from the `tests/*/**/*.js` glob). Per-file
-coverage matrix: branch `feature/vcalm-docs` → `docs/test-coverage.md`.
+`tests/*.js` and are excluded from the `tests/*/**/*.js` glob).
 
 ## Normative statements and the results matrix
 
@@ -70,97 +62,74 @@ npm install --legacy-peer-deps
 `--legacy-peer-deps` avoids peer-resolution conflicts between Mocha 11 and older
 devDependency trees (Chai OpenAPI).
 
-## Setup
+## Instructions for implementers
 
-Endpoints must follow the VCALM / VC-API shape:
+To add your implementation, add endpoints tagged `VCALM` to it in
+[vc-test-suite-implementations](https://github.com/w3c/vc-test-suite-implementations),
+or locally in `localConfig.cjs` at the root of this suite
+(`localConfig.example.cjs` is a template):
 
-- `POST /credentials/issue`
-- `POST /credentials/verify`
-- `POST /presentations/verify`
+```js
+module.exports = {
+  settings: {},
+  implementations: [{
+    name: 'My implementation',
+    issuers: [{
+      id: 'did:web:vcalm.example',
+      endpoint: 'https://vcalm.example',
+      tags: ['VCALM']
+    }],
+    verifiers: [{
+      endpoint: 'https://vcalm.example',
+      tags: ['VCALM']
+    }]
+  }]
+};
+```
 
-### Local testing
+Register only the roles your implementation has. Tests that need a role you
+did not register are not run for your implementation.
+
+Each `endpoint` is the root of your VCALM service, and the suite adds the
+paths from the specification. A role whose operations live under a different
+root gets its own `endpoint`.
+
+| Role key | Paths the suite adds | Used by |
+|----------|----------------------|---------|
+| `issuers` | `/credentials/issue`, `/credentials/{id}` | issuing, and the credentials other tests verify |
+| `verifiers` | `/credentials/verify`, `/presentations/verify`, `/challenges` | verifying credentials and presentations |
+| `holders` | `/presentations`, `/presentations/{id}`, `/credentials/derive` | creating the presentations that verifier tests send |
+| `workflows` | `/workflows`, `/workflows/{id}/...` | workflows and exchanges |
+| `interactions` | `/interactions/{id}` | interaction URLs and protocols |
+| `status` | `/credentials/status` | status updates |
+
+An `endpoint` that already ends with one of these operation paths, such as
+`https://vcalm.example/credentials/issue`, also works, so entries written for
+the other VC test suites can be reused.
+
+An `issuers` or `holders` entry may also carry `headers` and `oauth2`
+settings, which the suite uses for its requests to that endpoint.
+
+### Running locally
 
 ```sh
 cp localConfig.example.cjs localConfig.cjs
-# edit endpoints, then:
+# edit the endpoints, then:
 npm test
 ```
 
-Override the API base URL:
-
-```sh
-BASE_URL=https://localhost:8000 npm test
-```
-
-### Local HTTPS
-
-To test an implementation running locally with a self-signed certificate,
-point `localConfig.cjs` at it and allow self-signed certificates:
+To test an implementation that runs locally with a self-signed certificate,
+allow self-signed certificates:
 
 ```sh
 NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
 ```
 
-| Variable | Default | Meaning |
-|----------|---------|---------|
-| `NODE_TLS_REJECT_UNAUTHORIZED=0` | — | Allow self-signed HTTPS for local dev |
-| `VCALM_OPENAPI=0` | validation on | Skip OpenAPI response checks |
-
-### Role registration
-
-Tag each registered endpoint with `VCALM`. Register only roles your deployment
-implements — tests skip missing pairings (e.g. no VP path without `holders` +
-`verifiers`).
-
-| Profile | Register | Enables |
-|---------|----------|---------|
-| Issuer only | `issuers` | §1.3 issuer, §2.4.1/2.4.2, §3.2.1, §3.2.6 |
-| Verifier only | `verifiers` | §1.3 verifier smoke, §3.3.4–5 |
-| Issuer + verifier | `issuers`, `verifiers` | + §3.3.1, §3.3.4, §3.8.1 (VC) |
-| Full §1.3 core | above + `holders` | + §3.3.2, §3.3.5, §3.5.2, §3.8.1 (VP) |
-
-**Verifier — one entry, two operations.** There is no separate `vpVerifiers` key.
-A single `verifiers` entry satisfies §1.3 (verify credential and verify
-presentation). The suite derives the sibling path from `endpoint`:
-
-- `…/credentials/verify` → VP at `…/presentations/verify` (path swap)
-- Gateway root → both paths appended under the root
-
-| Role key | Typical `endpoint` |
-|----------|-------------------|
-| `issuers` | `…/credentials/issue` or gateway root |
-| `verifiers` | `…/credentials/verify` or gateway root |
-| `holders` | `…/presentations` or gateway root |
-| `workflows` | `…/workflows` or gateway root (optional) |
-| `interactions` | gateway root or `…/interactions` (optional) |
-
-Optional endpoints that return **404** or **501** are skipped. See
-`localConfig.example.cjs` for unified-gateway vs explicit-path templates.
-
-### Optional profiles
-
-| Tag / env | Enables |
-|-----------|---------|
-| `VCALM_FIXTURE=1` | Fixture-only §3.4 VPR shape tests and workflow config fixtures |
-
-Default `npm test` skips fixture suites unless `VCALM_FIXTURE=1`.
-
-Explicit paths:
-
-```js
-issuers: [{ endpoint: `${baseUrl}/credentials/issue`, tags: ['VCALM'] }],
-holders: [{ endpoint: `${baseUrl}/presentations`, tags: ['VCALM'] }],
-verifiers: [{ endpoint: `${baseUrl}/credentials/verify`, tags: ['VCALM'] }],
-```
-
-Unified gateways may use one `baseUrl` for all roles (see `localConfig.example.cjs`).
-
-## Implementation registration
-
-Register implementations in
-[`w3c/vc-test-suite-implementations`](https://github.com/w3c/vc-test-suite-implementations)
-with tag `VCALM` on issuer, verifier, and holder endpoints (and
-`workflows` / `VCALM:status` for optional profiles).
+| Variable | Effect |
+|----------|--------|
+| `NODE_TLS_REJECT_UNAUTHORIZED=0` | Accept self-signed HTTPS certificates |
+| `VCALM_OPENAPI=0` | Skip the OpenAPI response checks |
+| `VCALM_FIXTURE=1` | Also run the fixture-only tests (§3.4 presentation request shapes, workflow configuration fixtures) |
 
 ## OpenAPI response checks
 
