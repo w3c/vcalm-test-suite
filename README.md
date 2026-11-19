@@ -92,18 +92,12 @@ Override the API base URL:
 BASE_URL=https://localhost:8000 npm test
 ```
 
-### VC Dojo (localhost)
+### Local HTTPS
 
-Terminal 1 — start the server:
-
-```sh
-cd vc-dojo && ./scripts/dev-server.sh
-```
-
-Terminal 2 — run the suite (point `localConfig.cjs` at `https://localhost:8000`):
+To test an implementation running locally with a self-signed certificate,
+point `localConfig.cjs` at it and allow self-signed certificates:
 
 ```sh
-cd test-suites/vcalm-test-suite
 NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
 ```
 
