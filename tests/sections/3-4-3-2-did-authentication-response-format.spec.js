@@ -19,13 +19,12 @@
 // adds a challenge, and sets the request's `domain`, which the service does
 // not add on its own.
 
+import {requestDomain, servedRequest} from '../presentation-request.js';
 import {setupStatementMatrix, statementTest} from '../statement-test.js';
 import chai from 'chai';
-import {createWorkflowRequest} from '../mock.data.js';
 import {describe} from 'mocha';
 import {filterByTag} from 'vc-test-suite-implementations';
 import {shouldBeListedRefusal} from '../openapi.js';
-import {shouldCreateWorkflow} from '../assertions.js';
 import {testDidAuthenticationResponse} from '../signing.js';
 import {VCALM_TAG} from '../helpers.js';
 
@@ -35,34 +34,23 @@ const {match: implementations} = filterByTag(
   {property: 'workflows', tags: [VCALM_TAG]});
 
 // A workflow whose only step asks for DID Authentication, an exchange on it,
-// and the request the exchange returns for POST {}.
+// and the challenge and domain of the request the exchange returns.
 async function didAuthenticationRequest({
   endpoints, methods = ['key'], cryptosuites = ['eddsa-rdfc-2022']
 }) {
-  const domain = new URL(endpoints.workflow.settings.endpoint).origin;
-  const created = await endpoints.createWorkflow({
-    ...createWorkflowRequest(),
-    steps: {start: {
-      createChallenge: true,
-      verifiablePresentationRequest: {
-        domain,
-        query: [{
-          type: 'DIDAuthentication',
-          acceptedMethods: methods.map(method => ({method})),
-          acceptedCryptosuites: cryptosuites.map(cryptosuite => ({cryptosuite}))
-        }]
-      }
-    }}
+  const {workflowId, exchangeId, served} = await servedRequest({
+    endpoints,
+    request: {query: [{
+      type: 'DIDAuthentication',
+      acceptedMethods: methods.map(method => ({method})),
+      acceptedCryptosuites: cryptosuites.map(cryptosuite => ({cryptosuite}))
+    }]}
   });
-  shouldCreateWorkflow(created);
-  const {workflowId} = created;
-  const {exchangeId} = await endpoints.createExchange(workflowId);
-  const started = await endpoints.participateInExchange(
-    workflowId, exchangeId, {});
-  expect(started.result?.status, 'POST {} to the exchange').to.equal(200);
-  const request = started.data?.verifiablePresentationRequest;
-  expect(request?.challenge, 'the request challenge').to.be.a('string');
-  return {workflowId, exchangeId, challenge: request.challenge, domain};
+  expect(served.challenge, 'the request challenge').to.be.a('string');
+  return {
+    workflowId, exchangeId, challenge: served.challenge,
+    domain: requestDomain(endpoints)
+  };
 }
 
 // Answers a fresh DID Authentication request with the response that

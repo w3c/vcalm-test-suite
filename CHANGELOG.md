@@ -46,9 +46,12 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
   exchange must accept a response of the required form and refuse one that
   breaks the statement (no proof, wrong type, no holder or an unrequested DID
   method, an unrequested cryptosuite, another challenge or domain). The rows
-  on the form of a presentation request (3.4.1, 3.4.2, 3.4.3.1) are skipped:
-  the request is the workflow configuration, written by the suite. 3.4.1 (8)
-  and 3.4.3.2 (6) are skipped: they bind holders.
+  on the form of a presentation request (3.4.1, 3.4.2, 3.4.3.1) check the
+  request the exchange returns for POST `{}`, and that creating a workflow
+  whose step request breaks the form is refused. The 3.4.1
+  `acceptedEncryption` rows check the keys the service generates, for a
+  workflows entry that sets `encryptionStep`. 3.4.1 (8) is not tested yet
+  (needs an encrypted response); 3.4.3.2 (6) is skipped: it binds holders.
 - The test holder can sign with `eddsa-jcs-2022`
   (`@digitalbazaar/eddsa-jcs-2022-cryptosuite`), for a response that
   `eddsa-rdfc-2022` cannot sign.
