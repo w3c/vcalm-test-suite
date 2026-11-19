@@ -41,13 +41,3 @@ describeSkippedSection({
     NORMATIVE['3-7-4-interaction-protocols-response-2']
   ]
 });
-
-describeSkippedSection({
-  section: 'vcapi Interaction Protocol',
-  columnLabel: 'Interactions',
-  link: `${TR}#vcapi-interaction-protocol`,
-  statements: [
-    NORMATIVE['3-6-5-get-current-exchange-vpr-4'],
-    NORMATIVE['3-6-5-get-current-exchange-vpr-5']
-  ]
-});
