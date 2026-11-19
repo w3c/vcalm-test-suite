@@ -76,11 +76,11 @@ module.exports = {
     name: 'My implementation',
     issuers: [{
       id: 'did:web:vcalm.example',
-      endpoint: 'https://vcalm.example/credentials/issue',
+      endpoint: 'https://vcalm.example',
       tags: ['VCALM']
     }],
     verifiers: [{
-      endpoint: 'https://vcalm.example/credentials/verify',
+      endpoint: 'https://vcalm.example',
       tags: ['VCALM']
     }]
   }]
@@ -90,18 +90,22 @@ module.exports = {
 Register only the roles your implementation has. Tests that need a role you
 did not register are not run for your implementation.
 
-| Role key | `endpoint` | Used by |
-|----------|------------|---------|
-| `issuers` | `…/credentials/issue` | issuing, and the credentials other tests verify |
-| `verifiers` | `…/credentials/verify` | verifying credentials and presentations |
-| `holders` | `…/presentations` | creating the presentations that verifier tests send |
-| `workflows` | `…/workflows` | workflows and exchanges |
-| `interactions` | the interactions root | interaction URLs and protocols |
-| `status` | `…/credentials/status` | status updates |
+Each `endpoint` is the root of your VCALM service, and the suite adds the
+paths from the specification. A role whose operations live under a different
+root gets its own `endpoint`.
 
-One `verifiers` entry covers both verify operations. The suite derives the
-other path from `endpoint`: `…/credentials/verify` and `…/presentations/verify`
-swap, and any other URL is treated as the root both paths go under.
+| Role key | Paths the suite adds | Used by |
+|----------|----------------------|---------|
+| `issuers` | `/credentials/issue`, `/credentials/{id}` | issuing, and the credentials other tests verify |
+| `verifiers` | `/credentials/verify`, `/presentations/verify`, `/challenges` | verifying credentials and presentations |
+| `holders` | `/presentations`, `/presentations/{id}`, `/credentials/derive` | creating the presentations that verifier tests send |
+| `workflows` | `/workflows`, `/workflows/{id}/...` | workflows and exchanges |
+| `interactions` | `/interactions/{id}` | interaction URLs and protocols |
+| `status` | `/credentials/status` | status updates |
+
+An `endpoint` that already ends with one of these operation paths, such as
+`https://vcalm.example/credentials/issue`, also works, so entries written for
+the other VC test suites can be reused.
 
 An `issuers` or `holders` entry may also carry `headers` and `oauth2`
 settings, which the suite uses for its requests to that endpoint.
