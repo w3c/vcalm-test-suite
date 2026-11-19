@@ -300,21 +300,6 @@ export function resolveHolderExchangeUrl(workflowEndpoint, requirementId) {
 }
 
 /**
- * Build POST URL for `/callbacks/{id}` from a workflow endpoint setting.
- *
- * @param {string} workflowEndpoint - Workflow POST URL or instance root.
- * @param {string} callbackId - Callback id.
- * @returns {string} Callback URL.
- */
-export function resolveCallbackUrl(workflowEndpoint, callbackId) {
-  const trimmed = workflowEndpoint.replace(/\/+$/, '');
-  const base = trimmed.endsWith('/workflows') ?
-    trimmed.slice(0, -'/workflows'.length) :
-    trimmed;
-  return `${base}/callbacks/${encodeURIComponent(callbackId)}`;
-}
-
-/**
  * Build a §3.7.1 interaction start URL with required `iuv=1`.
  *
  * @param {string} instanceRoot - Service root or role endpoint URL.
