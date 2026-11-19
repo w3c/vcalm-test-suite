@@ -40,6 +40,18 @@ SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-
 - `tests/sections/3-2-1-issue-credential.spec.js`: the 3.2.1 row in the new
   pattern. An `issuers` entry tagged `multiProofs` must return two or more
   distinct proofs from one issue call.
+- `tests/sections/3-4-*.spec.js`: the 3.4 rows in the new pattern. 3.4.3.2
+  (1) to (5) answer a DID Authentication request through the exchange
+  protocol (POST `{}`, then the presentation) with the test holder; the
+  exchange must accept a response of the required form and refuse one that
+  breaks the statement (no proof, wrong type, no holder or an unrequested DID
+  method, an unrequested cryptosuite, another challenge or domain). The rows
+  on the form of a presentation request (3.4.1, 3.4.2, 3.4.3.1) are skipped:
+  the request is the workflow configuration, written by the suite. 3.4.1 (8)
+  and 3.4.3.2 (6) are skipped: they bind holders.
+- The test holder can sign with `eddsa-jcs-2022`
+  (`@digitalbazaar/eddsa-jcs-2022-cryptosuite`), for a response that
+  `eddsa-rdfc-2022` cannot sign.
 
 ### Changed
 
