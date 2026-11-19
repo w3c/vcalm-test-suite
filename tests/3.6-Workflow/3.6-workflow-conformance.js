@@ -161,7 +161,7 @@ describeSkippedSection({
   columnLabel: 'Workflow',
   property: 'workflows',
   link: `${TR}#create-workflow`,
-  statements: [NORMATIVE['3-6-1-create-workflow-22']]
+  statements: [NORMATIVE['3-6-1-create-workflow-2']]
 });
 
 describeSkippedSection({

@@ -80,7 +80,7 @@ describeNormativeStatement({
   columnLabel: 'Issuer',
   statements: [
     {
-      statement: NORMATIVE['3-2-1-issue-credential-9'],
+      statement: NORMATIVE['3-2-1-issue-credential-1'],
       link: 'https://www.w3.org/TR/vcalm-1.0/#issue-credential',
       skip: true,
       skipMessage: 'Skipped.'

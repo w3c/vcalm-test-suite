@@ -2,10 +2,12 @@
  * SPDX-License-Identifier: LicenseRef-w3c-3-clause-bsd-license-2008 OR LicenseRef-w3c-test-suite-license-2023
  */
 
-// Generated from the VCALM TR by respec-normative-statements. Do not edit.
-// NORMATIVE: every spec sentence with an RFC 2119 keyword, keyed by section.
+// Generated from the spec TR by respec-normative-statements. Do not edit.
+// NORMATIVE: every spec sentence with an RFC 2119 keyword in an
+// <em class="rfc2119"> element, keyed by section.
 // SECTION: key -> spec section heading.
 // REQUIRED: keys whose sentence contains MUST or REQUIRED (matrix rows).
+// MARKED: keys the TR marks as normative with the rfc2119 class.
 
 export const NORMATIVE = {
   // 1.3 Conformance
@@ -40,7 +42,7 @@ export const NORMATIVE = {
   // 1.3 Conformance
   '1-3-conformance-7':
     'A conforming status service implementation MUST provide the interface ' +
-    'described in Section D.3 Update Status.',
+    'described in Section E.3 Update Status.',
   // 1.3 Conformance
   '1-3-conformance-8':
     'A conforming workflow service implementation MUST provide all ' +
@@ -58,8 +60,8 @@ export const NORMATIVE = {
   'base-url-1':
     'The URL paths used throughout this specification are shown as absolute ' +
     'paths and their base URL MAY be the host name of the server (e.g., ' +
-    'website.example ), a subdomain (e.g., api.website.example, or a path ' +
-    'within that domain (e.g., website.example/api ).',
+    'website.example), a subdomain (e.g., api.website.example, or a path ' +
+    'within that domain (e.g., website.example/api).',
   // Forbidden Authorization
   'forbidden-authorization-1':
     'Requests to this API MUST NOT utilize any authorization protocol that ' +
@@ -101,93 +103,13 @@ export const NORMATIVE = {
     'configuring a larger size if required.',
   // 3.2.1 Issue Credential
   '3-2-1-issue-credential-1':
-    'Each item in the @context array MUST be a string.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-2':
-    'Each item in the type array MUST be a string.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-3':
-    'It MUST be an object of the following form:',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-4':
-    'Used with selective disclosure schemes to specify mandatory reveal ' +
-    'statements Each item in the mandatoryPointers array MUST be a string.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-5':
-    'credentialId SHOULD NOT be set by the issuer coordinator if the ' +
-    'credential.id property is set, nor should credentialId be used as a ' +
-    'replacement for credential.id;',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-6':
-    'The issuer service SHOULD NOT auto-generate a credentialId if one is ' +
-    'not supplied by the issuer coordinator, because doing so could create ' +
-    'a partitioning error if the result is never received by the client.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-7':
-    'This MUST be a "data:" scheme URL [RFC2397] that expresses a secured ' +
-    'verifiable credential using an enveloping security scheme.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-8':
-    'This MUST be EnvelopedVerifiableCredential.',
-  // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-9':
     'If a use case requires an issuer instance to attach multiple proofs to ' +
     'the provided credential, the instance MUST attach all of these proofs ' +
     'in response to a single call to the /credentials/issue endpoint.',
   // 3.2.1 Issue Credential
-  '3-2-1-issue-credential-10':
+  '3-2-1-issue-credential-2':
     'An issuing instance SHOULD be configured to handle existing proofs in ' +
     'one of the following ways:',
-  // 3.2.2 Get a Specific Credential
-  '3-2-2-get-a-specific-credential-1':
-    'I\'m a teapot - MUST not be returned outside of pre-arranged scenarios ' +
-    'between both parties',
-  // 3.3.1 Verify Credential
-  '3-3-1-verify-credential-1':
-    'Options for specifying how a credential is verified It MUST be an ' +
-    'object of the following form:',
-  // 3.3.1 Verify Credential
-  '3-3-1-verify-credential-2':
-    'Each item in the problemDetails array MUST be an object of the ' +
-    'following form:',
-  // 3.3.1 Verify Credential
-  '3-3-1-verify-credential-3':
-    'Each item in the credentialSchema array MUST be Results from verifying ' +
-    'a credentialSchema object.',
-  // 3.3.1 Verify Credential
-  '3-3-1-verify-credential-4':
-    'Each item in the credentialStatus array MUST be Results of verifying a ' +
-    'credentialStatus object.',
-  // 3.3.1 Verify Credential
-  '3-3-1-verify-credential-5':
-    'Each item in the proof array MUST be Results from verifying a proof ' +
-    'object.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-1':
-    'Implementations MAY extend this object with additional properties to ' +
-    'control verification behavior.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-2':
-    'If true, then the verified presentation MUST be returned.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-3':
-    'If false or not provided, then the verified presentation MUST NOT be ' +
-    'returned.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-4':
-    'This MUST be a "data:" scheme URL [RFC2397] that expresses a secured ' +
-    'verifiable presentation using an enveloping security scheme.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-5':
-    'This MUST be EnvelopedVerifiablePresentation.',
-  // 3.3.2 Verify Presentation
-  '3-3-2-verify-presentation-6':
-    'Each item in the credentials array MUST be Object to report the result ' +
-    'of a verification process on a VerifiableCredential.',
-  // 3.3.3 Create Challenge
-  '3-3-3-create-challenge-1':
-    'Object containg a challenge It MUST be an object of the following ' +
-    'form:',
   // 3.4.1 Verifiable Presentation Request
   '3-4-1-verifiable-presentation-request-1':
     'A REQUIRED property that specifies the information requested by the ' +
@@ -204,6 +126,32 @@ export const NORMATIVE = {
   '3-4-1-verifiable-presentation-request-4':
     'An OPTIONAL, unique string that is provided by a verifier to a holder ' +
     'during a specific presentation request.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-5':
+    'An OPTIONAL map that a verifier provides to a holder to indicate ' +
+    'whether the holder MAY or MUST encrypt the verifiable presentation ' +
+    'response (and any contained verifiable credentials) with public keys ' +
+    'the verifier controls.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-6':
+    'The value MUST be a map of the following form:',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-7':
+    'required: A REQUIRED boolean.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-8':
+    'If true, the holder MUST encrypt the response using one of the ' +
+    'provided keys for the response to be acceptable.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-9':
+    'If false, the holder MAY send an unencrypted verifiable presentation.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-10':
+    'jwks: A REQUIRED array of one or more public JSON Web Keys [RFC7517] ' +
+    'with which the holder may encrypt the response.',
+  // 3.4.1 Verifiable Presentation Request
+  '3-4-1-verifiable-presentation-request-11':
+    'Private key material MUST NOT be included.',
   // 3.4.2 Query By Example
   '3-4-2-query-by-example-1':
     'An OPTIONAL string that provides a human-readable explanation for why ' +
@@ -223,13 +171,13 @@ export const NORMATIVE = {
     'verifiable credential.',
   // 3.4.2 Query By Example
   '3-4-2-query-by-example-5':
-    'Each item MUST be either 1) a URL that identifies an issuer in the ' +
+    'Each item MUST be either 1) a [URL] that identifies an issuer in the ' +
     'issuer property of the received verifiable credential, or 2) an object ' +
-    'that contains an id property whose value is a URL that identifies an ' +
+    'that contains an id property whose value is a [URL] that identifies an ' +
     'issuer in the issuer property of the received verifiable credential, ' +
     'or 3) an object that contains a recognizedIn property that is ' +
     'associated with an object with a type property that is set to ' +
-    'RecognizedEntityCredential and an id property with a URL value that ' +
+    'RecognizedEntityCredential and an id property with a [URL] value that ' +
     'points to such a credential as defined in the Recognized Entities v1.0 ' +
     'specification;',
   // 3.4.2 Query By Example
@@ -240,8 +188,8 @@ export const NORMATIVE = {
   '3-4-2-query-by-example-7':
     'Each element SHOULD be an object with a cryptosuite property ' +
     'referencing a Data Integrity cryptosuite name or Ed25519Signature2020 ' +
-    'for legacy (for backwards compatibility, string values MAY also be ' +
-    'used and are to be interpreted as the cryptosuite name).',
+    'for legacy support (for backwards compatibility, string values MAY ' +
+    'also be used and are to be interpreted as the cryptosuite name).',
   // 3.4.2 Query By Example
   '3-4-2-query-by-example-8':
     'This property MAY be used independently of acceptedEnvelopes, which is ' +
@@ -289,8 +237,8 @@ export const NORMATIVE = {
   '3-4-3-1-the-did-authentication-query-format-5':
     'Each object in the array MUST contain a property called cryptosuite ' +
     'with a value that is a Data Integrity cryptosuite name (or ' +
-    'Ed25519Signature2020 for legacy), and MAY contain other properties ' +
-    'that are specific to the cryptosuite.',
+    'Ed25519Signature2020 for legacy support), and MAY contain other ' +
+    'properties that are specific to the cryptosuite.',
   // 3.4.3.2 The DID Authentication Response Format
   '3-4-3-2-the-did-authentication-response-format-1':
     'A DID Authentication response MUST be a verifiable presentation of the ' +
@@ -315,12 +263,6 @@ export const NORMATIVE = {
     'Holder implementations MUST ensure that the domain specified by the ' +
     'verifier matches the domain used for the current channel of ' +
     'communication.',
-  // 3.5.1 Derive Credential
-  '3-5-1-derive-credential-1':
-    'Each item in the selectivePointers array MUST be a string.',
-  // 3.5.3 Get Presentations
-  '3-5-3-get-presentations-1':
-    'Each item in the array MUST be an object of the following form:',
   // 3.6 Workflows and Exchanges
   '3-6-workflows-and-exchanges-1':
     'A server MAY include this value;',
@@ -332,110 +274,24 @@ export const NORMATIVE = {
     'The value SHOULD be a urn:uuid value.',
   // 3.6.1 Create Workflow
   '3-6-1-create-workflow-1':
-    'Passing an ID is OPTIONAL.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-2':
-    'Passing initialStep is REQUIRED.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-3':
-    'An OPTIONAL property that specifies the root controller of the ' +
-    'instance, which can be used by systems supporting authorization ' +
-    'mechanisms like Authorization Capabilities (ZCAPs), which rely on ' +
-    'object capabilities.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-4':
-    'An OPTIONAL property that specifies authorization scheme information ' +
-    'for the endpoint, such as an OAuth2 configuration.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-5':
-    'An array where each item MUST be an object of the following form:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-6':
-    'Passing the steps object is REQUIRED.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-7':
-    'Each item in the query array MUST be an object of the following form:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-8':
-    'Each item in the acceptedIssuers array MUST be an object of the ' +
-    'following form:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-9':
-    'Each item in the acceptedCryptosuites array MUST be a undefined:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-10':
-    'Each item in the acceptedEnvelopes array MUST be a undefined:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-11':
-    'Each item in the interact array MUST be an object of the following ' +
-    'form:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-12':
-    'The document MAY include an embedded proof.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-13':
-    'An EnvelopedVerifiablePresentation MAY be used instead, where noted in ' +
-    'the API description.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-14':
-    'Passing redirectUrl is OPTIONAL.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-15':
-    'Each item in the issueRequests array MUST be an object of the ' +
-    'following form:',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-16':
-    'The value MUST be JsonSchema.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-17':
-    'Passing nextStep is OPTIONAL.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-18':
-    'This field MUST NOT be present on the final step configuration.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-19':
-    'The value MUST be either the name of a top-level variable in the ' +
-    'exchange\'s variables object (see Create Exchange ) or a JSON pointer ' +
-    'to any variable within the exchange\'s variables object.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-20':
-    'Either this or authorizationRequest MUST be present, but not both.',
-  // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-21':
     'An issue request object MAY also include a variables property to ' +
     'provide values to be used when evaluating the credential template.',
   // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-22':
+  '3-6-1-create-workflow-2':
     'An issue request object MAY include an optional result property whose ' +
     'value MUST be either the name of a top-level variable in the ' +
     'exchange\'s variables object or a JSON pointer to any variable within ' +
     'the exchange\'s variables object, identifying where the result of the ' +
     'issue request is to be stored.',
   // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-23':
+  '3-6-1-create-workflow-3':
     'A step MAY include a verifiablePresentation to explicitly express one ' +
-    'or more verifiable presentation s to be used in that step.',
+    'or more verifiable presentations to be used in that step.',
   // 3.6.1 Create Workflow
-  '3-6-1-create-workflow-24':
+  '3-6-1-create-workflow-4':
     'A step MAY include a redirectUrl to specify a URL to send to the ' +
     'client that can be used to continue an interaction at another ' +
     'location.',
-  // 3.6.2 Get Workflow Configuration
-  '3-6-2-get-workflow-configuration-1':
-    'Passing intialStep is REQUIRED.',
-  // 3.6.2 Get Workflow Configuration
-  '3-6-2-get-workflow-configuration-2':
-    'Passing controller is OPTIONAL.',
-  // 3.6.2 Get Workflow Configuration
-  '3-6-2-get-workflow-configuration-3':
-    'Passing authorization is OPTIONAL.',
-  // 3.6.2 Get Workflow Configuration
-  '3-6-2-get-workflow-configuration-4':
-    'Passing credentialTemplates is OPTIONAL.',
-  // 3.6.2 Get Workflow Configuration
-  '3-6-2-get-workflow-configuration-5':
-    'Each item in the credentialTemplates array MUST be an object of the ' +
-    'following form:',
   // 3.6.5 Get Current Exchange VPR
   '3-6-5-get-current-exchange-vpr-1':
     'This endpoint MUST return the current verifiable presentation request ' +
@@ -454,7 +310,7 @@ export const NORMATIVE = {
     'be an empty JSON object.',
   // 3.6.5 Get Current Exchange VPR
   '3-6-5-get-current-exchange-vpr-4':
-    'To make a digital-credentials request backed by the VCALM protocol, ' +
+    'To make a [digital-credentials] request backed by the VCALM protocol, ' +
     'the coordinator MUST provide the interaction URL as the request data.',
   // 3.6.5 Get Current Exchange VPR
   '3-6-5-get-current-exchange-vpr-5':
@@ -469,7 +325,7 @@ export const NORMATIVE = {
     'protocol in an additive way.',
   // 3.6.5 Get Current Exchange VPR
   '3-6-5-get-current-exchange-vpr-7':
-    'However, if we find that the digital-credentials or other supported ' +
+    'However, if we find that the [digital-credentials] or other supported ' +
     'protocols require signed requests or encrypted responses, then the ' +
     'request MAY be returned as a signed object referencing a public key ' +
     'that SHOULD be used to encrypt the response.',
@@ -483,45 +339,6 @@ export const NORMATIVE = {
   // 3.6.6 Participate in an Exchange
   '3-6-6-participate-in-an-exchange-3':
     'The value of referenceId SHOULD be a urn:uuid value.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-4':
-    'When the server previously sent a referenceId, the client SHOULD ' +
-    'include it here to aid debugging and message correlation.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-5':
-    'If the server previously sent a referenceId, the client SHOULD include ' +
-    'it here to aid debugging and message correlation.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-6':
-    'A client MAY send an interaction URL to the server as a redirectUrl, ' +
-    'inviting the server to become the client for a different related ' +
-    'exchange starting with that interaction URL.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-7':
-    'A server MAY engage with this redirectUrl.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-8':
-    'Each item in the verifiablePresentation array MUST be a undefined:',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-9':
-    'A server MAY also send an interaction URL to the client as a ' +
-    'redirectUrl, inviting the client to automatically initiate another ' +
-    'exchange.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-10':
-    'In this case, a client that understands interaction URLs MAY retrieve ' +
-    'the protocols associated with the interaction URL and start the ' +
-    'exchange.',
-  // 3.6.6 Participate in an Exchange
-  '3-6-6-participate-in-an-exchange-11':
-    'A client that does not understand interaction URLs MAY direct the ' +
-    'holder to the redirectUrl in the browser, where an HTML page MAY ' +
-    'display next steps.',
-  // 3.6.8 Exchange Step Callbacks
-  '3-6-8-exchange-step-callbacks-1':
-    'The URL SHOULD be a capability URL to ensure that it can only be used ' +
-    'by parties with whom the URL is shared without a need for ' +
-    'authorization tokens, periodic token refresh, nor client registration.',
   // 3.6.9 Exchange Examples
   '3-6-9-exchange-examples-1':
     'The holder coordinator MAY call the Coordinator\'s exchange discovery ' +
@@ -551,7 +368,8 @@ export const NORMATIVE = {
   // 3.7.2 Interaction QR Code Format
   '3-7-2-interaction-qr-code-format-1':
     'An interaction QR Code MUST be an interaction URL expressed as a QR ' +
-    'code according to ISO18004:2024:',
+    'code according to ISO18004:2024: QR Code Bar Code Symbology ' +
+    'Specification.',
   // 3.7.2 Interaction QR Code Format
   '3-7-2-interaction-qr-code-format-2':
     'To ensure broad interoperability, the length of the interaction URL ' +
@@ -592,10 +410,17 @@ export const NORMATIVE = {
   // 3.8.1 Verification Errors vs. Warnings
   '3-8-1-verification-errors-vs-warnings-2':
     'if no errors are included, it MUST be set to true.',
-  // D.1 Create Status List
-  'd-1-create-status-list-1':
-    'An EnvelopedVerifiableCredential MAY be used instead, where noted in ' +
-    'the API description.',
+  // E.1 Create Status List
+  'e-1-create-status-list-1':
+    'When a status service manages more than one index-allocation context, ' +
+    'clients MAY supply an indexAllocator value when creating a status ' +
+    'list.',
+  // E.1 Create Status List
+  'e-1-create-status-list-2':
+    'If an indexAllocator is supplied at list creation (or when indices are ' +
+    'first assigned at issuance), subsequent status updates that depend on ' +
+    'that allocation state MUST reuse the same indexAllocator value unless ' +
+    'the implementation can unambiguously infer a single default allocator.',
 };
 
 export const SECTION = {
@@ -641,48 +466,6 @@ export const SECTION = {
     '3.2.1 Issue Credential',
   '3-2-1-issue-credential-2':
     '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-3':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-4':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-5':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-6':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-7':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-8':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-9':
-    '3.2.1 Issue Credential',
-  '3-2-1-issue-credential-10':
-    '3.2.1 Issue Credential',
-  '3-2-2-get-a-specific-credential-1':
-    '3.2.2 Get a Specific Credential',
-  '3-3-1-verify-credential-1':
-    '3.3.1 Verify Credential',
-  '3-3-1-verify-credential-2':
-    '3.3.1 Verify Credential',
-  '3-3-1-verify-credential-3':
-    '3.3.1 Verify Credential',
-  '3-3-1-verify-credential-4':
-    '3.3.1 Verify Credential',
-  '3-3-1-verify-credential-5':
-    '3.3.1 Verify Credential',
-  '3-3-2-verify-presentation-1':
-    '3.3.2 Verify Presentation',
-  '3-3-2-verify-presentation-2':
-    '3.3.2 Verify Presentation',
-  '3-3-2-verify-presentation-3':
-    '3.3.2 Verify Presentation',
-  '3-3-2-verify-presentation-4':
-    '3.3.2 Verify Presentation',
-  '3-3-2-verify-presentation-5':
-    '3.3.2 Verify Presentation',
-  '3-3-2-verify-presentation-6':
-    '3.3.2 Verify Presentation',
-  '3-3-3-create-challenge-1':
-    '3.3.3 Create Challenge',
   '3-4-1-verifiable-presentation-request-1':
     '3.4.1 Verifiable Presentation Request',
   '3-4-1-verifiable-presentation-request-2':
@@ -690,6 +473,20 @@ export const SECTION = {
   '3-4-1-verifiable-presentation-request-3':
     '3.4.1 Verifiable Presentation Request',
   '3-4-1-verifiable-presentation-request-4':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-5':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-6':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-7':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-8':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-9':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-10':
+    '3.4.1 Verifiable Presentation Request',
+  '3-4-1-verifiable-presentation-request-11':
     '3.4.1 Verifiable Presentation Request',
   '3-4-2-query-by-example-1':
     '3.4.2 Query By Example',
@@ -737,10 +534,6 @@ export const SECTION = {
     '3.4.3.2 The DID Authentication Response Format',
   '3-4-3-2-the-did-authentication-response-format-6':
     '3.4.3.2 The DID Authentication Response Format',
-  '3-5-1-derive-credential-1':
-    '3.5.1 Derive Credential',
-  '3-5-3-get-presentations-1':
-    '3.5.3 Get Presentations',
   '3-6-workflows-and-exchanges-1':
     '3.6 Workflows and Exchanges',
   '3-6-workflows-and-exchanges-2':
@@ -755,56 +548,6 @@ export const SECTION = {
     '3.6.1 Create Workflow',
   '3-6-1-create-workflow-4':
     '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-5':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-6':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-7':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-8':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-9':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-10':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-11':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-12':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-13':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-14':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-15':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-16':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-17':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-18':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-19':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-20':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-21':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-22':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-23':
-    '3.6.1 Create Workflow',
-  '3-6-1-create-workflow-24':
-    '3.6.1 Create Workflow',
-  '3-6-2-get-workflow-configuration-1':
-    '3.6.2 Get Workflow Configuration',
-  '3-6-2-get-workflow-configuration-2':
-    '3.6.2 Get Workflow Configuration',
-  '3-6-2-get-workflow-configuration-3':
-    '3.6.2 Get Workflow Configuration',
-  '3-6-2-get-workflow-configuration-4':
-    '3.6.2 Get Workflow Configuration',
-  '3-6-2-get-workflow-configuration-5':
-    '3.6.2 Get Workflow Configuration',
   '3-6-5-get-current-exchange-vpr-1':
     '3.6.5 Get Current Exchange VPR',
   '3-6-5-get-current-exchange-vpr-2':
@@ -825,24 +568,6 @@ export const SECTION = {
     '3.6.6 Participate in an Exchange',
   '3-6-6-participate-in-an-exchange-3':
     '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-4':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-5':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-6':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-7':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-8':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-9':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-10':
-    '3.6.6 Participate in an Exchange',
-  '3-6-6-participate-in-an-exchange-11':
-    '3.6.6 Participate in an Exchange',
-  '3-6-8-exchange-step-callbacks-1':
-    '3.6.8 Exchange Step Callbacks',
   '3-6-9-exchange-examples-1':
     '3.6.9 Exchange Examples',
   '3-7-1-interaction-url-format-1':
@@ -873,8 +598,10 @@ export const SECTION = {
     '3.8.1 Verification Errors vs. Warnings',
   '3-8-1-verification-errors-vs-warnings-2':
     '3.8.1 Verification Errors vs. Warnings',
-  'd-1-create-status-list-1':
-    'D.1 Create Status List',
+  'e-1-create-status-list-1':
+    'E.1 Create Status List',
+  'e-1-create-status-list-2':
+    'E.1 Create Status List',
 };
 
 export const REQUIRED = [
@@ -888,26 +615,14 @@ export const REQUIRED = [
   'options-5',
   'content-serialization-1',
   '3-2-1-issue-credential-1',
-  '3-2-1-issue-credential-2',
-  '3-2-1-issue-credential-3',
-  '3-2-1-issue-credential-4',
-  '3-2-1-issue-credential-7',
-  '3-2-1-issue-credential-8',
-  '3-2-1-issue-credential-9',
-  '3-2-2-get-a-specific-credential-1',
-  '3-3-1-verify-credential-1',
-  '3-3-1-verify-credential-2',
-  '3-3-1-verify-credential-3',
-  '3-3-1-verify-credential-4',
-  '3-3-1-verify-credential-5',
-  '3-3-2-verify-presentation-2',
-  '3-3-2-verify-presentation-3',
-  '3-3-2-verify-presentation-4',
-  '3-3-2-verify-presentation-5',
-  '3-3-2-verify-presentation-6',
-  '3-3-3-create-challenge-1',
   '3-4-1-verifiable-presentation-request-1',
   '3-4-1-verifiable-presentation-request-2',
+  '3-4-1-verifiable-presentation-request-5',
+  '3-4-1-verifiable-presentation-request-6',
+  '3-4-1-verifiable-presentation-request-7',
+  '3-4-1-verifiable-presentation-request-8',
+  '3-4-1-verifiable-presentation-request-10',
+  '3-4-1-verifiable-presentation-request-11',
   '3-4-2-query-by-example-5',
   '3-4-3-1-the-did-authentication-query-format-1',
   '3-4-3-1-the-did-authentication-query-format-2',
@@ -920,29 +635,11 @@ export const REQUIRED = [
   '3-4-3-2-the-did-authentication-response-format-4',
   '3-4-3-2-the-did-authentication-response-format-5',
   '3-4-3-2-the-did-authentication-response-format-6',
-  '3-5-1-derive-credential-1',
-  '3-5-3-get-presentations-1',
   '3-6-1-create-workflow-2',
-  '3-6-1-create-workflow-5',
-  '3-6-1-create-workflow-6',
-  '3-6-1-create-workflow-7',
-  '3-6-1-create-workflow-8',
-  '3-6-1-create-workflow-9',
-  '3-6-1-create-workflow-10',
-  '3-6-1-create-workflow-11',
-  '3-6-1-create-workflow-15',
-  '3-6-1-create-workflow-16',
-  '3-6-1-create-workflow-18',
-  '3-6-1-create-workflow-19',
-  '3-6-1-create-workflow-20',
-  '3-6-1-create-workflow-22',
-  '3-6-2-get-workflow-configuration-1',
-  '3-6-2-get-workflow-configuration-5',
   '3-6-5-get-current-exchange-vpr-1',
   '3-6-5-get-current-exchange-vpr-3',
   '3-6-5-get-current-exchange-vpr-4',
   '3-6-5-get-current-exchange-vpr-5',
-  '3-6-6-participate-in-an-exchange-8',
   '3-7-1-interaction-url-format-1',
   '3-7-2-interaction-qr-code-format-1',
   '3-7-2-interaction-qr-code-format-2',
@@ -952,4 +649,97 @@ export const REQUIRED = [
   '3-8-error-handling-1',
   '3-8-1-verification-errors-vs-warnings-1',
   '3-8-1-verification-errors-vs-warnings-2',
+  'e-1-create-status-list-2',
+];
+
+export const MARKED = [
+  '1-3-conformance-1',
+  '1-3-conformance-2',
+  '1-3-conformance-3',
+  '1-3-conformance-4',
+  '1-3-conformance-5',
+  '1-3-conformance-6',
+  '1-3-conformance-7',
+  '1-3-conformance-8',
+  '1-3-conformance-9',
+  '1-3-conformance-10',
+  'base-url-1',
+  'forbidden-authorization-1',
+  'options-1',
+  'options-2',
+  'options-3',
+  'options-4',
+  'options-5',
+  'content-serialization-1',
+  'payload-sizes-1',
+  '3-2-1-issue-credential-1',
+  '3-2-1-issue-credential-2',
+  '3-4-1-verifiable-presentation-request-1',
+  '3-4-1-verifiable-presentation-request-2',
+  '3-4-1-verifiable-presentation-request-3',
+  '3-4-1-verifiable-presentation-request-4',
+  '3-4-1-verifiable-presentation-request-5',
+  '3-4-1-verifiable-presentation-request-6',
+  '3-4-1-verifiable-presentation-request-7',
+  '3-4-1-verifiable-presentation-request-8',
+  '3-4-1-verifiable-presentation-request-9',
+  '3-4-1-verifiable-presentation-request-10',
+  '3-4-1-verifiable-presentation-request-11',
+  '3-4-2-query-by-example-1',
+  '3-4-2-query-by-example-2',
+  '3-4-2-query-by-example-3',
+  '3-4-2-query-by-example-4',
+  '3-4-2-query-by-example-5',
+  '3-4-2-query-by-example-6',
+  '3-4-2-query-by-example-7',
+  '3-4-2-query-by-example-8',
+  '3-4-2-query-by-example-9',
+  '3-4-2-query-by-example-10',
+  '3-4-2-query-by-example-11',
+  '3-4-2-query-by-example-12',
+  '3-4-3-1-the-did-authentication-query-format-1',
+  '3-4-3-1-the-did-authentication-query-format-2',
+  '3-4-3-1-the-did-authentication-query-format-3',
+  '3-4-3-1-the-did-authentication-query-format-4',
+  '3-4-3-1-the-did-authentication-query-format-5',
+  '3-4-3-2-the-did-authentication-response-format-1',
+  '3-4-3-2-the-did-authentication-response-format-2',
+  '3-4-3-2-the-did-authentication-response-format-3',
+  '3-4-3-2-the-did-authentication-response-format-4',
+  '3-4-3-2-the-did-authentication-response-format-5',
+  '3-4-3-2-the-did-authentication-response-format-6',
+  '3-6-workflows-and-exchanges-1',
+  '3-6-workflows-and-exchanges-2',
+  '3-6-workflows-and-exchanges-3',
+  '3-6-1-create-workflow-1',
+  '3-6-1-create-workflow-2',
+  '3-6-1-create-workflow-3',
+  '3-6-1-create-workflow-4',
+  '3-6-5-get-current-exchange-vpr-1',
+  '3-6-5-get-current-exchange-vpr-2',
+  '3-6-5-get-current-exchange-vpr-3',
+  '3-6-5-get-current-exchange-vpr-4',
+  '3-6-5-get-current-exchange-vpr-5',
+  '3-6-5-get-current-exchange-vpr-6',
+  '3-6-5-get-current-exchange-vpr-7',
+  '3-6-6-participate-in-an-exchange-1',
+  '3-6-6-participate-in-an-exchange-2',
+  '3-6-6-participate-in-an-exchange-3',
+  '3-6-9-exchange-examples-1',
+  '3-7-1-interaction-url-format-1',
+  '3-7-1-interaction-url-format-2',
+  '3-7-1-interaction-url-format-3',
+  '3-7-1-interaction-url-format-4',
+  '3-7-2-interaction-qr-code-format-1',
+  '3-7-2-interaction-qr-code-format-2',
+  '3-7-3-interaction-scheme-format-1',
+  '3-7-4-interaction-protocols-response-1',
+  '3-7-4-interaction-protocols-response-2',
+  '3-8-error-handling-1',
+  '3-8-error-handling-2',
+  '3-8-error-handling-3',
+  '3-8-1-verification-errors-vs-warnings-1',
+  '3-8-1-verification-errors-vs-warnings-2',
+  'e-1-create-status-list-1',
+  'e-1-create-status-list-2',
 ];
