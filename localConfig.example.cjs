@@ -1,82 +1,40 @@
-// Rename to localConfig.cjs — unified gateway (A) or explicit paths (B) below.
-//
-// Two URL conventions (pick one per deployment):
-//
-// A) Unified gateway — one URL routes by path/body.
-//    Set every role's `endpoint` to the same BASE_URL.
-//
-// B) Explicit paths — each role points at the operation URL (typical ACA-Py /
-//    instance-per-role setups). Set BASE_URL to the instance root and use the
-//    path helpers below.
-//
-// BASE_URL=http://localhost:40443/my-instance npm test
-const baseUrl = process.env.BASE_URL || 'https://vcalm.example';
-
-/** Append VCALM paths when using explicit-path style (B). */
-const paths = {
-  issue: `${baseUrl}/credentials/issue`,
-  verifyVc: `${baseUrl}/credentials/verify`,
-  verifyVp: `${baseUrl}/presentations/verify`,
-  createPresentation: `${baseUrl}/presentations`,
-  updateStatus: `${baseUrl}/credentials/status`,
-  workflows: `${baseUrl}/workflows`
-};
-
-// --- Pattern A: unified gateway ---
-const endpoint = baseUrl;
-
-// --- Pattern B: explicit paths (uncomment and comment out Pattern A) ---
-// const endpoint = null; // unused
-// const issuersEndpoint = paths.issue;
-// const verifiersEndpoint = paths.verifyVc;
-// const holdersEndpoint = paths.createPresentation;
-// const workflowsEndpoint = paths.workflows;
+// Copy to localConfig.cjs (gitignored) and set your endpoints.
+// Each endpoint is your VCALM service root; the suite adds the paths.
+// Leave out the roles your service does not have: their rows are skipped.
+// The README, "Configuring your implementation", describes every field.
+const endpoint = 'https://vcalm.example';
 
 module.exports = {
-  settings: {
-    // instancePayloadLimitBytes: 10485760
-  },
   implementations: [{
     name: 'My implementation',
-    implementation: 'My implementation',
 
-    // Issuer — §3.2.1 issue (required for §1.3 issuer service)
     issuers: [{
-      id: 'did:web:vcalm.example',
-      endpoint: endpoint /* or issuersEndpoint */,
+      // Used as the issuer of the credentials the suite asks you to issue.
+      id: 'did:example:issuer',
+      endpoint,
       tags: ['VCALM']
-      // options: {
-      //   cryptosuite: ['eddsa-jcs-2022', 'eddsa-rdfc-2022'], // proof set
-      //   // cryptosuite: 'eddsa-jcs-2022' // single proof
-      // },
-      // settings: { vcPayloadLimitBytes: 10485760 }
+      // options: {cryptosuite: 'eddsa-rdfc-2022'}
     }],
 
-    // Verifier — §3.3.1 verify credential and §3.3.2 verify presentation
     verifiers: [{
-      endpoint: endpoint /* or verifiersEndpoint */,
+      endpoint,
       tags: ['VCALM']
+      // options: {checks: ['proof']}
     }],
 
-    // Holder — §3.5.2 create presentation (needed for 3.3.2 VP happy path)
-    holders: [{
-      endpoint: endpoint /* or holdersEndpoint */,
-      tags: ['VCALM']
-    }],
+    // workflows: [{
+    //   endpoint,
+    //   tags: ['VCALM'],
+    //   options: {id: null},
+    //   zcap: {capability: require('./zcap.json'), keySeed: 'KEY_SEED'},
+    //   encryptionStep: {acceptedEncryption: {required: true}},
+    //   interactionUrl: 'https://vcalm.example/interactions/z8n38Dp7a?iuv=1'
+    // }],
 
-    // Workflow — optional; §3.6 and §1.3 holder checks when registered
-    workflows: [{
-      endpoint: endpoint /* or workflowsEndpoint */,
-      tags: ['VCALM']
-      // §3.7 rows: a live interaction URL your coordinator serves. Any entry
-      // can set it (README, "Interaction URLs").
-      // interactionUrl: `${baseUrl}/interactions/z8n38Dp7a?iuv=1`
-    }],
-
-    // Status — §C.3 Update Status (required for a conforming status service)
-    status: [{
-      endpoint: endpoint /* or paths.updateStatus */,
-      tags: ['VCALM']
-    }]
+    // status: [{
+    //   endpoint,
+    //   tags: ['VCALM'],
+    //   options: {indexAllocator: 'urn:uuid:...'}
+    // }]
   }]
 };
