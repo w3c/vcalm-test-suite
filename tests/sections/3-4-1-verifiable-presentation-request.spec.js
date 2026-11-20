@@ -5,12 +5,12 @@
 // Each statement is one test per implementation (see statementTest in
 // ../statement-test.js). Each check is labelled `3.4.1 (n): what it does`.
 //
-// In an exchange, the workflow service provides the verifiable presentation
-// request to the holder (POST {} returns it). The suite checks the request
-// the service sends, and that the service refuses to create a workflow whose
-// step request breaks the form, which it would otherwise send. The spec does
-// not say in words that a service must refuse such a workflow; the suite
-// reads the form requirements as binding the request the service sends.
+// In an exchange, the workflow service is the verifier: it provides the
+// verifiable presentation request to the holder (POST {} returns it), adding
+// its own challenge. The form statements therefore bind the request it
+// serves. The suite checks that a valid step gives a request of that form,
+// and that a malformed step is never served: the service refuses it when the
+// workflow is created or when the exchange starts (shouldRefuseRequest).
 //
 // `acceptedEncryption` keys are made by the service. Requesting encryption is
 // not a VCALM step field, so a workflows entry gives the step fields that do

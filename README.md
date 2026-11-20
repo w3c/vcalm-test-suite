@@ -264,6 +264,23 @@ A row needs an `accepts` and a `refuses` check, or a `responds` check. A
 statement the suite cannot test (for example, one that binds clients) is
 still a row, skipped with its reason.
 
+In an exchange, the workflow service is the verifier: it serves the
+presentation request to the holder and receives the response. Two groups of
+statements follow from that:
+
+- **The form of the presentation request** (3.4.1 (1), (2), 3.4.2 (5),
+  3.4.3.1). The service must not serve a request of the wrong form. A valid
+  step must give a request of the required form, and a malformed one must be
+  refused, either when the workflow is created or when the exchange starts,
+  with a status the OpenAPI lists.
+- **The form of the holder's response** (3.4.1 (8), 3.4.3.2 (1) to (5)).
+  These statements define a valid response, and 3.4.1 says an unencrypted
+  response is not acceptable when `required` is `true`. The suite plays the
+  holder: the workflow service must accept a response that meets them and
+  refuse one that does not, for example one without the requested `holder`,
+  DID method or cryptosuite, or an unencrypted one when `required` is
+  `true`.
+
 To add or change a row:
 
 - Write `rowId` as a string literal, for example
