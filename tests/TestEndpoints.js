@@ -269,6 +269,16 @@ export class TestEndpoints {
     });
   }
 
+  // A request an exchange client (holder) sends: unsigned and without the
+  // entry's headers. Initiating an exchange needs no authorization beyond
+  // the exchange URL (VCALM 3.6); only the coordinator's calls are signed.
+  async exchangeClientRequest({method, url, json, headers = {}}) {
+    const {makeHttpsRequest} = await import(
+      'vc-test-suite-implementations/lib/requests.js'
+    );
+    return makeHttpsRequest({url, method, json, headers});
+  }
+
   async getWorkflowConfiguration(workflowId) {
     const url = this.workflowResourceUrl(workflowId);
     const settled = settleHttp(await this.workflowInstanceRequest({
@@ -291,27 +301,24 @@ export class TestEndpoints {
 
   async getExchangeProtocols(workflowId, exchangeId) {
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'protocols');
-    const settled = settleHttp(await this.workflowInstanceRequest({
-      method: 'GET', url, workflowId
+    const settled = settleHttp(await this.exchangeClientRequest({
+      method: 'GET', url
     }));
     return {protocols: settled.data, ...settled};
   }
 
   async getCurrentExchangeVpr(workflowId, exchangeId) {
     const url = this.workflowResourceUrl(workflowId, exchangeId, 'request');
-    const settled = settleHttp(await this.workflowInstanceRequest({
-      method: 'GET',
-      url,
-      headers: {Accept: 'application/json'},
-      workflowId
+    const settled = settleHttp(await this.exchangeClientRequest({
+      method: 'GET', url, headers: {Accept: 'application/json'}
     }));
     return {vpr: settled.data, ...settled};
   }
 
   async participateInExchange(workflowId, exchangeId, body = {}) {
     const url = this.workflowResourceUrl(workflowId, exchangeId);
-    const settled = settleHttp(await this.workflowInstanceRequest({
-      method: 'POST', url, json: body, workflowId
+    const settled = settleHttp(await this.exchangeClientRequest({
+      method: 'POST', url, json: body
     }));
     return {message: settled.data, ...settled};
   }

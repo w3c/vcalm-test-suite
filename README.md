@@ -162,8 +162,12 @@ workflows: [{
 ```
 
 With a `zcap`, the suite also sets each workflow's `controller` to the
-client's DID (unless `options` sets one) and signs its requests to that
-workflow with the workflow's root capability (`urn:zcap:root:<workflow URL>`).
+client's DID (unless `options` sets one) and signs its coordinator requests
+to that workflow (reading it, creating exchanges, reading exchange state) with
+the workflow's root capability (`urn:zcap:root:<workflow URL>`). Requests a
+holder makes (taking part in an exchange, reading its protocols or current
+request) are sent unsigned, as a wallet sends them: VCALM needs no
+authorization beyond the exchange URL to initiate an exchange.
 VCALM defines no step field for requesting encryption, so `encryptionStep`
 names your own.
 
