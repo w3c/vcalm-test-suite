@@ -33,9 +33,32 @@ import {
   resolveWorkflowResourceUrl,
   resolveWorkflowsBaseUrl
 } from './helpers.js';
-// makeHttpsRequest is not exported from the package's entry point, so it
-// is imported from its module file.
-import {makeHttpsRequest} from 'vc-test-suite-implementations/lib/requests.js';
+
+// A plain HTTP request, for calls that carry no entry settings: the
+// holder's exchange calls, and a body the suite has already signed. It
+// returns the shape the registry's requests return: `result` is the
+// Response, with the parsed body as `result.data` and `data`.
+async function plainRequest({url, method = 'GET', json, body, headers = {}}) {
+  const init = {method, headers: {...headers}};
+  if(json !== undefined) {
+    init.body = JSON.stringify(json);
+    init.headers['content-type'] ??= 'application/json';
+  } else if(body !== undefined) {
+    init.body = body;
+  }
+  const result = await fetch(url, {
+    ...init, signal: AbortSignal.timeout(15000)
+  });
+  const text = await result.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : undefined;
+  } catch{
+    data = text;
+  }
+  Object.defineProperty(result, 'data', {value: data});
+  return {result, data};
+}
 
 function settleHttp({data, result, error}) {
   const httpResult = result ?? error?.response;
@@ -119,17 +142,6 @@ export class TestEndpoints {
       credential: extractIssuedCredential(settled.data),
       ...settled
     };
-  }
-
-  async deleteCredential(credentialId) {
-    const url = this.credentialResourceUrl(credentialId);
-    const {headers: _headers = {}, oauth2} = this.issuer.settings;
-    return settleHttp(await makeHttpsRequest({
-      url,
-      method: 'DELETE',
-      headers: _headers,
-      oauth2
-    }));
   }
 
   async updateCredentialStatus(body) {
@@ -273,7 +285,7 @@ export class TestEndpoints {
   // entry's headers. Initiating an exchange needs no authorization beyond
   // the exchange URL (VCALM 3.6); only the coordinator's calls are signed.
   exchangeClientRequest({method, url, json, headers = {}}) {
-    return makeHttpsRequest({url, method, json, headers});
+    return plainRequest({url, method, json, headers});
   }
 
   async getWorkflowConfiguration(workflowId) {
@@ -332,21 +344,18 @@ export class TestEndpoints {
   // `zcap`, the request is signed over the body's bytes.
   async issueWithRawBody(body) {
     const url = this.issueCredentialUrl();
-    const {headers: _headers = {}, oauth2, zcap} = this.issuer.settings;
+    const {zcap} = this.issuer.settings;
     if(zcap) {
       const signed = await signRawPost({
         url, body, capability: zcap.capability, keySeed: zcap.keySeed
       });
-      return settleHttp(await makeHttpsRequest({
+      return settleHttp(await plainRequest({
         url, method: 'POST', body: signed.body, headers: signed.headers
       }));
     }
-    return settleHttp(await makeHttpsRequest({
-      url,
-      method: 'POST',
-      body,
-      headers: {..._headers, 'content-type': 'application/json'},
-      oauth2
+    // The entry's headers and oauth2 settings are applied by the registry.
+    return settleHttp(await this.issuer.post({
+      url, body, headers: {'content-type': 'application/json'}
     }));
   }
 
