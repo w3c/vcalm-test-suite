@@ -33,6 +33,9 @@ import {
   resolveWorkflowResourceUrl,
   resolveWorkflowsBaseUrl
 } from './helpers.js';
+// makeHttpsRequest is not exported from the package's entry point, so it
+// is imported from its module file.
+import {makeHttpsRequest} from 'vc-test-suite-implementations/lib/requests.js';
 
 function settleHttp({data, result, error}) {
   const httpResult = result ?? error?.response;
@@ -121,9 +124,6 @@ export class TestEndpoints {
   async deleteCredential(credentialId) {
     const url = this.credentialResourceUrl(credentialId);
     const {headers: _headers = {}, oauth2} = this.issuer.settings;
-    const {makeHttpsRequest} = await import(
-      'vc-test-suite-implementations/lib/requests.js'
-    );
     return settleHttp(await makeHttpsRequest({
       url,
       method: 'DELETE',
@@ -272,10 +272,7 @@ export class TestEndpoints {
   // A request an exchange client (holder) sends: unsigned and without the
   // entry's headers. Initiating an exchange needs no authorization beyond
   // the exchange URL (VCALM 3.6); only the coordinator's calls are signed.
-  async exchangeClientRequest({method, url, json, headers = {}}) {
-    const {makeHttpsRequest} = await import(
-      'vc-test-suite-implementations/lib/requests.js'
-    );
+  exchangeClientRequest({method, url, json, headers = {}}) {
     return makeHttpsRequest({url, method, json, headers});
   }
 
@@ -336,9 +333,6 @@ export class TestEndpoints {
   async issueWithRawBody(body) {
     const url = this.issueCredentialUrl();
     const {headers: _headers = {}, oauth2, zcap} = this.issuer.settings;
-    const {makeHttpsRequest} = await import(
-      'vc-test-suite-implementations/lib/requests.js'
-    );
     if(zcap) {
       const signed = await signRawPost({
         url, body, capability: zcap.capability, keySeed: zcap.keySeed
