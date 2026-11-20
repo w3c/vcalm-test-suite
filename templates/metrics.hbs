@@ -98,9 +98,18 @@
     </section>
     <section id="did-authentication">
       <h4>DID Authentication</h4>
-      {{#matrixByTitle "DID Authentication"}}
-      {{> matrix.hbs matrix=. bare=true}}
-      {{/matrixByTitle}}
+      <section id="the-did-authentication-query-format">
+        <h5>The DID Authentication Query Format</h5>
+        {{#matrixByTitle "The DID Authentication Query Format"}}
+        {{> matrix.hbs matrix=. bare=true}}
+        {{/matrixByTitle}}
+      </section>
+      <section id="the-did-authentication-response-format">
+        <h5>The DID Authentication Response Format</h5>
+        {{#matrixByTitle "The DID Authentication Response Format"}}
+        {{> matrix.hbs matrix=. bare=true}}
+        {{/matrixByTitle}}
+      </section>
     </section>
     <section id="authorization-capability-request">
       <h4>Authorization Capability Request</h4>
@@ -194,9 +203,6 @@
     </section>
     <section id="vcapi-interaction-protocol">
       <h4><code>vcapi</code> Interaction Protocol</h4>
-      {{#matrixByTitle "vcapi Interaction Protocol"}}
-      {{> matrix.hbs matrix=. bare=true}}
-      {{/matrixByTitle}}
     </section>
   </section>
   <section id="error-handling">
@@ -248,6 +254,9 @@
     <h3>Status List Management</h3>
     <section id="create-status-list">
       <h4>Create Status List</h4>
+      {{#matrixByTitle "Create Status List"}}
+      {{> matrix.hbs matrix=. bare=true}}
+      {{/matrixByTitle}}
     </section>
     <section id="get-status-list">
       <h4>Get Status List</h4>
