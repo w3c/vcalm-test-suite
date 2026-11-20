@@ -25,7 +25,6 @@ import {
 import {
   resolveCredentialResourceUrl,
   resolveDeriveCredentialUrl,
-  resolveInteractionStartUrl,
   resolveIssueCredentialUrl,
   resolvePresentationResourceUrl,
   resolveUpdateStatusUrl,
@@ -59,8 +58,6 @@ export class TestEndpoints {
       holder => holder.tags.has(tag)) || null;
     this.workflow = implementation.workflows?.find(
       workflow => workflow.tags.has(tag)) || null;
-    this.interaction = implementation.interactions?.find(
-      interaction => interaction.tags.has(tag)) || null;
   }
 
   async issue(credential) {
@@ -375,18 +372,6 @@ export class TestEndpoints {
       method: 'GET', url, workflowId
     }));
     return {state: settled.data, ...settled};
-  }
-
-  async startInteraction({interactionId, accept = 'application/json'} = {}) {
-    const settings = this.interaction.settings;
-    const id = interactionId ?? settings.interactionId;
-    const url = settings.interactionStart ??
-      resolveInteractionStartUrl(settings.endpoint, id);
-    const settled = settleHttp(await this.interaction.get({
-      url,
-      headers: {Accept: accept}
-    }));
-    return {protocols: settled.data, ...settled};
   }
 
   // Sends `body` as-is, with a JSON Content-Type. For an issuer entry with a

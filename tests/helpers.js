@@ -4,22 +4,12 @@
 
 export const VCALM_TAG = 'VCALM';
 
-/** §2.4 interoperability baseline (10 MiB per verifiable credential). */
-export const RECOMMENDED_VC_PAYLOAD_BYTES = 10 * 1024 * 1024;
-
 /**
  * §1.3 holder conformance uses fixed workflow/exchange ids. Implementations
  * under test SHOULD accept these resources (stubs may pre-seed them).
  */
 export const CONFORMANCE_WORKFLOW_ID = 'urn:uuid:vcalm-probe-workflow';
 export const CONFORMANCE_EXCHANGE_ID = 'urn:uuid:vcalm-probe-exchange';
-
-/** §3.2.1 issuer configuration modes for credentials with existing proofs. */
-export const PROOF_HANDLING_MODES = [
-  'proofSets',
-  'proofChains',
-  'errorHandling'
-];
 
 export function setupMatrix(match, columnLabel) {
   this.matrix = true;
@@ -300,63 +290,6 @@ export function resolveHolderExchangeUrl(workflowEndpoint, requirementId) {
 }
 
 /**
- * Build a §3.7.1 interaction start URL with required `iuv=1`.
- *
- * @param {string} instanceRoot - Service root or role endpoint URL.
- * @param {string} interactionId - Interaction identifier.
- * @returns {string} Interaction URL.
- */
-export function resolveInteractionStartUrl(instanceRoot, interactionId) {
-  const trimmed = instanceRoot.replace(/\/+$/, '');
-  let base = trimmed;
-  if(trimmed.endsWith('/workflows')) {
-    base = trimmed.slice(0, -'/workflows'.length);
-  } else if(trimmed.endsWith('/interactions')) {
-    base = trimmed.slice(0, -'/interactions'.length);
-  }
-  const url = new URL(
-    `${base}/interactions/${encodeURIComponent(interactionId)}`
-  );
-  url.searchParams.set('iuv', '1');
-  return url.href;
-}
-
-/**
- * Build a §3.7.3 scheme URL from an interaction HTTPS URL.
- *
- * @param {string} interactionUrl - Interaction URL.
- * @param {string} [scheme='interaction'] - `interaction` or `web+interaction`.
- * @returns {string} Scheme URL.
- */
-export function toInteractionSchemeUrl(
-  interactionUrl,
-  scheme = 'interaction'
-) {
-  if(scheme !== 'interaction' && scheme !== 'web+interaction') {
-    throw new Error('Expected interaction or web+interaction scheme.');
-  }
-  return `${scheme}:${interactionUrl}`;
-}
-
-/**
- * Parse a §3.7.3 `interaction:` or `web+interaction:` URL.
- *
- * @param {string} schemeUrl - Scheme URL.
- * @returns {URL} Parsed interaction URL.
- */
-export function parseInteractionSchemeUrl(schemeUrl) {
-  const prefix = ['web+interaction:', 'interaction:'].find(
-    candidate => schemeUrl.startsWith(candidate)
-  );
-  if(!prefix) {
-    throw new Error(
-      'Expected interaction: or web+interaction: scheme URL.'
-    );
-  }
-  return new URL(schemeUrl.slice(prefix.length));
-}
-
-/**
  * Remove proof types that are not on the holder allow list (Appendix B.1).
  *
  * @param {object} credential - Credential or presentation.
@@ -378,28 +311,4 @@ export function stripUnrecognizedProofs(credential, acceptedProofTypes) {
     copy.proof = kept;
   }
   return copy;
-}
-
-const ENDPOINT_PROPERTIES = [
-  'issuers',
-  'verifiers',
-  'holders',
-  'workflows',
-  'interactions'
-];
-
-/**
- * Collect registered endpoint wrappers from an implementation manifest entry.
- *
- * @param {object} implementation - Implementation entry.
- * @returns {object[]} Endpoint instances.
- */
-export function listImplementationEndpoints(implementation) {
-  const endpoints = [];
-  for(const property of ENDPOINT_PROPERTIES) {
-    for(const endpoint of implementation[property] ?? []) {
-      endpoints.push(endpoint);
-    }
-  }
-  return endpoints;
 }
