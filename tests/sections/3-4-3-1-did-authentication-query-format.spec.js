@@ -45,10 +45,9 @@ describe('The DID Authentication Query Format', function() {
 
   for(const [name, implementation] of implementations) {
     describe(name, function() {
-      const row = n => `3-4-3-1-the-did-authentication-query-format-${n}`;
-
       statementTest({
-        name, implementation, role: 'workflow', rowId: row(1)
+        name, implementation, role: 'workflow',
+        rowId: '3-4-3-1-the-did-authentication-query-format-1'
       }, async ({endpoints, accepts, refuses}) => {
         await accepts('3.4.3.1 (1): the query has the required form',
           async () => {
@@ -62,7 +61,8 @@ describe('The DID Authentication Query Format', function() {
       });
 
       statementTest({
-        name, implementation, role: 'workflow', rowId: row(2)
+        name, implementation, role: 'workflow',
+        rowId: '3-4-3-1-the-did-authentication-query-format-2'
       }, async ({endpoints, accepts, refuses}) => {
         await accepts('3.4.3.1 (2): type is DIDAuthentication', async () => {
           expect((await servedQuery(endpoints)).type)
@@ -75,7 +75,8 @@ describe('The DID Authentication Query Format', function() {
       });
 
       statementTest({
-        name, implementation, role: 'workflow', rowId: row(3)
+        name, implementation, role: 'workflow',
+        rowId: '3-4-3-1-the-did-authentication-query-format-3'
       }, async ({endpoints, accepts, refuses}) => {
         await accepts('3.4.3.1 (3): each acceptedMethods item has a method',
           async () => {
@@ -94,7 +95,8 @@ describe('The DID Authentication Query Format', function() {
       });
 
       statementTest({
-        name, implementation, role: 'workflow', rowId: row(4)
+        name, implementation, role: 'workflow',
+        rowId: '3-4-3-1-the-did-authentication-query-format-4'
       }, async ({endpoints, accepts, refuses}) => {
         await accepts('3.4.3.1 (4): acceptedCryptosuites is an array',
           async () => {
@@ -109,7 +111,8 @@ describe('The DID Authentication Query Format', function() {
       });
 
       statementTest({
-        name, implementation, role: 'workflow', rowId: row(5)
+        name, implementation, role: 'workflow',
+        rowId: '3-4-3-1-the-did-authentication-query-format-5'
       }, async ({endpoints, accepts, refuses}) => {
         await accepts('3.4.3.1 (5): each acceptedCryptosuites item has a ' +
           'cryptosuite', async () => {

@@ -15,9 +15,6 @@ const chaiResponseValidator =
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SUITE_ROOT = path.join(__dirname, '..');
 
-/** Published VCALM OpenAPI document. */
-export const OPENAPI_SPEC_URL = 'https://w3c.github.io/vcalm/oas.yaml';
-
 export const OPENAPI_SPEC_PATH = path.join(
   SUITE_ROOT,
   'docs/openapi/oas.bundled.json'

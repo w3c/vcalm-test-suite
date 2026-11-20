@@ -6,7 +6,6 @@ import {
   applyWorkflowOptions,
   createDeriveRequestBody,
   createExchangeRequest,
-  createIssueRequestWithExistingProof,
   createPresentationRequestBody,
   createRequestBody,
   createUnknownOptionIssueBody,
@@ -181,17 +180,6 @@ export class TestEndpoints {
     };
   }
 
-  presentationsCollectionUrl() {
-    return resolvePresentationResourceUrl(this.holder.settings.endpoint);
-  }
-
-  presentationResourceUrl(presentationId) {
-    return resolvePresentationResourceUrl(
-      this.holder.settings.endpoint,
-      presentationId
-    );
-  }
-
   async deriveCredential(vc, options) {
     const url = resolveDeriveCredentialUrl(this.holder.settings.endpoint);
     const body = createDeriveRequestBody({
@@ -204,35 +192,6 @@ export class TestEndpoints {
       derivedVc: extractIssuedCredential(settled.data),
       ...settled
     };
-  }
-
-  async getPresentations() {
-    const url = this.presentationsCollectionUrl();
-    const settled = settleHttp(await this.holder.get({url}));
-    return {presentations: settled.data, ...settled};
-  }
-
-  async getPresentation(presentationId) {
-    const url = this.presentationResourceUrl(presentationId);
-    const settled = settleHttp(await this.holder.get({url}));
-    return {
-      presentation: extractCreatedPresentation(settled.data),
-      ...settled
-    };
-  }
-
-  async deletePresentation(presentationId) {
-    const url = this.presentationResourceUrl(presentationId);
-    const {headers: _headers = {}, oauth2} = this.holder.settings;
-    const {makeHttpsRequest} = await import(
-      'vc-test-suite-implementations/lib/requests.js'
-    );
-    return settleHttp(await makeHttpsRequest({
-      url,
-      method: 'DELETE',
-      headers: _headers,
-      oauth2
-    }));
   }
 
   async verifyPresentation(vp, options) {
@@ -248,11 +207,6 @@ export class TestEndpoints {
     return {data, result: httpResult, error: httpResult ? undefined : error};
   }
 
-  async verifyVp(vp, options = {}) {
-    const {data} = await this.verifyPresentation(vp, options);
-    return data;
-  }
-
   async createChallenge() {
     const url = resolveVerifierResourceUrl(
       this.verifier.settings.endpoint,
@@ -260,10 +214,6 @@ export class TestEndpoints {
     );
     const settled = settleHttp(await this.verifier.post({url, json: {}}));
     return settled;
-  }
-
-  workflowsBaseUrl() {
-    return resolveWorkflowsBaseUrl(this.workflow.settings.endpoint);
   }
 
   workflowResourceUrl(workflowId, exchangeId, suffix) {
@@ -404,8 +354,4 @@ export class TestEndpoints {
     return this.issueCredentialWithBody(body);
   }
 
-  async issueCredentialWithExistingProof() {
-    const body = createIssueRequestWithExistingProof(this.issuer);
-    return this.issueCredentialWithBody(body);
-  }
 }

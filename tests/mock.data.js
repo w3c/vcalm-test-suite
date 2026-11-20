@@ -13,14 +13,6 @@ const validVc = require('./validVc.json');
 export const UNKNOWN_OPTION_PROBE_KEY = 'vcalmInteropUnknownOptionProbe';
 
 /**
- * @param {string|string[]|undefined} cryptosuite - Issuer options.cryptosuite.
- * @returns {boolean} True when config requests a proof set (≥2 suites).
- */
-export function isProofSetCryptosuite(cryptosuite) {
-  return Array.isArray(cryptosuite) && cryptosuite.length >= 2;
-}
-
-/**
  * Map localConfig issue options to the VCALM request shape.
  * `cryptosuite` may be a string or string[]; an array means proof set
  * (first suite primary, remainder as additionalCryptosuites).
@@ -156,83 +148,6 @@ export function createVerifiablePresentationRequest({queries} = {}) {
 }
 
 /**
- * §3.4.3 DID Authentication query fixture.
- *
- * @param {object} [options] - Options.
- * @param {string} [options.challenge] - Challenge string.
- * @param {string} [options.domain] - Domain string.
- * @returns {object} DID Authentication query map.
- */
-export function createDidAuthenticationQuery({
-  challenge = `urn:uuid:${uuidv4()}`,
-  domain = 'vcalm.test'
-} = {}) {
-  return {
-    type: 'DIDAuthentication',
-    acceptedMethods: [{method: 'web'}],
-    acceptedCryptosuites: [{cryptosuite: 'eddsa-rdfc-2022'}],
-    challenge,
-    domain
-  };
-}
-
-/**
- * §3.4.3 DID Authentication response fixture (unsigned VP shell).
- *
- * @param {object} options - Options.
- * @param {string} options.holderDid - Holder DID.
- * @param {string} options.challenge - Challenge from the query.
- * @param {string} options.domain - Domain from the query.
- * @returns {object} Verifiable presentation object.
- */
-export function createDidAuthenticationPresentation({
-  holderDid,
-  challenge,
-  domain
-}) {
-  return {
-    '@context': ['https://www.w3.org/ns/credentials/v2'],
-    type: ['VerifiablePresentation'],
-    holder: holderDid,
-    proof: {
-      type: 'DataIntegrityProof',
-      cryptosuite: 'eddsa-rdfc-2022',
-      challenge,
-      domain,
-      proofPurpose: 'authentication',
-      verificationMethod: `${holderDid}#key-1`,
-      proofValue: 'z3FXQjecWufY46InteropFixtureProofValue'
-    }
-  };
-}
-
-/**
- * §3.4.5 VPR with grouped queries for AND/OR semantics.
- *
- * @returns {object} Verifiable Presentation Request object.
- */
-export function createGroupedQueryPresentationRequest() {
-  return createVerifiablePresentationRequest({
-    queries: [
-      {
-        type: 'QueryByExample',
-        group: 'credentials',
-        credentialQuery: {example: {type: 'VerifiableCredential'}}
-      },
-      {
-        type: 'DIDAuthentication',
-        group: 'credentials',
-        acceptedMethods: [{method: 'key'}]
-      },
-      {
-        type: 'QueryByExample',
-        credentialQuery: {example: {type: 'VerifiableCredential'}}
-      }
-    ]
-  });
-}
-
-/**
  * Request body probe for §2.4 unknown-options interop testing.
  *
  * @param {object} issuer - Issuer endpoint.
@@ -289,88 +204,6 @@ export function applyWorkflowOptions({body, options = {}} = {}) {
 }
 
 /**
- * §3.6.1 workflow step with issue-request `variables`.
- *
- * @returns {object} Create workflow request body.
- */
-export function createWorkflowWithIssueRequestVariables() {
-  return {
-    id: `urn:uuid:${uuidv4()}`,
-    initialStep: 'issue',
-    credentialTemplates: [{
-      id: 'template-1',
-      template: '{"credential":{"type":"VerifiableCredential"}}'
-    }],
-    steps: {
-      issue: {
-        issueRequests: [{
-          credentialTemplateId: 'template-1',
-          variables: {holderName: 'Example Holder'}
-        }]
-      }
-    }
-  };
-}
-
-/**
- * §3.6.1 workflow step with issue-request `result` JSON pointer.
- *
- * @returns {object} Create workflow request body.
- */
-export function createWorkflowWithIssueRequestResult() {
-  return {
-    id: `urn:uuid:${uuidv4()}`,
-    initialStep: 'issue',
-    credentialTemplates: [{
-      id: 'template-1',
-      template: '{"credential":{"type":"VerifiableCredential"}}'
-    }],
-    steps: {
-      issue: {
-        issueRequests: [{
-          credentialTemplateId: 'template-1',
-          result: '/variables/issuedCredential'
-        }]
-      }
-    }
-  };
-}
-
-/**
- * First issue request object from a workflow configuration fixture.
- *
- * @param {object} workflow - Workflow configuration.
- * @returns {object|undefined} Issue request map.
- */
-export function extractIssueRequest(workflow) {
-  for(const step of Object.values(workflow.steps ?? {})) {
-    if(step?.issueRequests?.[0]) {
-      return step.issueRequests[0];
-    }
-  }
-  return undefined;
-}
-
-/**
- * §3.2.1 issue request where the credential already contains a proof.
- *
- * @param {object} issuer - Issuer endpoint.
- * @returns {object} Issue credential request body.
- */
-export function createIssueRequestWithExistingProof(issuer) {
-  const credential = klona(validVc);
-  credential.id = credential.id || `urn:uuid:${uuidv4()}`;
-  credential.proof = {
-    type: 'DataIntegrityProof',
-    cryptosuite: 'eddsa-rdfc-2022',
-    proofPurpose: 'assertionMethod',
-    verificationMethod: 'did:example:holder#key-1',
-    proofValue: 'zExistingHolderProofValue'
-  };
-  return createRequestBody({issuer, vc: credential});
-}
-
-/**
  * §3.6.3 minimal create-exchange request fixture.
  *
  * @returns {object} Create exchange request body.
@@ -397,64 +230,8 @@ const warningFixture = {
   detail: 'Credential is past validUntil.'
 };
 
-/**
- * §3.8.1 verification result fixture.
- *
- * @param {object} [options] - Options.
- * @param {boolean} [options.verified] - Overall verification assertion.
- * @param {object[]} [options.errors] - Verification errors.
- * @param {object[]} [options.warnings] - Verification warnings.
- * @returns {object} Verification result object.
- */
-export function createVerificationResultFixture({
-  verified = true,
-  errors = [],
-  warnings = []
-} = {}) {
-  return {verified, errors, warnings};
-}
-
 export {
   problemDetailFixture,
   unknownOptionProblemDetailFixture,
   warningFixture
 };
-
-/**
- * Tamper an issued credential so verification should fail.
- *
- * @param {object} issuedVc - Issued verifiable credential.
- * @returns {object} Tampered verifiable credential.
- */
-export function createTamperedVerifiableCredential(issuedVc) {
-  const tampered = klona(issuedVc);
-  if(tampered.proof?.proofValue) {
-    tampered.proof.proofValue = `${tampered.proof.proofValue}x`;
-  } else if(tampered.proof) {
-    delete tampered.proof.proofValue;
-  }
-  return tampered;
-}
-
-/**
- * Credential with understood and unrecognized proof types (Appendix B).
- *
- * @returns {object} Verifiable credential fixture.
- */
-export function createCredentialWithMixedProofTypes() {
-  const credential = klona(validVc);
-  credential.proof = [
-    {
-      type: 'DataIntegrityProof',
-      cryptosuite: 'eddsa-rdfc-2022',
-      proofPurpose: 'assertionMethod',
-      verificationMethod: 'did:example:holder#key-1',
-      proofValue: 'zUnderstoodProofValue'
-    },
-    {
-      type: 'UnknownInteropProof2026',
-      proofValue: 'zUnknownProofValue'
-    }
-  ];
-  return credential;
-}
