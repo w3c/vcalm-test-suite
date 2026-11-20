@@ -170,6 +170,26 @@ step field for this, so each implementation names its own, for example
 check the keys the service puts in that request. Without `encryptionStep`
 they are skipped.
 
+### Interaction URLs
+
+Any entry (`issuers`, `verifiers`, `holders`, `workflows` or `status`) can
+set `interactionUrl`: an interaction URL (section 3.7.1) that the
+implementation's coordinator serves. For example:
+
+```js
+{
+  endpoint: 'https://app.example/workflows',
+  tags: ['VCALM'],
+  interactionUrl: 'https://app.example/interactions/z8n38Dp7a?iuv=1'
+}
+```
+
+The 3.7 rows check every `interactionUrl` they find: its syntax and `iuv`
+parameter (3.7.1), its length (3.7.2), and the responses to a GET with
+`Accept: application/json` and with an unrecognized `Accept` value (3.7.4).
+The URL must be live for the run. Without `interactionUrl` the 3.7 rows are
+skipped.
+
 ### Running locally
 
 ```sh
