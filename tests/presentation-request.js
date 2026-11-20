@@ -20,9 +20,11 @@ export const DID_AUTHENTICATION_QUERY = {
   acceptedCryptosuites: [{cryptosuite: 'eddsa-rdfc-2022'}]
 };
 
+// 3.4.2: "The `credentialQuery` property in a `QueryByExample` query is a
+// single object."
 export const QUERY_BY_EXAMPLE = {
   type: 'QueryByExample',
-  credentialQuery: [{example: {type: 'VerifiableCredential'}}]
+  credentialQuery: {example: {type: 'VerifiableCredential'}}
 };
 
 /**
@@ -90,9 +92,12 @@ export async function servedRequest({endpoints, request, step}) {
 }
 
 /**
- * Asserts that creating a workflow whose step asks for `request` is refused
- * with a status the OpenAPI lists. A service that accepted it would be set
- * up to send a request of the wrong form.
+ * Asserts that the workflow service does not give a holder a request of the
+ * wrong form. In an exchange the service is the verifier that provides the
+ * request, so the form statements bind what it serves. It may refuse when
+ * the workflow is created, when an exchange is created on it, or when the
+ * exchange starts (a step can be a template, so the request may only exist
+ * then), each time with a status the OpenAPI lists. Serving it fails.
  *
  * @param {object} options - Options.
  * @param {object} options.endpoints - TestEndpoints.
@@ -101,9 +106,29 @@ export async function servedRequest({endpoints, request, step}) {
  * @param {object} [options.step] - More step fields.
  */
 export async function shouldRefuseRequest({endpoints, request, step}) {
-  const {result} = await endpoints.createWorkflow(
+  const created = await endpoints.createWorkflow(
     stepWorkflow({endpoints, request, step}));
-  shouldBeListedRefusal({result, operation: 'createWorkflow'});
+  if(created.result?.status !== 201) {
+    shouldBeListedRefusal(
+      {result: created.result, operation: 'createWorkflow'});
+    return;
+  }
+  const exchange = await endpoints.createExchange(created.workflowId);
+  if(exchange.result?.status !== 201 || !exchange.exchangeId) {
+    shouldBeListedRefusal(
+      {result: exchange.result, operation: 'createExchange'});
+    return;
+  }
+  const {exchangeId} = exchange;
+  const started = await endpoints.participateInExchange(
+    created.workflowId, exchangeId, {});
+  if(started.result?.status === 200) {
+    throw new Error('The workflow was created (201) and its exchange served ' +
+      'the request: ' +
+      JSON.stringify(started.data?.verifiablePresentationRequest));
+  }
+  shouldBeListedRefusal(
+    {result: started.result, operation: 'participateInExchange'});
 }
 
 /**

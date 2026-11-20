@@ -5,9 +5,9 @@
 // Each statement is one test per implementation (see statementTest in
 // ../statement-test.js). Each check is labelled `3.4.2 (n): what it does`.
 //
-// As in 3.4.1, the suite checks the request the workflow service sends, and
-// that the service refuses to create a workflow whose step request breaks
-// the form (the suite's reading; the spec does not say so in words).
+// As in 3.4.1, the workflow service is the verifier that serves the request:
+// a valid step gives a request of the required form, and a malformed one is
+// refused when the workflow is created or when the exchange starts.
 
 import {
   QUERY_BY_EXAMPLE, servedRequest, shouldRefuseRequest
@@ -25,7 +25,7 @@ const {match: implementations} = filterByTag(
 
 const withIssuers = acceptedIssuers => ({query: [{
   ...QUERY_BY_EXAMPLE,
-  credentialQuery: [{...QUERY_BY_EXAMPLE.credentialQuery[0], acceptedIssuers}]
+  credentialQuery: {...QUERY_BY_EXAMPLE.credentialQuery, acceptedIssuers}
 }]});
 
 // The three item forms 3.4.2 (5) allows.
@@ -65,7 +65,7 @@ describe('Query By Example', function() {
           async () => {
             const {served} = await servedRequest(
               {endpoints, request: withIssuers(ACCEPTED_ISSUERS)});
-            const items = served.query?.[0]?.credentialQuery?.[0]
+            const items = served.query?.[0]?.credentialQuery
               ?.acceptedIssuers;
             expect(items).to.deep.equal(ACCEPTED_ISSUERS);
             for(const item of items) {

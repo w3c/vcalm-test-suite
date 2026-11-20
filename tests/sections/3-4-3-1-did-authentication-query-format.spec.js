@@ -5,10 +5,10 @@
 // Each statement is one test per implementation (see statementTest in
 // ../statement-test.js). Each check is labelled `3.4.3.1 (n): what it does`.
 //
-// As in 3.4.1, the suite checks the DID Authentication query the workflow
-// service sends, and that the service refuses to create a workflow whose step
-// query breaks the form (the suite's reading; the spec does not say so in
-// words).
+// As in 3.4.1, the workflow service is the verifier that serves the DID
+// Authentication query: a valid step gives a query of the required form, and
+// a malformed one is refused when the workflow is created or when the
+// exchange starts.
 
 import {
   DID_AUTHENTICATION_QUERY, servedRequest, shouldRefuseRequest
