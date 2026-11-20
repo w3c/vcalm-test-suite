@@ -86,8 +86,13 @@ An `endpoint` that already ends with the operation path, such as
 another VC test suite can be reused. A role whose operations live under a
 different root gets its own `endpoint`.
 
-The verifier rows sign their own test credentials and presentations, so they
-need no issuer or holder.
+The suite signs its own test credentials and presentations, so you can test
+a verifier without an issuer or holder. They use Ed25519 `did:key` keys and
+`eddsa-rdfc-2022` proofs over the VC v2 context
+(`https://www.w3.org/ns/credentials/v2`). VCALM requires no particular DID
+method or cryptosuite; this is the suite's baseline. The verifier rows, and the
+workflow rows where the suite answers as a holder, pass only if your service
+resolves `did:key` and verifies `eddsa-rdfc-2022`.
 
 ### Entry fields
 
