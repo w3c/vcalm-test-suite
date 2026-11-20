@@ -8,22 +8,22 @@ Lifecycle Management).
 
 | Layer | Tool | Where |
 |-------|------|--------|
-| Normative statements | Mocha | `tests/sections/` (one file per spec section) and the older `tests/<section>/` folders, plus `tests/Coverage/` for untested MUST and REQUIRED statements |
+| Normative statements | Mocha | `tests/sections/` (one file per spec section) |
 | Response shape | Chai OpenAPI | `docs/openapi/oas.bundled.json` via `tests/openapi.js` |
 
 Mocha tests are adapted from the CCG
 [vc-api-issuer-test-suite](https://github.com/w3c-ccg/vc-api-issuer-test-suite)
 and
 [vc-api-verifier-test-suite](https://github.com/w3c-ccg/vc-api-verifier-test-suite),
-extended with **negative fixtures** (malformed issue requests, foreign
-credentials/presentations) to catch stub implementations. Successful responses
+extended with **negative fixtures** (malformed issue and workflow requests)
+to catch stub implementations. Successful responses
 for the three required POSTs are also checked against the bundled VCALM OpenAPI
 document. This suite does
 **not** run VCDM or crypto interop suites — it uses minimal fixture credentials
 sufficient to exercise the API.
 
-Mocha tests under `tests/<section>/` mirror the VCALM TOC (helpers live at
-`tests/*.js` and are excluded from the `tests/*/**/*.js` glob).
+The files in `tests/sections/` follow the VCALM table of contents. Helpers
+live at `tests/*.js` and are excluded from the `tests/*/**/*.js` glob.
 
 ## Normative statements and the results matrix
 
@@ -48,8 +48,8 @@ It exports:
 sentence in the TR. `scripts/build-links.mjs` writes it from the extractor's
 output; rerun it whenever the statements are regenerated.
 
-Rows are being moved to one file per spec section in `tests/sections/`, in the
-shape of the Recognized Entities test suite: each statement is one test per
+Rows live in one file per spec section in `tests/sections/`, in the shape of
+the Recognized Entities test suite: each statement is one test per
 implementation (`statementTest` in `tests/statement-test.js`), and each check
 in it is labelled `N.N (n): what it does`. A test needs an `accepts` and a
 `refuses` check, or, for a statement about the implementation's own response,
@@ -61,9 +61,13 @@ Verifier tests sign their own credentials and presentations
 (`tests/signing.js`, `eddsa-rdfc-2022`), with keys derived from public labels,
 so they need no issuer or holder endpoint.
 
-Until every section is moved, `tests/Coverage/normative-coverage.js` adds a
-skipped row for each MUST or REQUIRED statement that no test file has a row
-for.
+Every `REQUIRED` statement has exactly one row in `tests/sections/`, tested
+or skipped with its reason, and no SHOULD or MAY statement has one.
+`tests/coverage/statement-rows.spec.js` checks this, so a statement added by
+regenerating `tests/normative-statements.js` fails the run until a section
+file has a row for it. Write each `rowId` as a string literal; the check
+reads the section files as text, so it also runs with no implementations
+configured.
 
 ## Install
 
@@ -208,7 +212,6 @@ NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
 |----------|--------|
 | `NODE_TLS_REJECT_UNAUTHORIZED=0` | Accept self-signed HTTPS certificates |
 | `VCALM_OPENAPI=0` | Skip the OpenAPI response checks |
-| `VCALM_FIXTURE=1` | Also run the fixture-only tests (§3.4 presentation request shapes, workflow configuration fixtures) |
 
 ## OpenAPI response checks
 

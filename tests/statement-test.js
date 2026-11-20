@@ -10,7 +10,6 @@
 import {it} from 'mocha';
 import {LINK} from './normative-links.js';
 import {NORMATIVE} from './normative-statements.js';
-import {recordRow as recordCoverage} from './coverage-registry.js';
 import {TestEndpoints} from './TestEndpoints.js';
 import {VCALM_TAG} from './helpers.js';
 
@@ -53,8 +52,7 @@ export function setupStatementMatrix({suite, names} = {}) {
 
 /**
  * Records a row's statement text for the report. At-risk rows lose their
- * cells, so the report reads their text from this registry. The row is also
- * recorded as covered, so tests/Coverage does not add a skipped row for it.
+ * cells, so the report reads their text from this registry.
  *
  * @param {object} options - Options.
  * @param {string} options.rowId - The statement key.
@@ -62,7 +60,6 @@ export function setupStatementMatrix({suite, names} = {}) {
 export function recordRow({rowId} = {}) {
   globalThis.interopRowText ??= {};
   globalThis.interopRowText[rowId] = NORMATIVE[rowId];
-  recordCoverage(NORMATIVE[rowId]);
 }
 
 /**
