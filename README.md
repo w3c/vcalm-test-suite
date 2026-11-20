@@ -1,246 +1,301 @@
 # VCALM Interoperability Test Suite
 
-Interoperability tests for implementations of
+Tests for implementations of
 [VCALM](https://www.w3.org/TR/vcalm-1.0/) (Verifiable Credential API for
-Lifecycle Management).
+Lifecycle Management). The suite sends HTTP requests to your service and
+checks the responses against every MUST and REQUIRED statement in the spec.
+The result is a report with one row per statement and one column per
+implementation.
 
-## Strategy
+## Quick start
 
-| Layer | Tool | Where |
-|-------|------|--------|
-| Normative statements | Mocha | `tests/sections/` (one file per spec section) |
-| Response shape | Chai OpenAPI | `docs/openapi/oas.bundled.json` via `tests/openapi.js` |
+You need Node.js 18.17 or later and a running VCALM service.
 
-Mocha tests are adapted from the CCG
-[vc-api-issuer-test-suite](https://github.com/w3c-ccg/vc-api-issuer-test-suite)
-and
-[vc-api-verifier-test-suite](https://github.com/w3c-ccg/vc-api-verifier-test-suite),
-extended with **negative fixtures** (malformed issue and workflow requests)
-to catch stub implementations. Successful responses
-for the three required POSTs are also checked against the bundled VCALM OpenAPI
-document. This suite does
-**not** run VCDM or crypto interop suites — it uses minimal fixture credentials
-sufficient to exercise the API.
+1. Install:
 
-The files in `tests/sections/` follow the VCALM table of contents. Helpers
-live at `tests/*.js` and are excluded from the `tests/*/**/*.js` glob.
+   ```sh
+   git clone https://github.com/w3c/vcalm-test-suite.git
+   cd vcalm-test-suite
+   npm install --legacy-peer-deps
+   ```
 
-## Normative statements and the results matrix
+   `--legacy-peer-deps` is needed because one dev dependency (the Chai
+   OpenAPI plugin) declares an older peer range.
 
-`tests/normative-statements.js` holds every sentence that the
-[VCALM TR](https://www.w3.org/TR/vcalm-1.0/) marks as normative: its RFC 2119
-keyword is in an `<em class="rfc2119">` element. A keyword in an OpenAPI
-description rendered into the TR is not marked, so it is not a statement here;
-those rules are checked by validating responses against the OpenAPI document
-(see "OpenAPI response checks"). The file is generated from the TR with the
-respec-normative-statements tooling. Do not edit it by hand.
+2. Create your config and point it at your service:
 
-It exports:
+   ```sh
+   cp localConfig.example.cjs localConfig.cjs
+   ```
 
-- `NORMATIVE`: key to sentence. Keys are `<section>-<n>`, for example
-  `1-3-conformance-3`.
-- `SECTION`: key to the spec section heading.
-- `REQUIRED`: the keys whose sentence contains MUST or REQUIRED. These are the
-  rows of the results matrix.
-- `MARKED`: the keys the TR marks as normative.
+   ```js
+   // localConfig.cjs
+   module.exports = {
+     implementations: [{
+       name: 'My implementation',
+       issuers: [{
+         id: 'did:example:issuer',
+         endpoint: 'https://localhost:8443',
+         tags: ['VCALM']
+       }],
+       verifiers: [{
+         endpoint: 'https://localhost:8443',
+         tags: ['VCALM']
+       }]
+     }]
+   };
+   ```
 
-`tests/normative-links.js` maps each key to a link that highlights the
-sentence in the TR. `scripts/build-links.mjs` writes it from the extractor's
-output; rerun it whenever the statements are regenerated.
+   `localConfig.cjs` is gitignored, so it stays on your machine.
 
-Rows live in one file per spec section in `tests/sections/`, in the shape of
-the Recognized Entities test suite: each statement is one test per
-implementation (`statementTest` in `tests/statement-test.js`), and each check
-in it is labelled `N.N (n): what it does`. A test needs an `accepts` and a
-`refuses` check, or, for a statement about the implementation's own response,
-a `responds` check. A statement with no test yet is a skipped row with its
-reason. Refusals must use a client error status that the OpenAPI lists for
-the operation.
+3. Run the tests:
 
-Verifier tests sign their own credentials and presentations
-(`tests/signing.js`, `eddsa-rdfc-2022`), with keys derived from public labels,
-so they need no issuer or holder endpoint.
+   ```sh
+   npm test
+   ```
 
-Every `REQUIRED` statement has exactly one row in `tests/sections/`, tested
-or skipped with its reason, and no SHOULD or MAY statement has one.
-`tests/coverage/statement-rows.spec.js` checks this, so a statement added by
-regenerating `tests/normative-statements.js` fails the run until a section
-file has a row for it. Write each `rowId` as a string literal; the check
-reads the section files as text, so it also runs with no implementations
-configured.
+   If your service uses a self-signed certificate:
 
-## Install
+   ```sh
+   NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
+   ```
 
-```sh
-npm install --legacy-peer-deps
-```
+4. Open `reports/index.html` to see the results.
 
-`--legacy-peer-deps` avoids peer-resolution conflicts between Mocha 11 and older
-devDependency trees (Chai OpenAPI).
+Start with the roles your service has. Rows for roles you leave out are
+skipped, not failed, so you can add roles one at a time.
 
-## Instructions for implementers
+## Configuring your implementation
 
-To add your implementation, add endpoints tagged `VCALM` to it in
-[vc-test-suite-implementations](https://github.com/w3c/vc-test-suite-implementations),
-or locally in `localConfig.cjs` at the root of this suite
-(`localConfig.example.cjs` is a template):
+### Roles
 
-```js
-module.exports = {
-  settings: {},
-  implementations: [{
-    name: 'My implementation',
-    issuers: [{
-      id: 'did:web:vcalm.example',
-      endpoint: 'https://vcalm.example',
-      tags: ['VCALM']
-    }],
-    verifiers: [{
-      endpoint: 'https://vcalm.example',
-      tags: ['VCALM']
-    }]
-  }]
-};
-```
+Each role is a list of entries. The suite uses the first entry in each list
+that has the tag `VCALM`.
 
-Register only the roles your implementation has. Tests that need a role you
-did not register are not run for your implementation.
+| Role | Paths the suite adds to `endpoint` | Rows that use it |
+|------|------------------------------------|------------------|
+| `issuers` | `/credentials/issue`, `/credentials/{id}` | 1.3, 2.4, 3.2.1; status rows issue a credential first |
+| `verifiers` | `/credentials/verify`, `/presentations/verify` | 1.3, 2.4, 3.8, 3.8.1 |
+| `workflows` | `/workflows`, `/workflows/{id}/exchanges/...` | 1.3, 2.4.3, 3.4, 3.6, 3.8 |
+| `status` | `/credentials/status` | 1.3, E.1 |
+| `holders` | `/presentations`, `/credentials/derive` | none yet |
 
-Each `endpoint` is the root of your VCALM service, and the suite adds the
-paths from the specification. A role whose operations live under a different
-root gets its own `endpoint`.
+`endpoint` is the root of your VCALM service, and the suite adds the paths.
+An `endpoint` that already ends with the operation path, such as
+`https://vcalm.example/credentials/issue`, also works, so an entry written for
+another VC test suite can be reused. A role whose operations live under a
+different root gets its own `endpoint`.
 
-| Role key | Paths the suite adds | Used by |
-|----------|----------------------|---------|
-| `issuers` | `/credentials/issue`, `/credentials/{id}` | issuing, and the credentials other tests verify |
-| `verifiers` | `/credentials/verify`, `/presentations/verify`, `/challenges` | verifying credentials and presentations |
-| `holders` | `/presentations`, `/presentations/{id}`, `/credentials/derive` | creating the presentations that verifier tests send |
-| `workflows` | `/workflows`, `/workflows/{id}/...` | workflows and exchanges |
-| `status` | `/credentials/status` | status updates |
+The verifier rows sign their own test credentials and presentations, so they
+need no issuer or holder.
 
-An `endpoint` that already ends with one of these operation paths, such as
-`https://vcalm.example/credentials/issue`, also works, so entries written for
-the other VC test suites can be reused.
+### Entry fields
 
-An `issuers` or `holders` entry may also carry `headers` and `oauth2`
-settings, which the suite uses for its requests to that endpoint.
+| Field | Roles | Meaning |
+|-------|-------|---------|
+| `endpoint` | all | Service root or operation URL (required). |
+| `tags` | all | Must include `VCALM`. Add `multiProofs` for 3.2.1 (see below). |
+| `id` | `issuers` | The issuer DID, used as the `issuer` of the credentials the suite asks you to issue. |
+| `options` | `issuers`, `verifiers`, `status`, `workflows` | Fields merged into each request body to that role (see below). |
+| `zcap` | any | `{capability, keySeed}`: the suite signs its POST requests with `capability`. `keySeed` names an environment variable that holds the client's key seed. `capability` may be an object or a JSON string. |
+| `headers`, `oauth2` | `issuers` | Extra headers, or OAuth2 client credentials, for requests to the issuer. |
+| `interactionUrl` | any | An interaction URL your service serves, for the 3.7 rows (see below). |
+| `encryptionStep` | `workflows` | Step fields that ask the holder to encrypt the response, for the 3.4.1 encryption rows (see below). |
 
-### Issuer entries
+`options` supplies what the spec leaves to the implementation:
 
-Section 3.2.1 requires an issuer instance that attaches multiple proofs to
-attach all of them in response to a single call to `/credentials/issue`. Tag
-such an instance's entry `multiProofs`, next to `VCALM`; the suite then checks
-that one issue response has two or more distinct proofs. Proof sets and proof
-chains both count. The entry can sit next to the implementation's main issuer
-entry:
+- **Issuers:** sent as the `options` of each issue request, for example
+  `{cryptosuite: 'eddsa-rdfc-2022'}`. A `cryptosuite` array asks for a proof
+  set: the first suite is sent as `cryptosuite`, the rest as
+  `additionalCryptosuites`.
+- **Verifiers:** sent as the `options` of each verify request, for example
+  `{checks: ['proof']}`.
+- **Status:** merged into each status update request, for example the
+  `indexAllocator` your status list uses (E.1 reads it from here).
+- **Workflows:** merged into each `POST /workflows` body. A key with a value
+  adds or replaces that field; a key set to `null` removes it. For example,
+  `id: null` lets the server generate the workflow ID.
+
+### Optional features
+
+These rows are skipped unless you opt in.
+
+**Multiple proofs (3.2.1).** The spec requires an issuer that attaches
+multiple proofs to return all of them from one issue call. Add a second
+issuer entry, tagged `multiProofs`, for an issuer configured that way:
 
 ```js
 issuers: [{
-  endpoint: 'https://issuer.example/issuers/main/credentials/issue',
+  id: 'did:example:issuer',
+  endpoint: 'https://issuer.example/issuers/main',
   tags: ['VCALM']
 }, {
-  endpoint: 'https://issuer.example/issuers/two-proofs/credentials/issue',
+  id: 'did:example:issuer',
+  endpoint: 'https://issuer.example/issuers/two-proofs',
   tags: ['VCALM', 'multiProofs']
 }]
 ```
 
-The other tests use the first `issuers` entry tagged `VCALM`. Without an entry
-tagged `multiProofs`, the 3.2.1 row is skipped.
+The other rows keep using the first entry.
 
-### Workflow entries
+**Workflows.** A workflows entry often needs all three of `options`, `zcap`
+and `encryptionStep`:
 
-A `workflows` entry can set `options`, which are merged into each
-`POST /workflows` request body the suite sends. This is how an implementation
-supplies fields the spec leaves out or makes optional, such as a meter. Options
-are merged last, so they override the suite's values.
+```js
+workflows: [{
+  endpoint: 'https://workflows.example',
+  tags: ['VCALM'],
+  // Merged into each POST /workflows body: adds a meter, and removes the
+  // suite's id so the server generates one.
+  options: {
+    meter: 'https://workflows.example/meters/z19uMCiPNET4YbcPpBcab5mEE',
+    id: null
+  },
+  // Signs the create request; the key seed is read from WORKFLOW_KEY_SEED.
+  zcap: {
+    capability: require('./workflow-create-zcap.json'),
+    keySeed: 'WORKFLOW_KEY_SEED'
+  },
+  // Step fields that make a step ask the holder to encrypt the response.
+  encryptionStep: {acceptedEncryption: {required: true}}
+}]
+```
 
-- A key with a value replaces or adds that field in the request.
-- A key with `null` is removed from the request. For example, `id: null` lets
-  the server generate the workflow ID.
+With a `zcap`, the suite also sets each workflow's `controller` to the
+client's DID (unless `options` sets one) and signs its requests to that
+workflow with the workflow's root capability (`urn:zcap:root:<workflow URL>`).
+VCALM defines no step field for requesting encryption, so `encryptionStep`
+names your own.
 
-A `workflows` entry can also set `zcap: {capability, keySeed}`, where
-`keySeed` names an environment variable that holds the client's secret key
-seed. The create request is signed with `capability`. The suite then sets the
-workflow's `controller` to the client's DID, unless `options` sets one, and
-signs its requests to each workflow it created with that workflow's root
-capability (`urn:zcap:root:<workflow URL>`).
-
-A `workflows` entry can also set `encryptionStep`: the step fields that make
-a workflow step ask the holder to encrypt the response, so that the request
-the exchange sends has `acceptedEncryption` (section 3.4.1). VCALM defines no
-step field for this, so each implementation names its own, for example
-`{acceptedEncryption: {required: true}}`. The 3.4.1 `acceptedEncryption` rows
-check the keys the service puts in that request. Without `encryptionStep`
-they are skipped.
-
-### Interaction URLs
-
-Any entry (`issuers`, `verifiers`, `holders`, `workflows` or `status`) can
-set `interactionUrl`: an interaction URL (section 3.7.1) that the
-implementation's coordinator serves. For example:
+**Interaction URLs (3.7).** Set `interactionUrl` on any entry to an
+interaction URL your service serves. The suite checks its syntax and `iuv`
+parameter, its length, and the responses to a GET with
+`Accept: application/json` and with an unrecognized `Accept` value, so the URL
+must be live during the run:
 
 ```js
 {
-  endpoint: 'https://app.example/workflows',
+  endpoint: 'https://app.example',
   tags: ['VCALM'],
   interactionUrl: 'https://app.example/interactions/z8n38Dp7a?iuv=1'
 }
 ```
 
-The 3.7 rows check every `interactionUrl` they find: its syntax and `iuv`
-parameter (3.7.1), its length (3.7.2), and the responses to a GET with
-`Accept: application/json` and with an unrecognized `Accept` value (3.7.4).
-The URL must be live for the run. Without `interactionUrl` the 3.7 rows are
-skipped.
+### Sharing your results
 
-### Running locally
+The published report tests the implementations listed in
+[vc-test-suite-implementations](https://github.com/w3c/vc-test-suite-implementations).
+To appear in it, add your entries there with the `VCALM` tag. While
+`localConfig.cjs` lists implementations, the suite tests only those.
 
-```sh
-cp localConfig.example.cjs localConfig.cjs
-# edit the endpoints, then:
-npm test
-```
+## Reading the report
 
-To test an implementation that runs locally with a self-signed certificate,
-allow self-signed certificates:
+`npm test` writes `reports/index.html` and `reports/index.json`, and a log in
+`suite.log`. Each cell is one statement for one implementation. Hover over a
+cell to see its details:
 
-```sh
-NODE_TLS_REJECT_UNAUTHORIZED=0 npm test
-```
+- **Passed:** every check for the statement passed.
+- **Failed:** at least one check failed. The details list each failed check,
+  labelled `N.N (n): what it checks`, with the reason.
+- **Skipped:** the row was not run for this implementation. The details say
+  why: a role or optional feature is not configured, the response did not let
+  the suite observe the statement, or the statement binds another party (such
+  as a client or a browser) and is not tested.
+
+A row is "at risk" while fewer than two implementations pass it, so with one
+implementation every row is listed under "At Risk".
+
+## Environment variables
 
 | Variable | Effect |
 |----------|--------|
-| `NODE_TLS_REJECT_UNAUTHORIZED=0` | Accept self-signed HTTPS certificates |
-| `VCALM_OPENAPI=0` | Skip the OpenAPI response checks |
+| `NODE_TLS_REJECT_UNAUTHORIZED=0` | Accept self-signed HTTPS certificates. |
+| `VCALM_OPENAPI=0` | Skip the OpenAPI schema checks on responses (refusal statuses are still checked). |
 
-## OpenAPI response checks
+## How the suite works
 
-`npm test` checks successful responses for:
+This section is for people changing the suite.
 
-- `POST /credentials/issue` (201, `verifiableCredential`)
-- `POST /credentials/verify` (200)
-- `POST /presentations/verify` (200)
+### Layout
 
-against `docs/openapi/oas.bundled.json`, bundled from
-`https://w3c.github.io/vcalm/oas.yaml` (version `0.9-unstable`). One `$ref`
-in that file points at `../components/ExchangeVerifiablePresentation.yml`;
-the bundle resolves it to
-`https://w3c.github.io/vcalm/components/ExchangeVerifiablePresentation.yml`.
-The published `servers` entry is one example host, so the bundle uses `/`
-as the service root. The test HTTP client unwraps `verifiableCredential`
-before assertions run; the checker puts that property back before comparing
-the issue response to the schema.
+| Path | What it holds |
+|------|---------------|
+| `tests/sections/` | One test file per spec section, named after it (`3-4-1-...spec.js`). |
+| `tests/coverage/statement-rows.spec.js` | Checks that every REQUIRED statement has exactly one row. |
+| `tests/normative-statements.js` | The spec's normative sentences (generated, do not edit). |
+| `tests/normative-links.js` | A link to each sentence in the TR (generated by `scripts/build-links.mjs`). |
+| `tests/statement-test.js` | `statementTest`, which defines one row. |
+| `tests/TestEndpoints.js` | The HTTP client for each role. |
+| `tests/*.js` | Other helpers: request bodies, signing, OpenAPI, and per-section helpers. |
+| `docs/openapi/oas.bundled.json` | The VCALM OpenAPI document. |
+| `templates/` | The report layout. |
 
-Set `VCALM_OPENAPI=0` to skip these checks.
+### Statements and rows
 
-## Report
+`tests/normative-statements.js` holds every sentence the
+[VCALM TR](https://www.w3.org/TR/vcalm-1.0/) marks as normative (its RFC 2119
+keyword is in an `<em class="rfc2119">` element). A keyword in an OpenAPI
+description rendered into the TR is not marked, so it is not a statement here;
+those rules are covered by the OpenAPI checks. The file exports `NORMATIVE`
+(key to sentence, for example `1-3-conformance-3`), `SECTION` (key to section
+heading), `REQUIRED` (keys whose sentence has MUST or REQUIRED: the rows of
+the report) and `MARKED`. Regenerate it from the TR, then rerun
+`scripts/build-links.mjs`.
 
-`npm test` writes:
+Each REQUIRED statement is one row, written with `statementTest` in its
+section file. A row has labelled checks:
 
-- W3C interoperability matrix — `reports/index.html` and `reports/index.json`
-- Mocha suite log — `suite.log`
+- `accepts`: the implementation does what the statement requires.
+- `refuses`: it refuses input that breaks the statement, with a client error
+  status the OpenAPI lists for the operation.
+- `responds`: for a statement about the implementation's own response, the
+  response has the required form.
 
-`reports/` is gitignored except `.gitkeep`; regenerate locally after each run.
+A row needs an `accepts` and a `refuses` check, or a `responds` check. A
+statement the suite cannot test (for example, one that binds clients) is
+still a row, skipped with its reason.
+
+To add or change a row:
+
+- Write `rowId` as a string literal, for example
+  `rowId: '3-6-5-get-current-exchange-vpr-1'`.
+  `tests/coverage/statement-rows.spec.js` reads the section files as text
+  and fails if a REQUIRED statement has no row or more than one, or if a
+  SHOULD or MAY statement has one. It runs even with no implementations
+  configured.
+- A new section file's `describe` title needs a matching
+  `{{#matrixByTitle "<title>"}}` slot in `templates/metrics.hbs`, or its rows
+  do not appear in their section of the report.
+- Test credentials and presentations are signed by the suite
+  (`tests/signing.js`, `eddsa-rdfc-2022`) with keys derived from fixed labels.
+
+### The OpenAPI document
+
+`docs/openapi/oas.bundled.json` is the published
+[`oas.yaml`](https://w3c.github.io/vcalm/oas.yaml) (version `0.9-unstable`)
+bundled into one JSON file with no external `$ref`, and with `servers` set to
+`/` because the published file names one example host. The suite uses it in
+two ways:
+
+- **Refusal statuses.** A `refuses` check only accepts a 4xx status the
+  document lists for the operation (`shouldBeListedRefusal` in
+  `tests/openapi.js`). `VCALM_OPENAPI=0` does not turn this off.
+- **Schema checks.** The successful responses of `POST /credentials/issue`
+  (201), `POST /credentials/verify` (200) and `POST /presentations/verify`
+  (200) are validated against their schemas. The HTTP client unwraps
+  `verifiableCredential` from the issue response; the checker puts it back
+  before validating. If the validator fails to load, these checks are skipped
+  with a console warning.
+
+To refresh the document after a spec change:
+
+```sh
+npx @redocly/cli@1.34.3 bundle https://w3c.github.io/vcalm/oas.yaml \
+  --ext json -o docs/openapi/oas.bundled.json
+```
+
+Then set `servers` to `[{"url": "/"}]` in the output and run `npm test`. A
+changed list of statuses changes which refusals pass.
 
 ## License
 
