@@ -103,7 +103,7 @@ resolves `did:key` and verifies `eddsa-rdfc-2022`.
 | `id` | `issuers` | The issuer DID, used as the `issuer` of the credentials the suite asks you to issue. |
 | `options` | `issuers`, `verifiers`, `status`, `workflows` | Fields merged into each request body to that role (see below). |
 | `zcap` | any | `{capability, keySeed}`: the suite signs its POST requests with `capability`. `keySeed` names an environment variable that holds the client's key seed. `capability` may be an object or a JSON string. |
-| `headers`, `oauth2` | `issuers` | Extra headers, or OAuth2 client credentials, for requests to the issuer. |
+| `headers`, `oauth2` | `issuers` | Extra headers, or OAuth2 client credentials, for requests to the issuer. `headers` must not carry credentials (an `Authorization` value, an API key or a token): section 2.4.1 forbids long-lived static credentials in requests, and the 2.4.1 row fails if any entry has one. Use `zcap` or `oauth2` instead. |
 | `interactionUrl` | any | An interaction URL your service serves, for the 3.7 rows (see below). |
 | `encryptionStep` | `workflows` | Step fields that ask the holder to encrypt the response, for the 3.4.1 encryption rows (see below). |
 
