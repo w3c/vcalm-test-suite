@@ -20,8 +20,7 @@ const ROLE_KEYS = {
   verifier: 'verifiers',
   holder: 'holders',
   workflow: 'workflows',
-  status: 'status',
-  interaction: 'interactions'
+  status: 'status'
 };
 
 /**

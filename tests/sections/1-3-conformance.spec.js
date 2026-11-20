@@ -43,9 +43,7 @@ const {expect} = chai;
 
 // Implementations with any endpoint tagged VCALM. filterByTag matches one
 // property at a time, so take the union over the role keys.
-const ROLE_KEYS = [
-  'issuers', 'verifiers', 'holders', 'workflows', 'status', 'interactions'
-];
+const ROLE_KEYS = ['issuers', 'verifiers', 'holders', 'workflows', 'status'];
 const implementations = new Map();
 for(const property of ROLE_KEYS) {
   const {match} = filterByTag({property, tags: [VCALM_TAG]});

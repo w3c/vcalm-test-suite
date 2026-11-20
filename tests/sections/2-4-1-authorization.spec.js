@@ -11,9 +11,7 @@ import {filterByTag} from 'vc-test-suite-implementations';
 import {VCALM_TAG} from '../helpers.js';
 
 // Implementations with any endpoint tagged VCALM.
-const ROLE_KEYS = [
-  'issuers', 'verifiers', 'holders', 'workflows', 'status', 'interactions'
-];
+const ROLE_KEYS = ['issuers', 'verifiers', 'holders', 'workflows', 'status'];
 const implementations = new Map();
 for(const property of ROLE_KEYS) {
   const {match} = filterByTag({property, tags: [VCALM_TAG]});

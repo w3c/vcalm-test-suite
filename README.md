@@ -112,7 +112,6 @@ root gets its own `endpoint`.
 | `verifiers` | `/credentials/verify`, `/presentations/verify`, `/challenges` | verifying credentials and presentations |
 | `holders` | `/presentations`, `/presentations/{id}`, `/credentials/derive` | creating the presentations that verifier tests send |
 | `workflows` | `/workflows`, `/workflows/{id}/...` | workflows and exchanges |
-| `interactions` | `/interactions/{id}` | interaction URLs and protocols |
 | `status` | `/credentials/status` | status updates |
 
 An `endpoint` that already ends with one of these operation paths, such as

@@ -19,8 +19,7 @@ const paths = {
   verifyVp: `${baseUrl}/presentations/verify`,
   createPresentation: `${baseUrl}/presentations`,
   updateStatus: `${baseUrl}/credentials/status`,
-  workflows: `${baseUrl}/workflows`,
-  interactions: `${baseUrl}/interactions`
+  workflows: `${baseUrl}/workflows`
 };
 
 // --- Pattern A: unified gateway ---
@@ -69,15 +68,9 @@ module.exports = {
     workflows: [{
       endpoint: endpoint /* or workflowsEndpoint */,
       tags: ['VCALM']
-    }],
-
-    // Interaction — optional; §3.7.4 GET protocols (skips if not implemented)
-    interactions: [{
-      endpoint: endpoint /* or paths.interactions */,
-      tags: ['VCALM']
-      // interactionId: 'urn:uuid:interaction-fixture',
-      // interactionStart:
-      //   `${baseUrl}/interactions/urn:uuid:interaction-fixture?iuv=1`
+      // §3.7 rows: a live interaction URL your coordinator serves. Any entry
+      // can set it (README, "Interaction URLs").
+      // interactionUrl: `${baseUrl}/interactions/z8n38Dp7a?iuv=1`
     }],
 
     // Status — §C.3 Update Status (required for a conforming status service)

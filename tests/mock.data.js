@@ -4,7 +4,6 @@
 
 import {createRequire} from 'node:module';
 import {klona} from 'klona';
-import {resolveInteractionStartUrl} from './helpers.js';
 import {v4 as uuidv4} from 'uuid';
 const require = createRequire(import.meta.url);
 const validVc = require('./validVc.json');
@@ -378,48 +377,6 @@ export function createIssueRequestWithExistingProof(issuer) {
  */
 export function createExchangeRequest() {
   return {variables: {}};
-}
-
-/**
- * §3.7.1 interaction URL fixture.
- *
- * @param {object} [options] - Options.
- * @param {string} [options.baseUrl] - Instance root URL.
- * @param {string} [options.interactionId] - Interaction id.
- * @returns {string} Interaction start URL.
- */
-export function createInteractionUrl({
-  baseUrl = 'https://vcalm.example',
-  interactionId = 'urn:uuid:interaction-fixture'
-} = {}) {
-  return resolveInteractionStartUrl(baseUrl, interactionId);
-}
-
-/**
- * §3.7.4 protocols object fixture (`inviteRequest` and/or `vcapi`).
- *
- * @returns {object} Protocols response body.
- */
-export function createInteractionProtocolsFixture() {
-  return {
-    inviteRequest:
-      'https://website.example/invitation/87654321/invite-request/response',
-    vcapi:
-      'https://vcapi.example/workflows/z1A1FjMfnG/exchanges/z19mxakBFecZ'
-  };
-}
-
-/**
- * §3.7.5 inviteResponse fixture.
- *
- * @returns {object} Invite response request body.
- */
-export function createInviteResponseFixture() {
-  return {
-    url: 'https://website.example/checkout/8372974',
-    purpose: 'VCALM interop test interaction',
-    referenceId: `urn:uuid:${uuidv4()}`
-  };
 }
 
 const problemDetailFixture = {
